@@ -82,7 +82,7 @@ setup(
     },
     download_url='https://github.com/celik-muhammed/scikit-plot/tree/muhammed-dev',  # Your fork's download URL
     # packages=find_packages(),  # Finds all packages automatically
-    packages=['skplt'],
+    packages=['scikitplot'],
     include_package_data=True,
     platforms='any',
     # entry_points={"console_scripts": []},
