@@ -1072,7 +1072,7 @@ def plot_calibration_curve(y_true, probas_list, clf_names=None, n_bins=10,
 
 def plot_cumulative_gain(y_true, y_probas, title='Cumulative Gains Curve',
                          ax=None, figsize=None, title_fontsize="large",
-                         text_fontsize="medium"):
+                         text_fontsize="medium", class_names = None):
     """Generates the Cumulative Gains Plot from labels and scores/probabilities
 
     The cumulative gains chart is used to determine the effectiveness of a
@@ -1104,6 +1104,10 @@ def plot_cumulative_gain(y_true, y_probas, title='Cumulative Gains Curve',
         text_fontsize (string or int, optional): Matplotlib-style fontsizes.
             Use e.g. "small", "medium", "large" or integer-values. Defaults to
             "medium".
+            
+        class_names (list of strings, optional): List of class names. Used for
+            the legend. Order should be synchronized with the order of classes
+            in y_probas.
 
     Returns:
         ax (:class:`matplotlib.axes.Axes`): The axes on which the plot was
@@ -1126,6 +1130,7 @@ def plot_cumulative_gain(y_true, y_probas, title='Cumulative Gains Curve',
     y_probas = np.array(y_probas)
 
     classes = np.unique(y_true)
+    if class_names is None: class_names = classes
     if len(classes) != 2:
         raise ValueError('Cannot calculate Cumulative Gains for data with '
                          '{} category/ies'.format(len(classes)))
@@ -1141,8 +1146,8 @@ def plot_cumulative_gain(y_true, y_probas, title='Cumulative Gains Curve',
 
     ax.set_title(title, fontsize=title_fontsize)
 
-    ax.plot(percentages, gains1, lw=3, label='Class {}'.format(classes[0]))
-    ax.plot(percentages, gains2, lw=3, label='Class {}'.format(classes[1]))
+    ax.plot(percentages, gains1, lw=3, label='Class {}'.format(class_names[0]))
+    ax.plot(percentages, gains2, lw=3, label='Class {}'.format(class_names[1]))
 
     ax.set_xlim([0.0, 1.0])
     ax.set_ylim([0.0, 1.0])
@@ -1160,7 +1165,7 @@ def plot_cumulative_gain(y_true, y_probas, title='Cumulative Gains Curve',
 
 def plot_lift_curve(y_true, y_probas, title='Lift Curve',
                     ax=None, figsize=None, title_fontsize="large",
-                    text_fontsize="medium"):
+                    text_fontsize="medium", class_names = None):
     """Generates the Lift Curve from labels and scores/probabilities
 
     The lift curve is used to determine the effectiveness of a
@@ -1192,6 +1197,10 @@ def plot_lift_curve(y_true, y_probas, title='Lift Curve',
         text_fontsize (string or int, optional): Matplotlib-style fontsizes.
             Use e.g. "small", "medium", "large" or integer-values. Defaults to
             "medium".
+            
+        class_names (list of strings, optional): List of class names. Used for
+            the legend. Order should be synchronized with the order of classes
+            in y_probas.
 
     Returns:
         ax (:class:`matplotlib.axes.Axes`): The axes on which the plot was
@@ -1214,6 +1223,7 @@ def plot_lift_curve(y_true, y_probas, title='Lift Curve',
     y_probas = np.array(y_probas)
 
     classes = np.unique(y_true)
+    if class_names is None: class_names = classes
     if len(classes) != 2:
         raise ValueError('Cannot calculate Lift Curve for data with '
                          '{} category/ies'.format(len(classes)))
@@ -1236,8 +1246,8 @@ def plot_lift_curve(y_true, y_probas, title='Lift Curve',
 
     ax.set_title(title, fontsize=title_fontsize)
 
-    ax.plot(percentages, gains1, lw=3, label='Class {}'.format(classes[0]))
-    ax.plot(percentages, gains2, lw=3, label='Class {}'.format(classes[1]))
+    ax.plot(percentages, gains1, lw=3, label='Class {}'.format(class_names[0]))
+    ax.plot(percentages, gains2, lw=3, label='Class {}'.format(class_names[1]))
 
     ax.plot([0, 1], [1, 1], 'k--', lw=2, label='Baseline')
 

@@ -464,7 +464,8 @@ class TestPlotCalibrationCurve(unittest.TestCase):
     def test_string_classes(self):
         plot_calibration_curve(
             convert_labels_into_string(self.y),
-            [self.lr_probas, self.rf_probas]
+            [self.lr_probas, self.rf_probas],
+            pos_label='1',  # Explicitly setting pos_label
         )
 
     def test_cmap(self):
