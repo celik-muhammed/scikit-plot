@@ -2,8 +2,9 @@
 The :mod:`scikitplot.metrics` module includes plots for machine learning
 evaluation metrics e.g. confusion matrix, silhouette scores, etc.
 """
-from __future__ import absolute_import, division, print_function, \
-    unicode_literals
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
 
 import itertools
 
@@ -28,11 +29,13 @@ from scikitplot.helpers import binary_ks_curve, validate_labels
 from scikitplot.helpers import cumulative_gain_curve
 
 
-def plot_confusion_matrix(y_true, y_pred, labels=None, true_labels=None,
-                          pred_labels=None, title=None, normalize=False,
-                          hide_zeros=False, hide_counts=False, x_tick_rotation=0, ax=None,
-                          figsize=None, cmap='Blues', title_fontsize="large",
-                          text_fontsize="medium", show_colorbar=True):
+def plot_confusion_matrix(
+    y_true, y_pred, labels=None, true_labels=None,
+    pred_labels=None, title=None, normalize=False,
+    hide_zeros=False, hide_counts=False, x_tick_rotation=0, ax=None,
+    figsize=None, cmap='Blues', title_fontsize="large",
+    text_fontsize="medium", show_colorbar=True,
+):
     """Generates confusion matrix plot from predictions and true labels
 
     Args:
