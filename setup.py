@@ -53,7 +53,7 @@ setup(
     long_description_content_type="text/markdown",
     long_description=README,
     version=VERSION,
-    url='https://github.com/celik-muhammed/scikit-plot/tree/muhammed-dev',
+    url='https://github.com/celik-muhammed/scikit-plot',
     download_url='https://github.com/celik-muhammed/scikit-plot/tree/muhammed-dev',
     project_urls={
         'Documentation': 'https://scikit-plot.readthedocs.io/en/stable/',
