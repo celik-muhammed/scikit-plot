@@ -61,7 +61,7 @@ KEYWORDS = (
 ##########################################################################
 
 setup(
-    name='scikitplot',
+    name='scikit-plots',
     version=VERSION,
     description='An intuitive library to add plotting functionality to scikit-learn objects.',
     long_description=README,
@@ -82,7 +82,7 @@ setup(
     },
     download_url='https://github.com/celik-muhammed/scikit-plot/tree/muhammed-dev',  # Your fork's download URL
     # packages=find_packages(),  # Finds all packages automatically
-    packages=['scikitplot'],
+    packages=['skplt'],
     include_package_data=True,
     platforms='any',
     # entry_points={"console_scripts": []},
