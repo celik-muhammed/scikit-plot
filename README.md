@@ -1,3 +1,17 @@
+
+---
+
+Updated `scikit-plot`:
+- expose strategy param for calibration curve #118
+- add show_labels option to plot_roc #116
+- make colorbar optional in plot_confusion_matrix() #114
+- Feature/label dots #111
+- Added class_names optional arg to plot_cumulative_gain. #109
+- Change cumulative curve like roc_curve #98
+- Preserve order of samples/classes/labels for plot_pca_2d_projection #108 
+
+---
+
 # Welcome to Scikit-plot
 
 [![PyPI version](https://badge.fury.io/py/scikit-plot.svg)](https://badge.fury.io/py/scikit-plot)
