@@ -906,11 +906,11 @@ def plot_silhouette(X, cluster_labels, title='Silhouette Analysis',
     return ax
 
 
-def plot_calibration_curve(y_true, probas_list, clf_names=None, n_bins=10,
+def plot_calibration_curve(y_true, probas_list, clf_names=None, n_bins=10,                           
                            title='Calibration plots (Reliability Curves)',
                            ax=None, figsize=None, cmap='nipy_spectral',
                            title_fontsize="large", text_fontsize="medium",
-                           pos_label=None):
+                           pos_label=None, strategy="uniform",):
     """Plots calibration curves for a set of classifier probability estimates.
 
     Plotting the calibration curves of a classifier is useful for determining
@@ -963,6 +963,12 @@ def plot_calibration_curve(y_true, probas_list, clf_names=None, n_bins=10,
             classification. If `None`, the positive label is inferred from `y_true`.
             If `y_true` contains string labels or labels other than {0, 1} or {-1, 1},
             you must specify this parameter explicitly.
+
+        strategy (str, optional): Strategy used to define the widths of the bins.
+            uniform
+                The bins have identical widths.
+            quantile
+                The bins have the same number of samples and depend on `y_prob`.
 
     Returns:
         :class:`matplotlib.axes.Axes`: The axes on which the plot was drawn.
@@ -1033,9 +1039,10 @@ def plot_calibration_curve(y_true, probas_list, clf_names=None, n_bins=10,
 
         probas = (probas - probas.min()) / (probas.max() - probas.min())
 
-        fraction_of_positives, mean_predicted_value = \
-            calibration_curve(y_true, probas, n_bins=n_bins, pos_label=pos_label)
-
+        fraction_of_positives, mean_predicted_value = calibration_curve(
+            y_true, probas, n_bins=n_bins,
+            pos_label=pos_label, strategy=strategy
+        )
         color = plt.cm.get_cmap(cmap)(float(i) / len(probas_list))
 
         ax.plot(mean_predicted_value, fraction_of_positives, 's-',
