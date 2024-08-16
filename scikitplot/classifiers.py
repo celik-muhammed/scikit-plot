@@ -67,14 +67,16 @@ def classifier_factory(clf):
     return clf
 
 
-def plot_confusion_matrix_with_cv(clf, X, y, labels=None, true_labels=None,
-                                  pred_labels=None, title=None,
-                                  normalize=False, hide_zeros=False,
-                                  x_tick_rotation=0, do_cv=True, cv=None,
-                                  shuffle=True, random_state=None, ax=None,
-                                  figsize=None, cmap='Blues',
-                                  title_fontsize="large",
-                                  text_fontsize="medium"):
+def plot_confusion_matrix_with_cv(
+    clf, X, y, labels=None, true_labels=None,
+    pred_labels=None, title=None,
+    normalize=False, hide_zeros=False,
+    x_tick_rotation=0, do_cv=True, cv=None,
+    shuffle=True, random_state=None, ax=None,
+    figsize=None, cmap='Blues',
+    title_fontsize="large",
+    text_fontsize="medium"
+):
     """Generates the confusion matrix for a given classifier and dataset.
 
     Args:
@@ -219,11 +221,13 @@ def plot_confusion_matrix_with_cv(clf, X, y, labels=None, true_labels=None,
     return ax
 
 
-def plot_roc_curve_with_cv(clf, X, y, title='ROC Curves', do_cv=True,
-                           cv=None, shuffle=True, random_state=None,
-                           curves=('micro', 'macro', 'each_class'),
-                           ax=None, figsize=None, cmap='nipy_spectral',
-                           title_fontsize="large", text_fontsize="medium"):
+def plot_roc_curve_with_cv(
+    clf, X, y, title='ROC Curves', do_cv=True,
+    cv=None, shuffle=True, random_state=None,
+    curves=('micro', 'macro', 'each_class'),
+    ax=None, figsize=None, cmap='nipy_spectral',
+    title_fontsize="large", text_fontsize="medium"
+):
     """Generates the ROC curves for a given classifier and dataset.
 
     Args:
@@ -349,10 +353,12 @@ def plot_roc_curve_with_cv(clf, X, y, title='ROC Curves', do_cv=True,
     return ax
 
 
-def plot_ks_statistic_with_cv(clf, X, y, title='KS Statistic Plot',
-                              do_cv=True, cv=None, shuffle=True,
-                              random_state=None, ax=None, figsize=None,
-                              title_fontsize="large", text_fontsize="medium"):
+def plot_ks_statistic_with_cv(
+    clf, X, y, title='KS Statistic Plot',
+    do_cv=True, cv=None, shuffle=True,
+    random_state=None, ax=None, figsize=None,
+    title_fontsize="large", text_fontsize="medium"
+):
     """Generates the KS Statistic plot for a given classifier and dataset.
 
     Args:
@@ -467,15 +473,17 @@ def plot_ks_statistic_with_cv(clf, X, y, title='KS Statistic Plot',
     return ax
 
 
-def plot_precision_recall_curve_with_cv(clf, X, y,
-                                        title='Precision-Recall Curve',
-                                        do_cv=True, cv=None, shuffle=True,
-                                        random_state=None,
-                                        curves=('micro', 'each_class'),
-                                        ax=None, figsize=None,
-                                        cmap='nipy_spectral',
-                                        title_fontsize="large",
-                                        text_fontsize="medium"):
+def plot_precision_recall_curve_with_cv(
+    clf, X, y,
+    title='Precision-Recall Curve',
+    do_cv=True, cv=None, shuffle=True,
+    random_state=None,
+    curves=('micro', 'each_class'),
+    ax=None, figsize=None,
+    cmap='nipy_spectral',
+    title_fontsize="large",
+    text_fontsize="medium"
+):
     """Generates the Precision-Recall curve for a given classifier and dataset.
 
     Args:

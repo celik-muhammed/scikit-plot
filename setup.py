@@ -129,18 +129,18 @@ setup(
     license=LICENSE,
     author=AUTHOR,
     author_email=A_EMAIL,
-    url=URL,
+    url=REPOSITORY,
+    download_url=f'{REPOSITORY}/tree/muhammed-dev',
     maintainer=MAINTAINER,
     maintainer_email=M_EMAIL,
     project_urls={
         'Bug Tracker'  : f'{REPOSITORY}/issues',             # Updated to your fork's issues URL
         'Documentation': DOC_URL,
         'Donate'       : f'{REPOSITORY}#donate',             # Updated donation link
+        'Forked Repo'  : URL,
         'Forum'        : f'{REPOSITORY}/issues',             # Updated forum link
         'Source Code'  : f'{REPOSITORY}/tree/muhammed-dev',  # Updated to your fork's URL
-        'Main Repo'    : URL,
     },
-    download_url=f'{REPOSITORY}/tree/muhammed-dev',
     platforms='any',
     # entry_points={"console_scripts": []},
     install_requires=list(get_requires()),
