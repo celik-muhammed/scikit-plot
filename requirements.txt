@@ -1,4 +1,20 @@
+## Library Dependencies
 matplotlib>=1.4.0
-scikit-learn>=0.18
+scikit-learn>=0.21
 scipy>=0.9
 joblib>=0.10
+
+## Build Requirements (uncomment for deployment)
+# wheel>=0.35
+# twine>=3.3
+
+## Pre-Commit Requirements (uncomment to use pre-commit hooks)
+# pre-commit>=2.20.0
+
+## Testing Requirements
+# pytest>=6.1
+
+## Documentation Dependencies
+# Sphinx>=3.4
+# sphinx-rtd-theme>=0.5.1
+# numpydoc>=1.1

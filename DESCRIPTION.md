@@ -1,18 +1,6 @@
-# Welcome to Scikit-plot
+# Scikit-plots
 
-[![PyPI version](https://badge.fury.io/py/scikit-plot.svg)](https://badge.fury.io/py/scikit-plot)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
-[![Build Status](https://travis-ci.org/reiinakano/scikit-plot.svg?branch=master)](https://travis-ci.org/reiinakano/scikit-plot)
-[![PyPI](https://img.shields.io/pypi/pyversions/scikit-plot.svg)]()
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.293191.svg)](https://doi.org/10.5281/zenodo.293191)
-
-### Single line functions for detailed visualizations
-
-### The quickest and easiest way to go from analysis...
-
-![roc_curves](docs/_static/readme_collage.jpg)
-
-### ...to this.
+![roc_curves](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/master/docs/_static/readme_collage.jpg)
 
 Scikit-plot is the result of an unartistic data scientist's dreadful realization that *visualization is one of the most crucial components in the data science process, not just a mere afterthought*.
 
@@ -44,7 +32,7 @@ import scikitplot as skplt
 skplt.metrics.plot_roc(y_test, predicted_probas)
 plt.show()
 ```
-![roc_curves](examples/roc_curves.png)
+![roc_curves](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/master/examples/roc_curves.png)
 
 Pretty.
 
@@ -71,7 +59,7 @@ probas = keras_clf.predict_proba(X_test, batch_size=64)
 skplt.metrics.plot_precision_recall_curve(y_test, probas)
 plt.show()
 ```
-![p_r_curves](examples/p_r_curves.png)
+![p_r_curves](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/master/examples/p_r_curves.png)
 
 You can see clearly here that `skplt.metrics.plot_precision_recall_curve` needs only the ground truth y-values and the predicted probabilities to generate the plot. This lets you use *anything* you want as the classifier, from Keras NNs to NLTK Naive Bayes to that groundbreaking classifier algorithm you just wrote.
 
@@ -83,7 +71,7 @@ Installation is simple! First, make sure you have the dependencies [Scikit-learn
 
 Then just run:
 ```bash
-pip install scikit-plot
+pip install scikit-plots
 ```
 
 Or if you want the latest development version, clone this repo and run
@@ -92,10 +80,10 @@ python setup.py install
 ```
 at the root folder.
 
-If using conda, you can install Scikit-plot by running:
+<!-- If using conda, you can install Scikit-plot by running:
 ```bash
 conda install -c conda-forge scikit-plot
-```
+``` -->
 
 ## Documentation and Examples
 
@@ -128,3 +116,16 @@ If so, please consider citing Scikit-plot with DOI [![DOI](https://zenodo.org/ba
 > [1]Reiichiro Nakano 2018. reiinakano/scikit-plot: 0.3.7. Zenodo.
 
 Happy plotting!
+
+---
+
+Updated `scikit-plot`:
+- expose strategy param for calibration curve #118
+- add show_labels option to plot_roc #116
+- make colorbar optional in plot_confusion_matrix() #114
+- Feature/label dots #111
+- Added class_names optional arg to plot_cumulative_gain. #109
+- Change cumulative curve like roc_curve #98
+- Preserve order of samples/classes/labels for plot_pca_2d_projection #108 
+
+---

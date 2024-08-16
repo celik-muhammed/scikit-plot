@@ -1,5 +1,7 @@
 """
-Setup script.
+Setup script for installing scikit-plots
+
+For license information, see LICENSE.txt and NOTICE.md
 """
 from __future__ import print_function
 
@@ -24,7 +26,51 @@ class PyTest(TestCommand):
         errcode = pytest.main(self.test_args)
         sys.exit(errcode)
 
+
+##########################################################################
+## Package Information
+##########################################################################
+
+## Basic information
+## Get the directory where setup.py is located
+HERE         = pathlib.Path(__file__).parent
+NAME         = 'scikit-plots'
+PACKAGE      = 'scikitplot'
+VERSION_PATH = os.path.join(PACKAGE, '__init__.py')
+DESCRIPTION  = 'An intuitive library to add plotting functionality to scikit-learn objects.'
+## Read the contents of the README file
+README       = 'DESCRIPTION.md'
+PKG_DESCRIBE = (HERE / README).read_text(encoding='utf-8')
+## Define the keywords
+KEYWORDS = [
+    'visualization',
+    'machine learning',
+    'scikit-learn',
+    'matplotlib',
+    'data science',
+]
+LICENSE      = 'MIT License'
+## If your name first as you're the current maintainer
+AUTHOR       = 'Reiichiro Nakano et al.'
+A_EMAIL      = 'reiichiro.s.nakano@gmail.com'
+URL          = 'https://github.com/reiinakano/scikit-plot'  # Your fork's URL
+DOC_URL      = 'https://scikit-plot.readthedocs.io/en/stable/'
+MAINTAINER   = 'Muhammed Çelik'
+M_EMAIL      = 'muhammed.business.network@gmail.com'
+REPOSITORY   = 'https://github.com/celik-muhammed/scikit-plot'
+REQUIRE_PATH = 'requirements.txt'
+
+
+##########################################################################
+## Helper Functions
+##########################################################################
+
+
 def read(*filenames, **kwargs):
+    """
+    Assume UTF-8 encoding and return the contents of the file located at the
+    absolute path from the REPOSITORY joined with *filenames.
+    """
     here = os.path.abspath(os.path.dirname(__file__))
     encoding = kwargs.get('encoding', 'utf-8')
     sep = kwargs.get('sep', '\n')
@@ -34,7 +80,12 @@ def read(*filenames, **kwargs):
             buf.append(f.read())
     return sep.join(buf)
 
-def get_version(rel_path):
+
+def get_version(rel_path=VERSION_PATH):
+    """
+    Reads the python file defined in the VERSION_PATH to find the get_version
+    function.
+    """
     for line in read(rel_path).splitlines():
         if line.startswith("__version__"):
             delim = '"' if '"' in line else "'"
@@ -42,56 +93,57 @@ def get_version(rel_path):
     raise RuntimeError('Unable to find version string.')
 
 
-## Basic information
-HERE = pathlib.Path(__file__).parent
-README = (HERE / 'README.md').read_text(encoding='utf-8')
-VERSION = get_version('scikitplot/__init__.py')
+def get_description_type(path=README):
+    """
+    Returns the long_description_content_type based on the extension of the
+    package describe path (e.g. .txt, .rst, or .md).
+    """
+    ext = pathlib.Path(path).suffix
+    return {'.rst': 'text/x-rst', '.txt': 'text/plain', '.md': 'text/markdown'}[ext]
 
-## Define the keywords
-KEYWORDS = [
-    'visualization',
-    'machine learning',
-    'scikit-learn',
-    'matplotlib',
-    'data science',
-]
+
+def get_requires(path=REQUIRE_PATH):
+    """
+    Yields a generator of requirements as defined by the REQUIRE_PATH which
+    should point to a requirements.txt output by `pip freeze`.
+    """
+    for line in read(path).splitlines():
+        line = line.strip()
+        if line and not line.startswith("#"):
+            yield line
 
 ##########################################################################
 ## Define the configuration, Run setup script
 ##########################################################################
 
 setup(
-    name='scikit-plots',
-    version=VERSION,
-    description='An intuitive library to add plotting functionality to scikit-learn objects.',
-    long_description=README,
-    long_description_content_type="text/markdown",
-    keywords=KEYWORDS,
-    license='MIT License',
-    author='Reiichiro Nakano et al.',  # Your name first as you're the current maintainer
-    author_email='reiichiro.s.nakano@gmail.com',  # Your email address
-    url='https://github.com/celik-muhammed/scikit-plot/tree/muhammed-dev',  # Your fork's URL
-    maintainer='Muhammed Çelik',
-    maintainer_email='muhammed.business.network@gmail.com',
-    project_urls={
-        'Documentation': 'https://scikit-plot.readthedocs.io/en/stable/',
-        'Source Code': 'https://github.com/celik-muhammed/scikit-plot',  # Updated to your fork's URL
-        'Bug Tracker': 'https://github.com/celik-muhammed/scikit-plot/issues',  # Updated to your fork's issues URL
-        'Forum': 'https://github.com/celik-muhammed/scikit-plot/issues',  # Updated forum link
-        'Donate': 'https://github.com/celik-muhammed/scikit-plot#donate',  # Updated donation link
-    },
-    download_url='https://github.com/celik-muhammed/scikit-plot/tree/muhammed-dev',  # Your fork's download URL
+    name=NAME,
     # packages=find_packages(),  # Finds all packages automatically
-    packages=['scikitplot'],
+    packages=[PACKAGE],
     include_package_data=True,
+    version=get_version(),
+    description=DESCRIPTION,
+    long_description=PKG_DESCRIBE,
+    long_description_content_type=get_description_type(PKG_DESCRIBE),
+    keywords=KEYWORDS,
+    license=LICENSE,
+    author=AUTHOR,
+    author_email=A_EMAIL,
+    url=URL,
+    maintainer=MAINTAINER,
+    maintainer_email=M_EMAIL,
+    project_urls={
+        'Bug Tracker'  : f'{REPOSITORY}/issues',             # Updated to your fork's issues URL
+        'Documentation': DOC_URL,
+        'Donate'       : f'{REPOSITORY}#donate',             # Updated donation link
+        'Forum'        : f'{REPOSITORY}/issues',             # Updated forum link
+        'Source Code'  : f'{REPOSITORY}/tree/muhammed-dev',  # Updated to your fork's URL
+        'Main Repo'    : URL,
+    },
+    download_url=f'{REPOSITORY}/tree/muhammed-dev',
     platforms='any',
     # entry_points={"console_scripts": []},
-    install_requires=[
-        'matplotlib>=1.4.0',
-        'scikit-learn>=0.21',
-        'scipy>=0.9',
-        'joblib>=0.10'
-    ],
+    install_requires=list(get_requires()),
     classifiers=[
         'Development Status :: 4 - Beta',  # Change status as per the current state
         'Intended Audience :: Developers',
@@ -103,6 +155,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.14',
         'Topic :: Scientific/Engineering :: Visualization',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
