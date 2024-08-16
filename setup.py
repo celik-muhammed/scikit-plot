@@ -48,13 +48,13 @@ README = (HERE / 'README.md').read_text(encoding='utf-8')
 VERSION = get_version('scikitplot/__init__.py')
 
 ## Define the keywords
-KEYWORDS = (
-    "visualization",
-    "machine learning",
-    "scikit-learn",
-    "matplotlib",
-    "data science",
-)
+KEYWORDS = [
+    'visualization',
+    'machine learning',
+    'scikit-learn',
+    'matplotlib',
+    'data science',
+]
 
 ##########################################################################
 ## Define the configuration, Run setup script
