@@ -13,10 +13,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_pca_component_variance(clf, title='PCA Component Explained Variances',
-                                target_explained_variance=0.75, ax=None,
-                                figsize=None, title_fontsize="large",
-                                text_fontsize="medium"):
+def plot_pca_component_variance(
+    clf, title='PCA Component Explained Variances',
+    target_explained_variance=0.75, ax=None,
+    figsize=None, title_fontsize="large",
+    text_fontsize="medium"
+):
     """Plots PCA components' explained variance ratios. (new in v0.2.2)
 
     Args:
@@ -95,11 +97,13 @@ def plot_pca_component_variance(clf, title='PCA Component Explained Variances',
     return ax
 
 
-def plot_pca_2d_projection(clf, X, y, title='PCA 2-D Projection',
-                           biplot=False, feature_labels=None,
-                           ax=None, figsize=None, cmap='Spectral',
-                           title_fontsize="large", text_fontsize="medium",
-                           dimensions=[0, 1], label_dots=False, ):
+def plot_pca_2d_projection(
+    clf, X, y, title='PCA 2-D Projection',
+    biplot=False, feature_labels=None,
+    ax=None, figsize=None, cmap='Spectral',
+    title_fontsize="large", text_fontsize="medium",
+    dimensions=[0, 1], label_dots=False, 
+):
     """Plots the 2-dimensional projection of PCA on a given dataset.
 
     Args:
@@ -165,6 +169,7 @@ def plot_pca_2d_projection(clf, X, y, title='PCA 2-D Projection',
         fig, ax = plt.subplots(1, 1, figsize=figsize)
 
     ax.set_title(title, fontsize=title_fontsize)
+
     # Get unique classes from y, preserving order of class occurence in y
     _, class_indexes = np.unique(np.array(y), return_index=True)
     classes = np.array(y)[np.sort(class_indexes)]
