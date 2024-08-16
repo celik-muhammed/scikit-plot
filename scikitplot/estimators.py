@@ -5,8 +5,9 @@ You can use your own estimators, but these plots assume specific properties
 shared by scikit-learn estimators. The specific requirements are documented per
 function.
 """
-from __future__ import absolute_import, division, print_function, \
-    unicode_literals
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
 
 import matplotlib.pyplot as plt
 import numpy as np

@@ -65,6 +65,32 @@ You can see clearly here that `skplt.metrics.plot_precision_recall_curve` needs 
 
 The possibilities are endless.
 
+## Plot Decile Table, Lift, Gain and KS Statistic charts with single line functions
+
+> Migrating: https://github.com/tensorbored/kds
+
+```python
+# REPRODUCABLE EXAMPLE
+# Load Dataset and train-test split
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn import tree
+
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33,random_state=3)
+clf = tree.DecisionTreeClassifier(max_depth=1,random_state=3)
+clf = clf.fit(X_train, y_train)
+y_prob = clf.predict_proba(X_test)
+
+# The magic happens here
+import scikitplot as skplt
+skplt.metrics.report(y_test, y_prob[:,1], plot_style='ggplot')
+```
+Choose among multiple ``plot_style`` list using ``plt.style.available``, to generate quick and beautiful plots.
+
+![readme_report.png](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/muhammed-dev/docs/_static/readme_report.png)
+
+
 ## Installation
 
 Installation is simple! First, make sure you have the dependencies [Scikit-learn](http://scikit-learn.org) and [Matplotlib](http://matplotlib.org/) installed.
@@ -93,11 +119,11 @@ You can find detailed documentation [here](http://scikit-plot.readthedocs.io).
 
 Examples are found in the [examples folder of this repo](examples/).
 
-## Contributing to Scikit-plot
+## Contributing to Scikit-plots
 
 Reporting a bug? Suggesting a feature? Want to add your own plot to the library? Visit our [contributor guidelines](CONTRIBUTING.md).
 
-## Citing Scikit-plot
+## Citing Scikit-plots
 
 Are you using Scikit-plot in an academic paper? You should be! Reviewers love eye candy.
 
@@ -120,6 +146,7 @@ Happy plotting!
 ---
 
 Updated `scikit-plot`:
+- Migrate **https://github.com/tensorbored/kds**
 - expose strategy param for calibration curve #118
 - add show_labels option to plot_roc #116
 - make colorbar optional in plot_confusion_matrix() #114

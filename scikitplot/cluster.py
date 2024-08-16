@@ -4,8 +4,9 @@ scikit-learn clusterer instances e.g. KMeans. You can use your own clusterers,
 but these plots assume specific properties shared by scikit-learn estimators.
 The specific requirements are documented per function.
 """
-from __future__ import absolute_import, division, print_function, \
-    unicode_literals
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
 
 import time
 
@@ -16,9 +17,11 @@ from sklearn.base import clone
 from joblib import Parallel, delayed
 
 
-def plot_elbow_curve(clf, X, title='Elbow Plot', cluster_ranges=None, n_jobs=1,
-                     show_cluster_time=True, ax=None, figsize=None,
-                     title_fontsize="large", text_fontsize="medium"):
+def plot_elbow_curve(
+    clf, X, title='Elbow Plot', cluster_ranges=None, n_jobs=1,
+    show_cluster_time=True, ax=None, figsize=None,
+    title_fontsize="large", text_fontsize="medium"
+):
     """Plots elbow curve of different values of K for KMeans clustering.
 
     Args:

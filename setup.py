@@ -134,6 +134,7 @@ setup(
     maintainer=MAINTAINER,
     maintainer_email=M_EMAIL,
     project_urls={
+        'Homepage   '  : REPOSITORY,                         # Updated to your fork's URL
         'Bug Tracker'  : f'{REPOSITORY}/issues',             # Updated to your fork's issues URL
         'Documentation': DOC_URL,
         'Donate'       : f'{REPOSITORY}#donate',             # Updated donation link
