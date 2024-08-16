@@ -24,8 +24,6 @@ from sklearn.metrics import silhouette_samples
 from sklearn.calibration import calibration_curve
 from sklearn.utils import deprecated
 
-from scipy import interp
-
 from scikitplot.helpers import binary_ks_curve, validate_labels
 from scikitplot.helpers import cumulative_gain_curve
 
@@ -281,7 +279,7 @@ def plot_roc_curve(y_true, y_probas, title='ROC Curves',
     # Then interpolate all ROC curves at this points
     mean_tpr = np.zeros_like(all_fpr)
     for i in range(len(classes)):
-        mean_tpr += interp(all_fpr, fpr[i], tpr[i])
+        mean_tpr += np.interp(all_fpr, fpr[i], tpr[i])
 
     # Finally average it and compute AUC
     mean_tpr /= len(classes)
@@ -440,7 +438,7 @@ def plot_roc(y_true, y_probas, title='ROC Curves',
         # Then interpolate all ROC curves at this points
         mean_tpr = np.zeros_like(all_fpr)
         for i in range(len(classes)):
-            mean_tpr += interp(all_fpr, fpr_dict[i], tpr_dict[i])
+            mean_tpr += np.interp(all_fpr, fpr_dict[i], tpr_dict[i])
 
         # Finally average it and compute AUC
         mean_tpr /= len(classes)
