@@ -124,7 +124,7 @@ setup(
     version=get_version(),
     description=DESCRIPTION,
     long_description=PKG_DESCRIBE,
-    long_description_content_type=get_description_type(PKG_DESCRIBE),
+    long_description_content_type=get_description_type(),
     keywords=KEYWORDS,
     license=LICENSE,
     author=AUTHOR,
