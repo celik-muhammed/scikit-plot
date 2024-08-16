@@ -5,8 +5,9 @@ e.g. PCA. You can use your own estimators, but these plots assume specific
 properties shared by scikit-learn estimators. The specific requirements are
 documented per function.
 """
-from __future__ import absolute_import, division, print_function, \
-    unicode_literals
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -97,7 +98,8 @@ def plot_pca_component_variance(clf, title='PCA Component Explained Variances',
 def plot_pca_2d_projection(clf, X, y, title='PCA 2-D Projection',
                            biplot=False, feature_labels=None,
                            ax=None, figsize=None, cmap='Spectral',
-                           title_fontsize="large", text_fontsize="medium"):
+                           title_fontsize="large", text_fontsize="medium",
+                           dimensions=[0, 1], label_dots=False, ):
     """Plots the 2-dimensional projection of PCA on a given dataset.
 
     Args:
@@ -163,21 +165,27 @@ def plot_pca_2d_projection(clf, X, y, title='PCA 2-D Projection',
         fig, ax = plt.subplots(1, 1, figsize=figsize)
 
     ax.set_title(title, fontsize=title_fontsize)
-    classes = np.unique(np.array(y))
+    # Get unique classes from y, preserving order of class occurence in y
+    _, class_indexes = np.unique(np.array(y), return_index=True)
+    classes = np.array(y)[np.sort(class_indexes)]
 
     colors = plt.cm.get_cmap(cmap)(np.linspace(0, 1, len(classes)))
 
     for label, color in zip(classes, colors):
-        ax.scatter(transformed_X[y == label, 0], transformed_X[y == label, 1],
+        ax.scatter(transformed_X[y == label, dimensions[0]], transformed_X[y == label, dimensions[1]],
                    alpha=0.8, lw=2, label=label, color=color)
 
+        if label_dots:
+            for dot in transformed_X[y == label][:, dimensions]:
+                ax.text(*dot, label)
+
     if biplot:
-        xs = transformed_X[:, 0]
-        ys = transformed_X[:, 1]
-        vectors = np.transpose(clf.components_[:2, :])
+        xs = transformed_X[:, dimensions[0]]
+        ys = transformed_X[:, dimensions[1]]
+        vectors = np.transpose(clf.components_[dimensions, :])
         vectors_scaled = vectors * [xs.max(), ys.max()]
         for i in range(vectors.shape[0]):
-            ax.annotate("", xy=(vectors_scaled[i, 0], vectors_scaled[i, 1]),
+            ax.annotate("", xy=(vectors_scaled[i, dimensions[0]], vectors_scaled[i, dimensions[1]]),
                         xycoords='data', xytext=(0, 0), textcoords='data',
                         arrowprops={'arrowstyle': '-|>', 'ec': 'r'})
 
@@ -187,8 +195,8 @@ def plot_pca_2d_projection(clf, X, y, title='PCA 2-D Projection',
 
     ax.legend(loc='best', shadow=False, scatterpoints=1,
               fontsize=text_fontsize)
-    ax.set_xlabel('First Principal Component', fontsize=text_fontsize)
-    ax.set_ylabel('Second Principal Component', fontsize=text_fontsize)
+    ax.set_xlabel(f'Principal Component {dimensions[0]+1}', fontsize=text_fontsize)
+    ax.set_ylabel(f'Principal Component {dimensions[1]+1}', fontsize=text_fontsize)
     ax.tick_params(labelsize=text_fontsize)
 
     return ax
