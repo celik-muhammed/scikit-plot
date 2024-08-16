@@ -1,15 +1,15 @@
 from __future__ import absolute_import
 import unittest
 
+import numpy as np
+import matplotlib.pyplot as plt
+
 from sklearn.datasets import load_iris as load_data
 from sklearn.datasets import load_breast_cancer
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.cluster import KMeans
-
-import numpy as np
-import matplotlib.pyplot as plt
 
 from scikitplot.metrics import plot_confusion_matrix
 from scikitplot.metrics import plot_roc_curve
@@ -439,7 +439,7 @@ class TestPlotSilhouette(unittest.TestCase):
 class TestPlotCalibrationCurve(unittest.TestCase):
     def setUp(self):
         np.random.seed(0)
-        self.X, self.y = load_breast_cancer(return_X_y=True)
+        self.X, self.y = load_breast_cancer(return_X_y=True, as_frame=False)
         p = np.random.permutation(len(self.X))
         self.X, self.y = self.X[p], self.y[p]
         self.lr = LogisticRegression()
@@ -462,15 +462,15 @@ class TestPlotCalibrationCurve(unittest.TestCase):
         plot_calibration_curve(self.y, [self.lr_probas, self.rf_probas])
 
     def test_string_classes(self):
-        plot_calibration_curve(convert_labels_into_string(self.y),
-                               [self.lr_probas, self.rf_probas])
+        plot_calibration_curve(
+            convert_labels_into_string(self.y),
+            [self.lr_probas, self.rf_probas]
+        )
 
     def test_cmap(self):
-        plot_calibration_curve(convert_labels_into_string(self.y),
-                               [self.lr_probas, self.rf_probas],
+        plot_calibration_curve(self.y, [self.lr_probas, self.rf_probas],
                                cmap='Spectral')
-        plot_calibration_curve(convert_labels_into_string(self.y),
-                               [self.lr_probas, self.rf_probas],
+        plot_calibration_curve(self.y, [self.lr_probas, self.rf_probas],
                                cmap=plt.cm.Spectral)
 
     def test_ax(self):
@@ -485,11 +485,15 @@ class TestPlotCalibrationCurve(unittest.TestCase):
         assert ax is out_ax
 
     def test_array_like(self):
-        plot_calibration_curve(self.y, [self.lr_probas.tolist(),
-                                        self.rf_probas.tolist()])
-        plot_calibration_curve(convert_labels_into_string(self.y),
-                               [self.lr_probas.tolist(),
-                                self.rf_probas.tolist()])
+        plot_calibration_curve(
+            self.y, 
+            [self.lr_probas.tolist(), self.rf_probas.tolist()]
+        )
+        plot_calibration_curve(
+            convert_labels_into_string(self.y),
+            [self.lr_probas.tolist(), self.rf_probas.tolist()],
+            pos_label='1',  # Explicitly setting pos_label
+        )
 
     def test_invalid_probas_list(self):
         self.assertRaises(ValueError, plot_calibration_curve,

@@ -909,7 +909,8 @@ def plot_silhouette(X, cluster_labels, title='Silhouette Analysis',
 def plot_calibration_curve(y_true, probas_list, clf_names=None, n_bins=10,
                            title='Calibration plots (Reliability Curves)',
                            ax=None, figsize=None, cmap='nipy_spectral',
-                           title_fontsize="large", text_fontsize="medium"):
+                           title_fontsize="large", text_fontsize="medium",
+                           pos_label=None):
     """Plots calibration curves for a set of classifier probability estimates.
 
     Plotting the calibration curves of a classifier is useful for determining
@@ -937,7 +938,7 @@ def plot_calibration_curve(y_true, probas_list, clf_names=None, n_bins=10,
             data.
 
         title (string, optional): Title of the generated plot. Defaults to
-            "Calibration plots (Reliabilirt Curves)"
+            "Calibration plots (Reliability Curves)".
 
         ax (:class:`matplotlib.axes.Axes`, optional): The axes upon which to
             plot the curve. If None, the plot is drawn on a new set of axes.
@@ -958,11 +959,21 @@ def plot_calibration_curve(y_true, probas_list, clf_names=None, n_bins=10,
             Use e.g. "small", "medium", "large" or integer-values. Defaults to
             "medium".
 
+        pos_label (int, float, bool, str, optional): The positive label for binary
+            classification. If `None`, the positive label is inferred from `y_true`.
+            If `y_true` contains string labels or labels other than {0, 1} or {-1, 1},
+            you must specify this parameter explicitly.
+
     Returns:
         :class:`matplotlib.axes.Axes`: The axes on which the plot was drawn.
 
     Example:
         >>> import scikitplot as skplt
+        >>> from sklearn.ensemble import RandomForestClassifier
+        >>> from sklearn.linear_model import LogisticRegression
+        >>> from sklearn.naive_bayes import GaussianNB
+        >>> from sklearn.svm import LinearSVC
+        >>> from sklearn.metrics import calibration_curve
         >>> rf = RandomForestClassifier()
         >>> lr = LogisticRegression()
         >>> nb = GaussianNB()
@@ -976,7 +987,8 @@ def plot_calibration_curve(y_true, probas_list, clf_names=None, n_bins=10,
         ...              'Gaussian Naive Bayes', 'Support Vector Machine']
         >>> skplt.metrics.plot_calibration_curve(y_test,
         ...                                      probas_list,
-        ...                                      clf_names)
+        ...                                      clf_names,
+        ...                                      pos_label='1')
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
@@ -1022,7 +1034,7 @@ def plot_calibration_curve(y_true, probas_list, clf_names=None, n_bins=10,
         probas = (probas - probas.min()) / (probas.max() - probas.min())
 
         fraction_of_positives, mean_predicted_value = \
-            calibration_curve(y_true, probas, n_bins=n_bins)
+            calibration_curve(y_true, probas, n_bins=n_bins, pos_label=pos_label)
 
         color = plt.cm.get_cmap(cmap)(float(i) / len(probas_list))
 
