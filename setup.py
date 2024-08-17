@@ -39,7 +39,7 @@ PACKAGE      = 'scikitplot'
 VERSION_PATH = os.path.join(PACKAGE, '__init__.py')
 DESCRIPTION  = 'An intuitive library to add plotting functionality to scikit-learn objects.'
 ## Read the contents of the README file
-README       = 'DESCRIPTION.md'
+README       = 'README.md'
 PKG_DESCRIBE = (HERE / README).read_text(encoding='utf-8')
 ## Define the keywords
 KEYWORDS = [
@@ -145,6 +145,7 @@ setup(
     platforms='any',
     # entry_points={"console_scripts": []},
     install_requires=list(get_requires()),
+    python_requires='>=3',  # Python version requirement
     classifiers=[
         'Development Status :: 4 - Beta',  # Change status as per the current state
         'Intended Audience :: Developers',

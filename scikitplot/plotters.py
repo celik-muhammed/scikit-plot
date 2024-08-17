@@ -153,7 +153,7 @@ def plot_confusion_matrix(y_true, y_pred, labels=None, true_labels=None,
     else:
         ax.set_title('Confusion Matrix', fontsize=title_fontsize)
 
-    image = ax.imshow(cm, interpolation='nearest', cmap=plt.cm.get_cmap(cmap))
+    image = ax.imshow(cm, interpolation='nearest', cmap=plt.get_cmap(cmap))
     plt.colorbar(mappable=image)
     x_tick_marks = np.arange(len(pred_classes))
     y_tick_marks = np.arange(len(true_classes))
@@ -301,7 +301,7 @@ def plot_roc_curve(y_true, y_probas, title='ROC Curves',
 
     if 'each_class' in curves:
         for i in range(len(classes)):
-            color = plt.cm.get_cmap(cmap)(float(i) / len(classes))
+            color = plt.get_cmap(cmap)(float(i) / len(classes))
             ax.plot(fpr[i], tpr[i], lw=2, color=color,
                     label='ROC curve of class {0} (area = {1:0.2f})'
                     ''.format(classes[i], roc_auc[i]))
@@ -517,7 +517,7 @@ def plot_precision_recall_curve(y_true, y_probas,
 
     if 'each_class' in curves:
         for i in range(len(classes)):
-            color = plt.cm.get_cmap(cmap)(float(i) / len(classes))
+            color = plt.get_cmap(cmap)(float(i) / len(classes))
             ax.plot(recall[i], precision[i], lw=2,
                     label='Precision-recall curve of class {0} '
                           '(area = {1:0.3f})'.format(classes[i],
@@ -863,7 +863,7 @@ def plot_silhouette(clf, X, title='Silhouette Analysis', metric='euclidean',
         size_cluster_i = ith_cluster_silhouette_values.shape[0]
         y_upper = y_lower + size_cluster_i
 
-        color = plt.cm.get_cmap(cmap)(float(i) / n_clusters)
+        color = plt.get_cmap(cmap)(float(i) / n_clusters)
 
         ax.fill_betweenx(np.arange(y_lower, y_upper),
                          0, ith_cluster_silhouette_values,
@@ -1115,7 +1115,7 @@ def plot_pca_2d_projection(clf, X, y, title='PCA 2-D Projection', ax=None,
     ax.set_title(title, fontsize=title_fontsize)
     classes = np.unique(np.array(y))
 
-    colors = plt.cm.get_cmap(cmap)(np.linspace(0, 1, len(classes)))
+    colors = plt.get_cmap(cmap)(np.linspace(0, 1, len(classes)))
 
     for label, color in zip(classes, colors):
         ax.scatter(transformed_X[y == label, 0], transformed_X[y == label, 1],

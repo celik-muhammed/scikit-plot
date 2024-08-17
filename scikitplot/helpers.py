@@ -136,14 +136,14 @@ def validate_labels(known_classes, passed_labels, argument_name):
 
     if len(passed_labels) != len(unique_labels):
         indexes = np.arange(0, len(passed_labels))
-        duplicate_indexes = indexes[~np.in1d(indexes, unique_indexes)]
+        duplicate_indexes = indexes[~np.isin(indexes, unique_indexes)]
         duplicate_labels = [str(x) for x in passed_labels[duplicate_indexes]]
 
         msg = "The following duplicate labels were passed into {0}: {1}" \
                 .format(argument_name, ", ".join(duplicate_labels))
         raise ValueError(msg)
 
-    passed_labels_absent = ~np.in1d(passed_labels, known_classes)
+    passed_labels_absent = ~np.isin(passed_labels, known_classes)
 
     if np.any(passed_labels_absent):
         absent_labels = [str(x) for x in passed_labels[passed_labels_absent]]

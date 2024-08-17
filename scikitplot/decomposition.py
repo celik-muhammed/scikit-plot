@@ -174,7 +174,7 @@ def plot_pca_2d_projection(
     _, class_indexes = np.unique(np.array(y), return_index=True)
     classes = np.array(y)[np.sort(class_indexes)]
 
-    colors = plt.cm.get_cmap(cmap)(np.linspace(0, 1, len(classes)))
+    colors = plt.get_cmap(cmap)(np.linspace(0, 1, len(classes)))
 
     for label, color in zip(classes, colors):
         ax.scatter(transformed_X[y == label, dimensions[0]], transformed_X[y == label, dimensions[1]],

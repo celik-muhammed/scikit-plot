@@ -135,7 +135,7 @@ def plot_confusion_matrix(
     else:
         validate_labels(classes, true_labels, "true_labels")
 
-        true_label_indexes = np.in1d(classes, true_labels)
+        true_label_indexes = np.isin(classes, true_labels)
 
         true_classes = classes[true_label_indexes]
         cm = cm[true_label_indexes]
@@ -145,7 +145,7 @@ def plot_confusion_matrix(
     else:
         validate_labels(classes, pred_labels, "pred_labels")
 
-        pred_label_indexes = np.in1d(classes, pred_labels)
+        pred_label_indexes = np.isin(classes, pred_labels)
 
         pred_classes = classes[pred_label_indexes]
         cm = cm[:, pred_label_indexes]
@@ -157,7 +157,7 @@ def plot_confusion_matrix(
     else:
         ax.set_title('Confusion Matrix', fontsize=title_fontsize)
 
-    image = ax.imshow(cm, interpolation='nearest', cmap=plt.cm.get_cmap(cmap))
+    image = ax.imshow(cm, interpolation='nearest', cmap=plt.get_cmap(cmap))
 
     if show_colorbar == True:
         plt.colorbar(mappable=image)
@@ -310,7 +310,7 @@ def plot_roc_curve(y_true, y_probas, title='ROC Curves',
 
     if 'each_class' in curves:
         for i in range(len(classes)):
-            color = plt.cm.get_cmap(cmap)(float(i) / len(classes))
+            color = plt.get_cmap(cmap)(float(i) / len(classes))
             ax.plot(fpr[i], tpr[i], lw=2, color=color,
                     label='ROC curve of class {0} (area = {1:0.2f})'
                     ''.format(classes[i], roc_auc[i]))
@@ -426,13 +426,13 @@ def plot_roc(
     fpr_dict = dict()
     tpr_dict = dict()
 
-    indices_to_plot = np.in1d(classes, classes_to_plot)
+    indices_to_plot = np.isin(classes, classes_to_plot)
     for i, to_plot in enumerate(indices_to_plot):
         fpr_dict[i], tpr_dict[i], _ = roc_curve(y_true, probas[:, i],
                                                 pos_label=classes[i])
         if to_plot:
             roc_auc = auc(fpr_dict[i], tpr_dict[i])
-            color = plt.cm.get_cmap(cmap)(float(i) / len(classes))
+            color = plt.get_cmap(cmap)(float(i) / len(classes))
             ax.plot(fpr_dict[i], tpr_dict[i], lw=2, color=color,
                     label='ROC curve of class {0} (area = {1:.{digits}f})'
                           ''.format(classes[i], roc_auc, digits=digits))
@@ -584,7 +584,7 @@ def plot_precision_recall_curve(y_true, y_probas,
 
     if 'each_class' in curves:
         for i in range(len(classes)):
-            color = plt.cm.get_cmap(cmap)(float(i) / len(classes))
+            color = plt.get_cmap(cmap)(float(i) / len(classes))
             ax.plot(recall[i], precision[i], lw=2,
                     label='Precision-recall curve of class {0} '
                           '(area = {1:0.3f})'.format(classes[i],
@@ -694,7 +694,7 @@ def plot_precision_recall(
 
     ax.set_title(title, fontsize=title_fontsize)
 
-    indices_to_plot = np.in1d(classes, classes_to_plot)
+    indices_to_plot = np.isin(classes, classes_to_plot)
     for i, to_plot in enumerate(indices_to_plot):
         if to_plot:
             average_precision = average_precision_score(
@@ -702,7 +702,7 @@ def plot_precision_recall(
                 probas[:, i])
             precision, recall, _ = precision_recall_curve(
                 y_true, probas[:, i], pos_label=classes[i])
-            color = plt.cm.get_cmap(cmap)(float(i) / len(classes))
+            color = plt.get_cmap(cmap)(float(i) / len(classes))
             ax.plot(recall, precision, lw=2,
                     label='Precision-recall curve of class {0} '
                           '(area = {1:.{digits}f})'.format(classes[i],
@@ -830,7 +830,7 @@ def plot_silhouette(
         size_cluster_i = ith_cluster_silhouette_values.shape[0]
         y_upper = y_lower + size_cluster_i
 
-        color = plt.cm.get_cmap(cmap)(float(i) / n_clusters)
+        color = plt.get_cmap(cmap)(float(i) / n_clusters)
 
         ax.fill_betweenx(np.arange(y_lower, y_upper),
                          0, ith_cluster_silhouette_values,
@@ -994,7 +994,7 @@ def plot_calibration_curve(
             y_true, probas, n_bins=n_bins,
             pos_label=pos_label, strategy=strategy
         )
-        color = plt.cm.get_cmap(cmap)(float(i) / len(probas_list))
+        color = plt.get_cmap(cmap)(float(i) / len(probas_list))
 
         ax.plot(mean_predicted_value, fraction_of_positives, 's-',
                 label=clf_names[i], color=color)
@@ -1241,7 +1241,7 @@ def plot_cumulative_gain(
         perc_dict[i], gain_dict[i] = cumulative_gain_curve(y_true, y_probas[:, i], pos_label=classes[i])
 
         if to_plot:
-            color = plt.cm.get_cmap(cmap)(float(i) / len(classes))
+            color = plt.get_cmap(cmap)(float(i) / len(classes))
             ax.plot(perc_dict[i], gain_dict[i], lw=2, color=color,
                     label='Class {} Cumulative Gain curve'.format(class_names[i]))
 
