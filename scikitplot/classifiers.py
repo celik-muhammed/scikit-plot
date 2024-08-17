@@ -3,9 +3,8 @@ from __future__ import (
 )
 
 import six
-import warnings
 import types
-
+import warnings
 import numpy as np
 
 from sklearn.model_selection import StratifiedKFold

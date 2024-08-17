@@ -9,15 +9,15 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def plot_pca_component_variance(
     clf, title='PCA Component Explained Variances',
-    target_explained_variance=0.75, ax=None,
-    figsize=None, title_fontsize="large",
-    text_fontsize="medium"
+    target_explained_variance=0.75,
+    ax=None, figsize=None, title_fontsize="large",
+    text_fontsize="medium",
 ):
     """Plots PCA components' explained variance ratios. (new in v0.2.2)
 
@@ -100,8 +100,8 @@ def plot_pca_component_variance(
 def plot_pca_2d_projection(
     clf, X, y, title='PCA 2-D Projection',
     biplot=False, feature_labels=None,
-    ax=None, figsize=None, cmap='Spectral',
-    title_fontsize="large", text_fontsize="medium",
+    ax=None, figsize=None, title_fontsize="large",
+    text_fontsize="medium", cmap='Spectral',
     dimensions=[0, 1], label_dots=False, 
 ):
     """Plots the 2-dimensional projection of PCA on a given dataset.
@@ -135,11 +135,6 @@ def plot_pca_2d_projection(
         figsize (2-tuple, optional): Tuple denoting figure size of the plot
             e.g. (6, 6). Defaults to ``None``.
 
-        cmap (string or :class:`matplotlib.colors.Colormap` instance, optional):
-            Colormap used for plotting the projection. View Matplotlib Colormap
-            documentation for available options.
-            https://matplotlib.org/users/colormaps.html
-
         title_fontsize (string or int, optional): Matplotlib-style fontsizes.
             Use e.g. "small", "medium", "large" or integer-values. Defaults to
             "large".
@@ -147,6 +142,11 @@ def plot_pca_2d_projection(
         text_fontsize (string or int, optional): Matplotlib-style fontsizes.
             Use e.g. "small", "medium", "large" or integer-values. Defaults to
             "medium".
+
+        cmap (string or :class:`matplotlib.colors.Colormap` instance, optional):
+            Colormap used for plotting the projection. View Matplotlib Colormap
+            documentation for available options.
+            https://matplotlib.org/users/colormaps.html
 
     Returns:
         ax (:class:`matplotlib.axes.Axes`): The axes on which the plot was

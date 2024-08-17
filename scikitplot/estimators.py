@@ -9,17 +9,19 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 from sklearn.model_selection import learning_curve
 
 
-def plot_feature_importances(clf, title='Feature Importance',
-                             feature_names=None, max_num_features=20,
-                             order='descending', x_tick_rotation=0, ax=None,
-                             figsize=None, title_fontsize="large",
-                             text_fontsize="medium"):
+def plot_feature_importances(
+    clf, title='Feature Importance',
+    feature_names=None, max_num_features=20,
+    order='descending', x_tick_rotation=0,
+    ax=None, figsize=None, title_fontsize="large",
+    text_fontsize="medium",
+):
     """Generates a plot of a classifier's feature importances.
 
     Args:
@@ -133,11 +135,13 @@ def plot_feature_importances(clf, title='Feature Importance',
     return ax
 
 
-def plot_learning_curve(clf, X, y, title='Learning Curve', cv=None,
-                        shuffle=False, random_state=None,
-                        train_sizes=None, n_jobs=1, scoring=None,
-                        ax=None, figsize=None, title_fontsize="large",
-                        text_fontsize="medium"):
+def plot_learning_curve(
+    clf, X, y, title='Learning Curve',
+    cv=None, shuffle=False, random_state=None,
+    train_sizes=None, n_jobs=1, scoring=None,
+    ax=None, figsize=None, title_fontsize="large",
+    text_fontsize="medium",
+):
     """Generates a plot of the train and test learning curves for a classifier.
 
     Args:

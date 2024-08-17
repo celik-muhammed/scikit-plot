@@ -9,18 +9,19 @@ from __future__ import (
 )
 
 import time
-
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 from sklearn.base import clone
 from joblib import Parallel, delayed
 
 
 def plot_elbow_curve(
-    clf, X, title='Elbow Plot', cluster_ranges=None, n_jobs=1,
-    show_cluster_time=True, ax=None, figsize=None,
-    title_fontsize="large", text_fontsize="medium"
+    clf, X, title='Elbow Plot',
+    cluster_ranges=None, n_jobs=1,
+    show_cluster_time=True, 
+    ax=None, figsize=None, title_fontsize="large",
+    text_fontsize="medium",
 ):
     """Plots elbow curve of different values of K for KMeans clustering.
 
