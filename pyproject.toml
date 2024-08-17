@@ -8,7 +8,6 @@ requires = [
 
 [tool.setuptools]
 packages = ["scikitplot"]
-include_package_data = true
 
 [tool.setuptools.cmdclass]
 test = "PyTest"
