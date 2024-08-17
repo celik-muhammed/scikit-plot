@@ -1,5 +1,5 @@
 """
-The :mod:`scikitplot.decile` module includes plots for machine learning
+The :mod:`scikitplot.deciles` module includes plots for machine learning
 evaluation decile analysis e.g. Gain, Lift and Decile charts, etc.
 
 References:
@@ -10,7 +10,6 @@ from __future__ import (
 )
 
 import warnings
-import itertools
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -97,7 +96,7 @@ def decile_table(
         >>> clf = tree.DecisionTreeClassifier(max_depth=1,random_state=3)
         >>> clf = clf.fit(X_train, y_train)
         >>> y_prob = clf.predict_proba(X_test)
-        >>> skplt.decile.decile_table(y_test, y_prob[:,1])
+        >>> skplt.deciles.decile_table(y_test, y_prob[:,1])
 
     References:
     [1] https://github.com/tensorbored/kds/blob/master/kds/metrics.py#L32
@@ -225,7 +224,7 @@ def plot_cumulative_gain(
         >>> lr = LogisticRegression()
         >>> lr = lr.fit(X_train, y_train)
         >>> y_probas = lr.predict_proba(X_test)
-        >>> skplt.decile.plot_cumulative_gain(y_test, y_probas)
+        >>> skplt.deciles.plot_cumulative_gain(y_test, y_probas)
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
@@ -351,7 +350,7 @@ def plot_lift(
         >>> lr = LogisticRegression()
         >>> lr = lr.fit(X_train, y_train)
         >>> y_probas = lr.predict_proba(X_test)
-        >>> skplt.decile.plot_lift(y_test, y_probas)
+        >>> skplt.deciles.plot_lift(y_test, y_probas)
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
@@ -446,7 +445,7 @@ def plot_lift_decile_wise(
         >>> clf = tree.DecisionTreeClassifier(max_depth=1,random_state=3)
         >>> clf = clf.fit(X_train, y_train)
         >>> y_prob = clf.predict_proba(X_test)
-        >>> skplt.metrics.plot_lift_decile_wise(y_test, y_prob[:,1])
+        >>> skplt.deciles.plot_lift_decile_wise(y_test, y_prob[:,1])
 
     References:
     [1] https://github.com/tensorbored/kds/blob/master/kds/metrics.py#L190
@@ -516,7 +515,7 @@ def plot_ks_statistic(
         >>> lr = LogisticRegression()
         >>> lr = lr.fit(X_train, y_train)
         >>> y_probas = lr.predict_proba(X_test)
-        >>> skplt.decile.plot_ks_statistic(y_test, y_probas)
+        >>> skplt.deciles.plot_ks_statistic(y_test, y_probas)
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
@@ -618,7 +617,7 @@ def report(
         >>> clf = tree.DecisionTreeClassifier(max_depth=1,random_state=3)
         >>> clf = clf.fit(X_train, y_train)
         >>> y_prob = clf.predict_proba(X_test)
-        >>> skplt.decile.report(y_test, y_prob[:,1])
+        >>> skplt.deciles.report(y_test, y_prob[:,1])
 
     References:
     [1] https://github.com/tensorbored/kds/blob/master/kds/metrics.py#L382
@@ -632,11 +631,11 @@ def report(
 
     # Cumulative Lift Plot
     plt.subplot(2, 2, 1)
-    plot_lift_curve(y_true,y_prob)
+    plot_lift(y_true,y_prob)
 
     #  Decile-wise Lift Plot
     plt.subplot(2, 2, 2)
-    plot_lift_curve_decile_wise(y_true,y_prob)
+    plot_lift_decile_wise(y_true,y_prob)
 
     # Cumulative Gains Plot
     plt.subplot(2, 2, 3)
