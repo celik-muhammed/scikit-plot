@@ -67,7 +67,7 @@ The possibilities are endless.
 
 ## Plot Decile Table, Lift, Gain and KS Statistic charts with single line functions
 
-> Migrating: https://github.com/tensorbored/kds
+> Migrating as `skplt.deciles` module: https://github.com/tensorbored/kds
 
 ```python
 # REPRODUCABLE EXAMPLE
@@ -84,7 +84,7 @@ y_prob = clf.predict_proba(X_test)
 
 # The magic happens here
 import scikitplot as skplt
-skplt.metrics.report(y_test, y_prob[:,1], plot_style='ggplot')
+skplt.deciles.report(y_test, y_prob[:,1], plot_style='ggplot')
 ```
 Choose among multiple ``plot_style`` list using ``plt.style.available``, to generate quick and beautiful plots.
 
@@ -146,7 +146,7 @@ Happy plotting!
 ---
 
 Updated `scikit-plot`:
-- Migrate **https://github.com/tensorbored/kds**
+- Migrating as `skplt.deciles` module: **https://github.com/tensorbored/kds**
 - expose strategy param for calibration curve #118
 - add show_labels option to plot_roc #116
 - make colorbar optional in plot_confusion_matrix() #114

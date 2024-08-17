@@ -43,10 +43,10 @@ README       = 'README.md'
 PKG_DESCRIBE = (HERE / README).read_text(encoding='utf-8')
 ## Define the keywords
 KEYWORDS = [
-    'visualization',
-    'machine learning',
-    'scikit-learn',
     'matplotlib',
+    'visualization',
+    'scikit-learn',
+    'machine learning',
     'data science',
 ]
 LICENSE      = 'MIT License'

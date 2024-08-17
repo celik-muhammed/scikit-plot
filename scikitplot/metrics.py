@@ -5,7 +5,6 @@ evaluation metrics e.g. confusion matrix, silhouette scores, etc.
 from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
-
 import warnings
 import itertools
 import numpy as np

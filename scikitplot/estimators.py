@@ -8,7 +8,6 @@ function.
 from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -250,3 +249,10 @@ def plot_learning_curve(
     ax.legend(loc="best", fontsize=text_fontsize)
 
     return ax
+
+
+## Define __all__ to specify the public interface of the module, not required default all above func
+__all__ = [
+    'plot_feature_importances',
+    'plot_learning_curve',
+]

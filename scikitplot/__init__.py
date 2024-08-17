@@ -1,11 +1,13 @@
 from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
-
 from . import (
-    metrics, deciles, cluster, decomposition, estimators
+    estimators,
+    decomposition,
+    metrics, cluster,
+    deciles, 
 )
-__version__ = '0.3.8.4'
+__version__ = '0.3.8.5'
 
 from scikitplot.classifiers import classifier_factory
 from scikitplot.clustering import clustering_factory

@@ -7,7 +7,6 @@ The specific requirements are documented per function.
 from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
-
 import time
 import numpy as np
 import matplotlib.pyplot as plt
@@ -134,3 +133,10 @@ def _clone_and_score_clusterer(clf, X, n_clusters):
     clf = clone(clf)
     setattr(clf, 'n_clusters', n_clusters)
     return clf.fit(X).score(X), time.time() - start
+
+
+## Define __all__ to specify the public interface of the module, not required default all above func
+__all__ = [
+    'plot_elbow_curve',
+    '_clone_and_score_clusterer',
+]

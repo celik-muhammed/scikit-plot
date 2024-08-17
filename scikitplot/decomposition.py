@@ -8,7 +8,6 @@ documented per function.
 from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -205,3 +204,10 @@ def plot_pca_2d_projection(
     ax.tick_params(labelsize=text_fontsize)
 
     return ax
+
+
+## Define __all__ to specify the public interface of the module, not required default all above func
+__all__ = [
+    'plot_pca_component_variance',
+    'plot_pca_2d_projection',
+]
