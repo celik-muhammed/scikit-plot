@@ -1,3 +1,4 @@
+# https://packaging.python.org/en/latest/discussions/setup-py-deprecated/#setup-py-deprecated
 # https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#a-full-example
 [build-system]
 build-backend = "setuptools.build_meta"
@@ -9,13 +10,12 @@ requires = [
 [tool.setuptools]
 packages = ["scikitplot"]
 
-[tool.setuptools.cmdclass]
-test = "test_commands:PyTest"
-
 [tool.pytest.ini_options]
 minversion = "6.0"  # Specify the minimum version of pytest
 addopts = "-ra -q"  # Add command-line options
-testpaths = ["tests"]  # Directories to search for tests
+testpaths = [
+    "tests",
+]  # Directories to search for tests
 
 [tool.setuptools.dynamic]
 readme = {file=["README.md"], content-type="text/markdown"}
