@@ -1,7 +1,10 @@
 """
+Updated:  August 17 2024
+Author :  Muhammed Çelik
+
 Setup script for installing scikit-plots
 
-For license information, see LICENSE.txt and NOTICE.md
+For license information, see LICENSE and/or NOTICE.md
 """
 from __future__ import print_function
 
@@ -113,42 +116,39 @@ def get_requires(path=REQUIRE_PATH):
             yield line
 
 ##########################################################################
-## Define the configuration, Run setup script
+## Define the configuration
 ##########################################################################
 
-setup(
-    name=NAME,
-    # packages=find_packages(),  # Finds all packages automatically
-    packages=[PACKAGE],
-    include_package_data=True,
-    version=get_version(),
-    description=DESCRIPTION,
-    long_description=PKG_DESCRIBE,
-    long_description_content_type=get_description_type(),
-    keywords=KEYWORDS,
-    license=LICENSE,
-    author=AUTHOR,
-    author_email=A_EMAIL,
-    url=REPOSITORY,
-    download_url=f'{REPOSITORY}/tree/muhammed-dev',
-    maintainer=MAINTAINER,
-    maintainer_email=M_EMAIL,
-    project_urls={
-        'Homepage   '  : REPOSITORY,                         # Updated to your fork's URL
+## https://setuptools.pypa.io/en/latest/deprecated/distutils/apiref.html#distutils.core.setup
+config = {
+    # packages': find_packages(),  # Finds all packages automatically
+    'packages': [PACKAGE],
+    'include_package_data': True,
+    'name': NAME,
+    'version': get_version(),
+    'description': DESCRIPTION,
+    'long_description': PKG_DESCRIBE,
+    'long_description_content_type': get_description_type(),
+    'keywords': KEYWORDS,
+    'license': LICENSE,
+    'author': AUTHOR,
+    'author_email': A_EMAIL,
+    'maintainer': MAINTAINER,
+    'maintainer_email': M_EMAIL,
+    'url': REPOSITORY,
+    'download_url': f'{REPOSITORY}/tree/muhammed-dev',
+    'project_urls': {
+        'Homepage   '  : REPOSITORY,
         'Documentation': DOC_URL,
-        'Donate'       : f'{REPOSITORY}#donate',             # Updated donation link
-        'Forum'        : f'{REPOSITORY}/issues',             # Updated forum link
-        'Issues'       : f'{REPOSITORY}/issues',             # Updated to your fork's issues URL
+        'Donate'       : f'{REPOSITORY}#donate',
+        'Forum'        : f'{REPOSITORY}/issues',
+        'Issues'       : f'{REPOSITORY}/issues',
         'Repo_Forked'  : URL,
-        'Repository '  : f'{REPOSITORY}/tree/muhammed-dev',  # Updated to your fork's URL
+        'Repository '  : f'{REPOSITORY}/tree/muhammed-dev',
     },
-    platforms='any',
-    # entry_points={"console_scripts": []},
-    install_requires=list(get_requires()),
-    python_requires='>=3',  # Python version requirement
-    # https://pypi.org/pypi?%3Aaction=list_classifiers
-    classifiers=[
-        'Development Status :: 4 - Beta',  # Change status as per the current state
+    'classifiers': [
+        # https://pypi.org/pypi?%3Aaction=list_classifiers
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
@@ -162,10 +162,21 @@ setup(
         'Topic :: Scientific/Engineering :: Visualization',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
-    cmdclass={'test': PyTest},
-    tests_require=['pytest'],
-    test_suite='scikitplot.tests.test_scikitplot',
-    extras_require={
+    # 'entry_points': {"console_scripts": []},
+    'python_requires': '>=3',
+    'install_requires': list(get_requires()),
+    'platforms': 'any',
+    'tests_require': ['pytest'],
+    'extras_require': {
         'testing': ['pytest'],
-    }
-)
+    },
+    'test_suite': 'scikitplot.tests.test_scikitplot',
+    'cmdclass': {'test': PyTest},
+}
+
+##########################################################################
+## Run setup script
+##########################################################################
+
+if __name__ == "__main__":
+    setup(**config)

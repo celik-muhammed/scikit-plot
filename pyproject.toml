@@ -10,13 +10,6 @@ requires = [
 [tool.setuptools]
 packages = ["scikitplot"]
 
-[tool.pytest.ini_options]
-minversion = "6.0"  # Specify the minimum version of pytest
-addopts = "-ra -q"  # Add command-line options
-testpaths = [
-    "tests",
-]  # Directories to search for tests
-
 [tool.setuptools.dynamic]
 readme = {file=["README.md"], content-type="text/markdown"}
 
@@ -26,7 +19,6 @@ name = "scikit-plots"
 version = "0.3.8rc1"  # replace with the actual version from get_version()
 description = "An intuitive library to add plotting functionality to scikit-learn objects."
 dynamic = ["readme"]
-requires-python = ">=3"
 keywords = [
     "matplotlib", 
     "visualization", 
@@ -58,6 +50,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Visualization",
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
+requires-python = ">=3"
 dependencies = [
     # Replace these with the actual dependencies from requirements.txt
     "matplotlib>=1.4.0",
@@ -68,12 +61,20 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/celik-muhammed/scikit-plot"
+Homepage      = "https://github.com/celik-muhammed/scikit-plot"
 Documentation = "https://scikit-plot.readthedocs.io/en/stable/"
-Donate = "https://github.com/celik-muhammed/scikit-plot#donate"
-Forum = "https://github.com/celik-muhammed/scikit-plot/issues"
-Issues = "https://github.com/celik-muhammed/scikit-plot/issues"
-Repository = "https://github.com/celik-muhammed/scikit-plot/tree/muhammed-dev"
+Donate        = "https://github.com/celik-muhammed/scikit-plot#donate"
+Forum         = "https://github.com/celik-muhammed/scikit-plot/issues"
+Issues        = "https://github.com/celik-muhammed/scikit-plot/issues"
+Repo_Forked   = "https://github.com/reiinakano/scikit-plot",
+Repository    = "https://github.com/celik-muhammed/scikit-plot/tree/muhammed-dev"
 
 [project.optional-dependencies]
 testing = ["pytest"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"  # Specify the minimum version of pytest
+addopts = "-ra -q"  # Add command-line options
+testpaths = [
+    "tests",
+]  # Directories to search for tests
