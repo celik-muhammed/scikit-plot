@@ -10,12 +10,12 @@ requires = [
 packages = ["scikitplot"]
 
 [tool.setuptools.cmdclass]
-test = "PyTest"
+test = "test_commands:PyTest"
 
 [tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "-ra -q"
-testpaths = ["tests"]
+minversion = "6.0"  # Specify the minimum version of pytest
+addopts = "-ra -q"  # Add command-line options
+testpaths = ["tests"]  # Directories to search for tests
 
 [tool.setuptools.dynamic]
 readme = {file=["README.md"], content-type="text/markdown"}
@@ -74,3 +74,6 @@ Donate = "https://github.com/celik-muhammed/scikit-plot#donate"
 Forum = "https://github.com/celik-muhammed/scikit-plot/issues"
 Issues = "https://github.com/celik-muhammed/scikit-plot/issues"
 Repository = "https://github.com/celik-muhammed/scikit-plot/tree/muhammed-dev"
+
+[project.optional-dependencies]
+testing = ["pytest"]
