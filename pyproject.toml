@@ -66,7 +66,7 @@ Documentation = "https://scikit-plot.readthedocs.io/en/stable/"
 Donate        = "https://github.com/celik-muhammed/scikit-plot#donate"
 Forum         = "https://github.com/celik-muhammed/scikit-plot/issues"
 Issues        = "https://github.com/celik-muhammed/scikit-plot/issues"
-Repo_Forked   = "https://github.com/reiinakano/scikit-plot",
+Repo_Forked   = "https://github.com/reiinakano/scikit-plot"
 Repository    = "https://github.com/celik-muhammed/scikit-plot/tree/muhammed-dev"
 
 [project.optional-dependencies]
