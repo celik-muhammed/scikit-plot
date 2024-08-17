@@ -7,7 +7,8 @@ from . import (
     metrics, cluster,
     deciles, 
 )
-__version__ = '0.3.8.5'
+# https://packaging.python.org/en/latest/discussions/versioning/#valid-version-numbers
+__version__ = '0.3.8rc0'
 
 from scikitplot.classifiers import classifier_factory
 from scikitplot.clustering import clustering_factory

@@ -51,8 +51,8 @@ KEYWORDS = [
 ]
 LICENSE      = 'MIT License'
 ## If your name first as you're the current maintainer
-AUTHOR       = 'Reiichiro Nakano et al.'
-A_EMAIL      = 'reiichiro.s.nakano@gmail.com'
+AUTHOR       = 'Reiichiro Nakano, Prateek Sharma et al.'
+A_EMAIL      = 'reiichiro.s.nakano@gmail.com, s.prateek3080@gmail.com'
 URL          = 'https://github.com/reiinakano/scikit-plot'  # Your fork's URL
 DOC_URL      = 'https://scikit-plot.readthedocs.io/en/stable/'
 MAINTAINER   = 'Muhammed Çelik'
@@ -135,17 +135,18 @@ setup(
     maintainer_email=M_EMAIL,
     project_urls={
         'Homepage   '  : REPOSITORY,                         # Updated to your fork's URL
-        'Bug Tracker'  : f'{REPOSITORY}/issues',             # Updated to your fork's issues URL
         'Documentation': DOC_URL,
         'Donate'       : f'{REPOSITORY}#donate',             # Updated donation link
-        'Forked Repo'  : URL,
         'Forum'        : f'{REPOSITORY}/issues',             # Updated forum link
-        'Source Code'  : f'{REPOSITORY}/tree/muhammed-dev',  # Updated to your fork's URL
+        'Issues'       : f'{REPOSITORY}/issues',             # Updated to your fork's issues URL
+        'Repo_Forked'  : URL,
+        'Repository '  : f'{REPOSITORY}/tree/muhammed-dev',  # Updated to your fork's URL
     },
     platforms='any',
     # entry_points={"console_scripts": []},
     install_requires=list(get_requires()),
     python_requires='>=3',  # Python version requirement
+    # https://pypi.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         'Development Status :: 4 - Beta',  # Change status as per the current state
         'Intended Audience :: Developers',
