@@ -25,7 +25,11 @@ from sklearn.metrics import silhouette_score
 from sklearn.metrics import silhouette_samples
 from sklearn.utils import deprecated
 
-from scikitplot.helpers import binary_ks_curve, validate_labels
+from .utils import (
+    validate_labels,
+    cumulative_gain_curve,
+    binary_ks_curve,
+)
 
 
 warnings.warn("This module was deprecated in version 0.3.0 and its functions "

@@ -23,9 +23,10 @@ from sklearn.utils import deprecated
 from sklearn.utils.multiclass import unique_labels
 from sklearn.calibration import calibration_curve
 
-from scikitplot.helpers import (
+from .utils import (
     validate_labels,
-    binary_ks_curve, cumulative_gain_curve
+    cumulative_gain_curve,
+    binary_ks_curve,
 )
 
 
@@ -679,7 +680,7 @@ def plot_roc(
         )        
         if to_plot:
             if class_names is None:
-                class_names = classes            
+                class_names = classes
             color = plt.get_cmap(cmap)( float(i) / len(classes) )
             ax.plot(
                 fpr_dict[i], tpr_dict[i],

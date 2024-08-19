@@ -15,122 +15,229 @@ from sklearn.model_selection import learning_curve
 
 
 def plot_feature_importances(
-    clf, title='Feature Importance',
-    feature_names=None, max_num_features=20,
-    order='descending', x_tick_rotation=0,
-    ax=None, figsize=None, title_fontsize="large",
+    clf,
+    title='Feature Importances',
+    ax=None,
+    figsize=None,
+    title_fontsize="large",
     text_fontsize="medium",
+    cmap='PiYG',
+    orientation='vertical',
+    x_tick_rotation=None,
+    bar_padding=11,
+    display_labels=True,
+    class_index=None,
+    threshold=None,
+    order=None,
+    feature_names=None,
+    digits=4,
 ):
-    """Generates a plot of a classifier's feature importances.
-
-    Args:
-        clf: Classifier instance that has a ``feature_importances_`` attribute,
-            e.g. :class:`sklearn.ensemble.RandomForestClassifier` or
-            :class:`xgboost.XGBClassifier`.
-
-        title (string, optional): Title of the generated plot. Defaults to
-            "Feature importances".
-
-        feature_names (None, :obj:`list` of string, optional): Determines the
-            feature names used to plot the feature importances. If None,
-            feature names will be numbered.
-
-        max_num_features (int): Determines the maximum number of features to
-            plot. Defaults to 20.
-
-        order ('ascending', 'descending', or None, optional): Determines the
-            order in which the feature importances are plotted. Defaults to
-            'descending'.
-
-        x_tick_rotation (int, optional): Rotates x-axis tick labels by the
-            specified angle. This is useful in cases where there are numerous
-            categories and the labels overlap each other.
-
-        ax (:class:`matplotlib.axes.Axes`, optional): The axes upon which to
-            plot the curve. If None, the plot is drawn on a new set of axes.
-
-        figsize (2-tuple, optional): Tuple denoting figure size of the plot
-            e.g. (6, 6). Defaults to ``None``.
-
-        title_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "large".
-
-        text_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "medium".
-
-    Returns:
-        ax (:class:`matplotlib.axes.Axes`): The axes on which the plot was
-            drawn.
-
-    Example:
-        >>> import scikitplot as skplt
-        >>> rf = RandomForestClassifier()
-        >>> rf.fit(X, y)
-        >>> skplt.estimators.plot_feature_importances(
-        ...     rf, feature_names=['petal length', 'petal width',
-        ...                        'sepal length', 'sepal width'])
-        <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-        >>> plt.show()
-
-        .. image:: _static/examples/plot_feature_importances.png
-           :align: center
-           :alt: Feature Importances
     """
-    if not hasattr(clf, 'feature_importances_'):
-        raise TypeError('"feature_importances_" attribute not in classifier. '
-                        'Cannot plot feature importances.')
+    Generates a plot of a classifier's feature importances.
 
-    importances = clf.feature_importances_
+    This function handles different types of classifiers and their respective
+    feature importance or coefficient attributes. It supports models wrapped in pipelines.
+    Error bars can be added based on different statistical methods or custom functions.
 
-    if hasattr(clf, 'estimators_')\
-            and isinstance(clf.estimators_, list)\
-            and hasattr(clf.estimators_[0], 'feature_importances_'):
-        std = np.std([tree.feature_importances_ for tree in clf.estimators_],
-                     axis=0)
+    Supports models like `LogisticRegression`, `RidgeClassifier`,
+    `KNeighborsClassifier`, `LinearSVC`, `SVC`, `DecisionTreeClassifier`,
+    `BaggingClassifier`, `RandomForestClassifier`, `Perceptron`,
+    `BayesianRidge`, `HuberRegressor`, `TweedieRegressor`, 
+    `LatentDirichletAllocation`, `PCA`, `LinearDiscriminantAnalysis`, and 
+    `QuadraticDiscriminantAnalysis`.
 
-    else:
-        std = None
+    Parameters
+    ----------
+    clf : estimator object
+        A fitted classifier or pipeline containing a classifier.
 
-    if order == 'descending':
-        indices = np.argsort(importances)[::-1]
+    title : str, optional
+        Title of the generated plot.
+        Defaults to "Feature Importances".
 
-    elif order == 'ascending':
-        indices = np.argsort(importances)
+    ax : matplotlib.axes.Axes, optional
+        The axes upon which to plot the curve. If None, the plot is drawn on
+        a new set of axes.
 
-    elif order is None:
-        indices = np.array(range(len(importances)))
+    figsize : tuple, optional
+        Tuple denoting figure size of the plot e.g. (6, 6). Defaults to None.
 
-    else:
-        raise ValueError('Invalid argument {} for "order"'.format(order))
+    title_fontsize : str or int, optional
+        Matplotlib-style fontsizes. Use e.g. "small", "medium", "large" or
+        integer-values. Defaults to "large".
 
+    text_fontsize : str or int, optional
+        Matplotlib-style fontsizes. Use e.g. "small", "medium", "large" or
+        integer-values. Defaults to "medium".
+
+    cmap : str or matplotlib.colors.Colormap, optional, default='PiYG'
+        Colormap used for plotting.
+        - See Matplotlib Colormap documentation for options.
+
+    orientation : {'vertical', 'horizontal'}, optional
+        Orientation of the bar plot. Defaults to 'vertical'.
+
+    x_tick_rotation : int, optional
+        Rotates x-axis tick labels by the specified angle. Defaults to None
+        (automatically set based on orientation).
+
+    bar_padding : float, optional
+        Padding between bars in the plot. Defaults to 11.
+
+    display_labels : bool, optional
+        Whether to display the bar labels. Defaults to True.
+
+    class_index : int, optional
+        Index of the class of interest for multi-class classification.
+        Defaults to None.
+
+    threshold : float, optional
+        Threshold for filtering features by absolute importance. Only
+        features with an absolute importance greater than this threshold will
+        be plotted. Defaults to None (plot all features).
+
+    order : {'ascending', 'descending', None}, optional
+        Order of feature importances in the plot. Defaults to None
+        (automatically set based on orientation).
+
+    feature_names : list of str, optional
+        List of feature names corresponding to the features. If None, feature
+        indices are used.
+
+    digits : int, optional, default=4
+        Number of digits for formatting AUC values in the plot.
+
+    Returns
+    -------
+    ax : matplotlib.axes.Axes
+        The axes on which the plot was drawn.
+
+    Examples
+    --------
+    >>> import matplotlib.pyplot as plt
+    >>> # from sklearn.datasets import load_iris as load_data  # multi
+    >>> from sklearn.datasets import load_breast_cancer as load_data  # binary
+    >>> from sklearn.model_selection import train_test_split
+    >>> from sklearn.preprocessing import StandardScaler
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> from sklearn.ensemble import RandomForestClassifier
+    >>> from sklearn.pipeline import make_pipeline
+    >>> import scikitplot as skplt
+    >>> X, y = load_data(return_X_y=True)
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
+    >>> clf = make_pipeline(StandardScaler(), RandomForestClassifier())
+    >>> clf.fit(X_train, y_train)
+    >>> skplt.estimators.plot_feature_importances(clf)
+    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
+    >>> plt.show()
+    """
+    if figsize is None:
+        figsize = (16, 9)
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
+        
+    # Handle pipelines
+    if hasattr(clf, 'named_steps'):
+        clf = clf.named_steps[next(reversed(clf.named_steps))]
 
+    # Determine the appropriate attribute for feature importances or coefficients
+    if hasattr(clf, 'feature_importances_'):
+        importances = clf.feature_importances_
+    elif hasattr(clf, 'coef_'):
+        if clf.coef_.ndim > 1:  # Multi-class case
+            if class_index is not None:
+                importances = np.array(clf.coef_)[class_index]
+            else:
+                importances = np.mean(np.abs(clf.coef_), axis=0)
+        else:
+            importances = clf.coef_.ravel()
+    elif hasattr(clf, 'explained_variance_ratio_'):  # PCA, LDA
+        importances = clf.explained_variance_ratio_
+    elif hasattr(clf, 'lda_'):  # LDA (scikit-learn < 0.24)
+        importances = np.abs(clf.lda_.scalings_).ravel()
+    elif hasattr(clf, 'coef_'):  # QDA (scikit-learn >= 0.24)
+        importances = np.abs(clf.coef_).ravel()
+    else:
+        raise TypeError(
+            'The estimator does not have an attribute for feature '
+            'importances or coefficients.'
+        )
+
+    # Apply filtering based on the threshold
+    indices = np.arange(len(importances))
+    if threshold is not None:
+        indices = indices[np.abs(importances) > threshold]
+
+    # Apply ordering based on orientation
+    if order is None:
+        order = 'ascending' if orientation == 'horizontal' else 'descending'
+    if order == 'descending':
+        indices = indices[np.argsort(importances[indices])[::-1]]
+    elif order == 'ascending':
+        indices = indices[np.argsort(importances[indices])]
+        
+    # Select features to plot
     if feature_names is None:
-        feature_names = indices
+        if hasattr(clf, 'feature_names_in_'):
+            feature_names = clf.feature_names_in_
+        else:
+            feature_names = indices
     else:
         feature_names = np.array(feature_names)[indices]
+        
+    importances   = importances[indices]
+    feature_names = feature_names[indices]
 
-    max_num_features = min(max_num_features, len(importances))
+    # Prepare the color map
+    cmap_obj = plt.get_cmap(cmap)
+    
+    # Plot bars based on orientation
+    for idx, imp in enumerate(importances):
+        color = cmap_obj(float(idx) / len(importances))
+        
+        if orientation == 'vertical':
+            bar = ax.bar(x=feature_names[idx], height=imp, color=color)
+        elif orientation == 'horizontal':
+            bar = ax.barh(y=feature_names[idx], width=imp, color=color)
+        else:
+            raise ValueError(
+                "Invalid value for orientation: "
+                "must be 'vertical' or 'horizontal'."
+            )
 
+    # Set default x_tick_rotation based on orientation
+    if x_tick_rotation is None:
+        x_tick_rotation = 0 if orientation == 'horizontal' else 90
+
+    if display_labels:
+        for bars in ax.containers:
+            ax.bar_label(
+                bars,
+                fmt=lambda x:'{:0>{digits}.{digits}f}'.format(x, digits=digits),
+                fontsize=text_fontsize, 
+                rotation=x_tick_rotation,
+                padding=bar_padding,
+            )
     ax.set_title(title, fontsize=title_fontsize)
-
-    if std is not None:
-        ax.bar(range(max_num_features),
-               importances[indices][:max_num_features], color='r',
-               yerr=std[indices][:max_num_features], align='center')
+    if orientation == 'vertical':
+        ax.tick_params(axis='x', rotation=x_tick_rotation)
+        # ax.set_xticks(np.arange(len(importances)))
+        # ax.set_xticklabels(feature_names, rotation=x_tick_rotation)
+        ax.set_xlabel("Features", fontsize=text_fontsize)
+        ax.set_ylabel("Importance", fontsize=text_fontsize)
+    elif orientation == 'horizontal':
+        ax.tick_params(axis='y', rotation=x_tick_rotation)
+        # ax.set_yticks(np.arange(len(importances)))
+        # ax.set_yticklabels(feature_names, rotation=x_tick_rotation)
+        ax.set_xlabel("Importance", fontsize=text_fontsize)
+        ax.set_ylabel("Features", fontsize=text_fontsize)
     else:
-        ax.bar(range(max_num_features),
-               importances[indices][:max_num_features],
-               color='r', align='center')
-
-    ax.set_xticks(range(max_num_features))
-    ax.set_xticklabels(feature_names[:max_num_features],
-                       rotation=x_tick_rotation)
-    ax.set_xlim([-1, max_num_features])
-    ax.tick_params(labelsize=text_fontsize)
+        raise ValueError(
+            "Invalid value for orientation: must be "
+            "'vertical' or 'horizontal'."
+        )
+    plt.tight_layout()
+    plt.legend([f'features: {idx}'])
     return ax
 
 

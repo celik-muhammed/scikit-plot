@@ -1,3 +1,8 @@
+
+"""
+Helper functions and generic utilities for use in scikitplot code.
+"""
+
 from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
@@ -5,6 +10,15 @@ from __future__ import (
 import numpy as np
 
 from sklearn.preprocessing import LabelEncoder
+
+
+## Define __all__ to specify the public interface of the module,
+## not required default all belove func
+__all__ = [
+    'validate_labels',
+    'cumulative_gain_curve',
+    'binary_ks_curve',
+]
 
 
 def validate_labels(
