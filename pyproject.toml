@@ -8,7 +8,7 @@ requires = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["scikitplot"]
+where = "scikitplot"
 # include = ["scikitplot*", "scikitplot.utils*"]
 
 [tool.setuptools.dynamic]
