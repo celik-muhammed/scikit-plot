@@ -23,7 +23,7 @@ from sklearn.metrics import silhouette_score
 from sklearn.metrics import silhouette_samples
 from sklearn.utils import deprecated
 
-from utils import (
+from scikitplot.utils import (
     validate_labels,
     cumulative_gain_curve,
     binary_ks_curve,

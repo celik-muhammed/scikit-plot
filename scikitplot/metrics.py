@@ -23,7 +23,7 @@ from sklearn.utils import deprecated
 from sklearn.utils.multiclass import unique_labels
 from sklearn.calibration import calibration_curve
 
-from utils import (
+from scikitplot.utils import (
     validate_labels,
     cumulative_gain_curve,
     binary_ks_curve,
