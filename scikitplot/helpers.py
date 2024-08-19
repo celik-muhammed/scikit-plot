@@ -7,159 +7,360 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 
 
-def validate_labels(known_classes, passed_labels, argument_name):
-    """Validates the labels passed into the true_labels or pred_labels
-    arguments in the plot_confusion_matrix function.
+def validate_labels(
+    known_classes, 
+    passed_labels, 
+    argument_name,
+):
+    """
+    Validates the labels passed into arguments such as `true_labels` or `pred_labels`
+    in functions like `plot_confusion_matrix`.
 
-    Raises a ValueError exception if any of the passed labels are not in the
-    set of known classes or if there are duplicate labels. Otherwise returns
-    None.
+    This function checks for any duplicate labels and ensures that all passed labels
+    are within the set of known classes. It raises a `ValueError` if any issues are found.
 
-    Args:
-        known_classes (array-like):
-            The classes that are known to appear in the data.
-        passed_labels (array-like):
-            The labels that were passed in through the argument.
-        argument_name (str):
-            The name of the argument being validated.
+    Parameters
+    ----------
+    known_classes : array-like
+        The set of classes that are known to appear in the data.
 
-    Example:
-        >>> known_classes = ["A", "B", "C"]
-        >>> passed_labels = ["A", "B"]
-        >>> validate_labels(known_classes, passed_labels, "true_labels")
+    passed_labels : array-like
+        The labels that were passed in through the argument to be validated.
+
+    argument_name : str
+        The name of the argument being validated. Used for error messages.
+
+    Raises
+    ------
+    ValueError
+        If there are duplicate labels in `passed_labels` or if any labels
+        in `passed_labels` are not found in `known_classes`.
+
+    Example
+    -------
+    >>> known_classes = ["A", "B", "C"]
+    >>> passed_labels = ["A", "B"]
+    >>> validate_labels(known_classes, passed_labels, "true_labels")
     """
     known_classes = np.array(known_classes)
     passed_labels = np.array(passed_labels)
 
     unique_labels, unique_indexes = np.unique(passed_labels, return_index=True)
 
+    # Check for duplicates in passed labels
     if len(passed_labels) != len(unique_labels):
+        # duplicate_indexes = np.setdiff1d(np.arange(len(passed_labels)), unique_indexes)
         indexes = np.arange(0, len(passed_labels))
         duplicate_indexes = indexes[~np.isin(indexes, unique_indexes)]
-        duplicate_labels = [str(x) for x in passed_labels[duplicate_indexes]]
+        duplicate_labels = [str(passed_labels[idx]) for idx in duplicate_indexes]
+        raise ValueError(
+            "The following duplicate labels were "
+            f"passed into {argument_name}: {', '.join(duplicate_labels)}"
+        )
 
-        msg = "The following duplicate labels were passed into {0}: {1}" \
-                .format(argument_name, ", ".join(duplicate_labels))
-        raise ValueError(msg)
-
-    passed_labels_absent = ~np.isin(passed_labels, known_classes)
-
-    if np.any(passed_labels_absent):
-        absent_labels = [str(x) for x in passed_labels[passed_labels_absent]]
-
-        msg = ("The following labels "
-               "were passed into {0}, "
-               "but were not found in "
-               "labels: {1}").format(argument_name, ", ".join(absent_labels))
-        raise ValueError(msg)
-
-    return
+    # Check for labels in passed_labels that are not in known_classes
+    # missing_labels = [str(label) for label in passed_labels if label not in known_classes]
+    missing_labels = passed_labels[~np.isin(passed_labels, known_classes)]
+    if len(missing_labels) > 0:
+        raise ValueError(
+            f"The following labels were passed into {argument_name}, "
+            f"but were not found in known classes: {', '.join(map(str, missing_labels))}"
+        )
+    return None
 
 
-def cumulative_gain_curve(y_true, y_score, pos_label=None):
-    """This function generates the points necessary to plot the Cumulative Gain
-
-    Note: This implementation is restricted to the binary classification task.
-
-    Args:
-        y_true (array-like, shape (n_samples)): True labels of the data.
-
-        y_score (array-like, shape (n_samples)): Target scores, can either be
-            probability estimates of the positive class, confidence values, or
-            non-thresholded measure of decisions (as returned by
-            decision_function on some classifiers).
-
-        pos_label (int or str, default=None): Label considered as positive and
-            others are considered negative
-
-    Returns:
-        percentages (numpy.ndarray): An array containing the X-axis values for
-            plotting the Cumulative Gains chart.
-
-        gains (numpy.ndarray): An array containing the Y-axis values for one
-            curve of the Cumulative Gains chart.
-
-    Raises:
-        ValueError: If `y_true` is not composed of 2 classes. The Cumulative
-            Gain Chart is only relevant in binary classification.
+def cumulative_gain_curve(
+    y_true, 
+    y_score, 
+    pos_label=None
+):
     """
-    y_true, y_score = np.asarray(y_true), np.asarray(y_score)
+    Generate the data points necessary to plot the Cumulative Gain curve for binary classification tasks.
 
-    # ensure binary classification if pos_label is not specified
+    The Cumulative Gain curve helps in visualizing how well a binary classifier identifies the positive class 
+    as more instances are considered based on predicted scores. It shows the proportion of true positives 
+    captured as a function of the total instances considered.
+
+    Parameters
+    ----------
+    y_true : array-like of shape (n_samples,)
+        True class labels of the data. This array should contain exactly two unique classes 
+        (e.g., `[0, 1]`, `[-1, 1]`) to represent a binary classification problem. If more 
+        than two classes are present, the function will raise a `ValueError`.
+
+    y_score : array-like of shape (n_samples,)
+        Target scores for each instance. These scores are typically the predicted probability of the positive 
+        class, confidence scores, or any non-thresholded metric produced by a classifier. 
+        It is essential that these scores be continuous rather than binary (0/1).
+
+    pos_label : int or str, optional, default=None
+        The label representing the positive class. If `pos_label` is not provided, the function 
+        attempts to infer it from `y_true`, assuming standard binary classification labels such as 
+        `{0, 1}`, `{-1, 1}`, or a single unique class. If inference is not possible, a `ValueError` 
+        is raised.
+
+    Returns
+    -------
+    percentages : numpy.ndarray of shape (n_points,)
+        The X-axis values representing the cumulative percentage of instances considered. 
+        Values range from 0 (no instances considered) to 1 (all instances considered), and an 
+        initial 0 is inserted at the start to represent the baseline.
+
+    gains : numpy.ndarray of shape (n_points,)
+        The Y-axis values representing the cumulative gain, i.e., the proportion of true positives 
+        captured as a function of the total instances considered. Values range from 0 (no positives 
+        captured) to 1 (all positives captured), and an initial 0 is inserted at the start to represent 
+        the baseline.
+
+    Raises
+    ------
+    ValueError
+        - If `y_true` does not contain exactly two distinct classes, indicating that the problem is 
+          not a binary classification task.
+        - If `pos_label` is not provided and cannot be inferred from `y_true`, or if `y_score` is binary 
+          instead of continuous.
+        - If the positive class does not appear in `y_true`, resulting in a gain of zero, which would 
+          mislead the user.
+
+    Notes
+    -----
+    - **Binary Classification Only:** This implementation is strictly for binary classification. 
+      Multi-class problems are not supported and will result in a `ValueError`.
+    - **Score Type:** The `y_score` array must contain continuous values. Binary scores (0/1) are 
+      not appropriate for plotting cumulative gain curves and will lead to incorrect results.
+    - **Performance:** The function sorts the scores, which contributes to a time complexity of 
+      O(n log n), where `n` is the number of samples. For large datasets, this could be a 
+      performance bottleneck.
+    - **Baseline Insertion:** A starting point of (0, 0) is included in both the `percentages` and `gains` 
+      arrays. This ensures that the cumulative gain curve starts at the origin, providing an accurate 
+      representation of the gain from zero instances considered.
+    - **Handling Edge Cases:** If `y_true` contains no instances of the positive class, the function 
+      will raise a `ValueError`, as a cumulative gain curve would not be meaningful.
+
+    Example
+    -------
+    >>> from sklearn.datasets import make_classification
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> from sklearn.model_selection import train_test_split
+    >>> import matplotlib.pyplot as plt
+
+    >>> # Generate a binary classification dataset
+    >>> X, y = make_classification(n_samples=1000, n_classes=2, n_informative=3, random_state=42)
+
+    >>> # Split into training and test sets
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+    >>> # Train a logistic regression model
+    >>> model = LogisticRegression()
+    >>> model.fit(X_train, y_train)
+
+    >>> # Predict probabilities for the test set
+    >>> y_scores = model.predict_proba(X_test)[:, 1]
+
+    >>> # Calculate the cumulative gain curve
+    >>> percentages, gains = cumulative_gain_curve(y_test, y_scores)
+
+    >>> # Plot the cumulative gain curve
+    >>> plt.plot(percentages, gains, marker='o')
+    >>> plt.xlabel('Percentage of Samples')
+    >>> plt.ylabel('Gain')
+    >>> plt.title('Cumulative Gain Curve')
+    >>> plt.grid()
+    >>> plt.show()
+
+    """
+    # Convert input to numpy arrays for efficient processing
+    y_true = np.asarray(y_true)
+    y_score = np.asarray(y_score)
+
+    # Identify the unique classes in y_true and ensure it is binary
     classes = np.unique(y_true)
+    if len(classes) != 2:
+        raise ValueError(
+            "`y_true` must contain exactly two distinct classes "
+            "for binary classification."
+        )
+
+    # Ensure the pos_label is provided or infer it from the data
     if (pos_label is None and
         not (np.array_equal(classes, [0, 1]) or
              np.array_equal(classes, [-1, 1]) or
              np.array_equal(classes, [0]) or
              np.array_equal(classes, [-1]) or
              np.array_equal(classes, [1]))):
-        raise ValueError("Data is not binary and pos_label is not specified")
+        raise ValueError(
+            "Data is not binary and pos_label is not specified. "
+            "Please provide the `pos_label`."
+        )
     elif pos_label is None:
-        pos_label = 1.
+        pos_label = 1.  # Default to 1 for standard binary labels
 
-    # make y_true a boolean vector
+    # Convert y_true to a boolean array where the positive class is True
     y_true = (y_true == pos_label)
 
+    # Ensure y_score is continuous and not binary
+    if np.unique(y_score).size == 2:
+        raise ValueError(
+            "`y_score` should contain continuous values, "
+            "not binary (0/1) scores. Provide non-thresholded scores."
+        )
+
+    # Sort instances by their scores in descending order
     sorted_indices = np.argsort(y_score)[::-1]
     y_true = y_true[sorted_indices]
+
+    # Compute cumulative gains (number of true positives as threshold decreases)
     gains = np.cumsum(y_true)
 
+    # Calculate the cumulative percentage of instances considered
     percentages = np.arange(start=1, stop=len(y_true) + 1)
 
-    gains = gains / float(np.sum(y_true))
+    # Normalize gains by the total number of positive instances
+    total_positives = float(np.sum(y_true))
+    if total_positives == 0:
+        raise ValueError("The positive class does not appear in `y_true`, resulting in a gain of zero.")
+    gains = gains / float(total_positives)
+
+    # Normalize percentages by the total number of instances
     percentages = percentages / float(len(y_true))
 
+    # Insert (0, 0) as the starting point for baseline
     gains = np.insert(gains, 0, [0])
     percentages = np.insert(percentages, 0, [0])
 
     return percentages, gains
 
 
-def binary_ks_curve(y_true, y_probas):
-    """This function generates the points necessary to calculate the KS
-    Statistic curve.
-
-    Args:
-        y_true (array-like, shape (n_samples)): True labels of the data.
-
-        y_probas (array-like, shape (n_samples)): Probability predictions of
-            the positive class.
-
-    Returns:
-        thresholds (numpy.ndarray): An array containing the X-axis values for
-            plotting the KS Statistic plot.
-
-        pct1 (numpy.ndarray): An array containing the Y-axis values for one
-            curve of the KS Statistic plot.
-
-        pct2 (numpy.ndarray): An array containing the Y-axis values for one
-            curve of the KS Statistic plot.
-
-        ks_statistic (float): The KS Statistic, or the maximum vertical
-            distance between the two curves.
-
-        max_distance_at (float): The X-axis value at which the maximum vertical
-            distance between the two curves is seen.
-
-        classes (np.ndarray, shape (2)): An array containing the labels of the
-            two classes making up `y_true`.
-
-    Raises:
-        ValueError: If `y_true` is not composed of 2 classes. The KS Statistic
-            is only relevant in binary classification.
+def binary_ks_curve(
+    y_true, 
+    y_probas
+):
     """
-    y_true, y_probas = np.asarray(y_true), np.asarray(y_probas)
+    Generate the data points necessary to plot the Kolmogorov-Smirnov (KS)
+    Statistic curve for binary classification tasks.
+
+    The KS Statistic measures the maximum vertical distance between
+    the cumulative distribution functions (CDFs) of the predicted
+    probabilities for the positive and negative classes.
+    It is used to evaluate the discriminatory power of a binary classifier.
+
+    Parameters
+    ----------
+    y_true : array-like of shape (n_samples,)
+        True binary labels of the data. This array should contain exactly
+        two unique classes to represent a binary classification problem.
+        If more than two classes are present, the function will raise a 
+        `ValueError`.
+
+    y_probas : array-like of shape (n_samples,)
+        Probability predictions for the positive class.
+        This array should contain continuous values representing 
+        the predicted probability of the positive class.
+        Binary scores are not suitable for this function.
+
+    Returns
+    -------
+    thresholds : numpy.ndarray of shape (n_thresholds,)
+        An array containing the threshold (X-axis) values
+        used for plotting the KS Statistic curve. These thresholds
+        range from the minimum to the maximum predicted probabilities.
+
+    pct1 : numpy.ndarray of shape (n_thresholds,)
+        An array containing the cumulative (Y-axis) percentage of samples
+        for the positive class up to each threshold value.
+
+    pct2 : numpy.ndarray of shape (n_thresholds,)
+        An array containing the cumulative (Y-axis) percentage of samples
+        for the negative class up to each threshold value.
+
+    ks_statistic : float
+        The KS Statistic, which is the maximum vertical distance
+        between the cumulative distribution functions 
+        of the positive and negative classes.
+
+    max_distance_at : float
+        The threshold (X-axis) value at which the maximum vertical distance
+        between the two cumulative distribution functions 
+        (and hence the KS Statistic) is observed.
+
+    classes : numpy.ndarray of shape (2,)
+        An array containing the labels of the two classes present in `y_true`.
+
+    Raises
+    ------
+    ValueError
+        - If `y_true` does not contain exactly two distinct classes,
+          indicating that the problem is not binary.
+        - If `y_probas` contains binary values instead of continuous probabilities.
+
+    Notes
+    -----
+    - **Binary Classification Only:** This implementation is strictly for binary classification. 
+      Multi-class problems are not supported and will result in a `ValueError`.
+    - **Probability Scores:** The `y_probas` array must contain continuous values representing probabilities.
+      Binary scores (0/1) are not appropriate for KS curve calculations.
+    - **Performance:** The function sorts the predicted probabilities for both classes, leading to a time 
+      complexity of O(n log n) where `n` is the number of samples. Sorting could be a performance bottleneck 
+      for very large datasets.
+    - **Handling Edge Cases:** The function inserts thresholds of 0 and 1 if they are not already present to ensure 
+      that the KS curve starts and ends at the boundaries of the predicted probability range.
+
+    Example
+    -------
+    >>> from sklearn.datasets import make_classification
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> from sklearn.model_selection import train_test_split
+    >>> import matplotlib.pyplot as plt
+
+    >>> # Generate a binary classification dataset
+    >>> X, y = make_classification(n_samples=1000, n_classes=2, n_informative=3, random_state=42)
+
+    >>> # Split into training and test sets
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+    >>> # Train a logistic regression model
+    >>> model = LogisticRegression()
+    >>> model.fit(X_train, y_train)
+
+    >>> # Predict probabilities for the test set
+    >>> y_probas = model.predict_proba(X_test)[:, 1]
+
+    >>> # Calculate the KS Statistic curve
+    >>> thresholds, pct1, pct2, ks_statistic, max_distance_at, classes = binary_ks_curve(y_test, y_probas)
+
+    >>> # Plot the KS Statistic curve
+    >>> plt.plot(thresholds, pct1 - pct2, marker='o')
+    >>> plt.xlabel('Threshold')
+    >>> plt.ylabel('KS Statistic')
+    >>> plt.title('KS Statistic Curve')
+    >>> plt.grid()
+    >>> plt.show()
+
+    """
+    # Convert input to numpy arrays for efficient processing
+    y_true = np.asarray(y_true)
+    y_probas = np.asarray(y_probas)
+
+    # Encode the true labels to ensure binary classification
     lb = LabelEncoder()
     encoded_labels = lb.fit_transform(y_true)
     if len(lb.classes_) != 2:
-        raise ValueError('Cannot calculate KS statistic for data with '
-                         '{} category/ies'.format(len(lb.classes_)))
+        raise ValueError(
+            f'Cannot calculate KS statistic for data with '
+            f'{len(lb.classes_)} category/ies.'
+        )
+
+    # Separate probabilities for the two classes
     idx = encoded_labels == 0
-    data1 = np.sort(y_probas[idx])
+    data1 = np.sort(y_probas[idx])  # Probabilities for the negative class
+    # data2 = np.sort(y_probas[~idx])  # Probabilities for the positive class
     data2 = np.sort(y_probas[np.logical_not(idx)])
 
+    # Initialize counters and lists to store results
     ctr1, ctr2 = 0, 0
     thresholds, pct1, pct2 = [], [], []
+
+    # Compute cumulative percentages for different thresholds
     while ctr1 < len(data1) or ctr2 < len(data2):
 
         # Check if data1 has no more elements
@@ -196,10 +397,12 @@ def binary_ks_curve(y_true, y_probas):
         pct1.append(ctr1)
         pct2.append(ctr2)
 
+    # Convert lists to numpy arrays
     thresholds = np.asarray(thresholds)
     pct1 = np.asarray(pct1) / float(len(data1))
     pct2 = np.asarray(pct2) / float(len(data2))
 
+    # Insert boundary values if not present
     if thresholds[0] != 0:
         thresholds = np.insert(thresholds, 0, [0.0])
         pct1 = np.insert(pct1, 0, [0.0])
@@ -209,8 +412,10 @@ def binary_ks_curve(y_true, y_probas):
         pct1 = np.append(pct1, [1.0])
         pct2 = np.append(pct2, [1.0])
 
+    # Calculate the KS Statistic and the threshold where it occurs
     differences = pct1 - pct2
-    ks_statistic, max_distance_at = (np.max(differences),
-                                     thresholds[np.argmax(differences)])
-
+    ks_statistic, max_distance_at = (
+        np.max(differences),
+        thresholds[np.argmax(differences)]
+    )
     return thresholds, pct1, pct2, ks_statistic, max_distance_at, lb.classes_
