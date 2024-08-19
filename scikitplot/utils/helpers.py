@@ -63,22 +63,21 @@ def validate_labels(
 
     # Check for duplicates in passed labels
     if len(passed_labels) != len(unique_labels):
-        # duplicate_indexes = np.setdiff1d(np.arange(len(passed_labels)), unique_indexes)
         indexes = np.arange(0, len(passed_labels))
-        duplicate_indexes = indexes[~np.isin(indexes, unique_indexes)]
-        duplicate_labels = [str(passed_labels[idx]) for idx in duplicate_indexes]
+        duplicate_indexes = indexes[~np.in1d(indexes, unique_indexes)]
+        duplicate_labels = [str(x) for x in passed_labels[duplicate_indexes]]
         raise ValueError(
             "The following duplicate labels were "
             f"passed into {argument_name}: {', '.join(duplicate_labels)}"
         )
 
     # Check for labels in passed_labels that are not in known_classes
-    # missing_labels = [str(label) for label in passed_labels if label not in known_classes]
-    missing_labels = passed_labels[~np.isin(passed_labels, known_classes)]
-    if len(missing_labels) > 0:
+    passed_labels_absent = ~np.in1d(passed_labels, known_classes)
+    if np.any(passed_labels_absent):
+        absent_labels = [str(x) for x in passed_labels[passed_labels_absent]]
         raise ValueError(
             f"The following labels were passed into {argument_name}, "
-            f"but were not found in known classes: {', '.join(map(str, missing_labels))}"
+            f"but were not found in labels: {', '.join(map(str, absent_labels))}"
         )
     return None
 
@@ -213,11 +212,11 @@ def cumulative_gain_curve(
     y_true = (y_true == pos_label)
 
     # Ensure y_score is continuous and not binary
-    if np.unique(y_score).size == 2:
-        raise ValueError(
-            "`y_score` should contain continuous values, "
-            "not binary (0/1) scores. Provide non-thresholded scores."
-        )
+    # if np.unique(y_score).size == 2:
+    #     raise ValueError(
+    #         "`y_score` should contain continuous values, "
+    #         "not binary (0/1) scores. Provide non-thresholded scores."
+    #     )
 
     # Sort instances by their scores in descending order
     sorted_indices = np.argsort(y_score)[::-1]

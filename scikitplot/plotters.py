@@ -7,10 +7,8 @@ from __future__ import absolute_import, division, print_function, \
 
 import warnings
 import itertools
-
-import matplotlib.pyplot as plt
-
 import numpy as np
+import matplotlib.pyplot as plt
 
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import label_binarize

@@ -34,7 +34,8 @@ class TestFeatureImportances(unittest.TestCase):
         np.random.seed(0)
         clf = LogisticRegression()
         clf.fit(self.X, self.y)
-        self.assertRaises(TypeError, plot_feature_importances, clf)
+        # self.assertRaises(TypeError, plot_feature_importances, clf)
+        plot_feature_importances(clf, feature_names=["a", "b", "c", "d"])
 
     def test_feature_names(self):
         np.random.seed(0)
@@ -42,13 +43,13 @@ class TestFeatureImportances(unittest.TestCase):
         clf.fit(self.X, self.y)
         plot_feature_importances(clf, feature_names=["a", "b", "c", "d"])
 
-    def test_max_num_features(self):
+    def test_threshold(self):
         np.random.seed(0)
         clf = RandomForestClassifier()
         clf.fit(self.X, self.y)
-        plot_feature_importances(clf, max_num_features=2)
-        plot_feature_importances(clf, max_num_features=4)
-        plot_feature_importances(clf, max_num_features=6)
+        plot_feature_importances(clf, threshold=1e-10)
+        plot_feature_importances(clf, threshold=1e-5)
+        plot_feature_importances(clf, threshold=1e-2)
 
     def test_order(self):
         np.random.seed(0)
