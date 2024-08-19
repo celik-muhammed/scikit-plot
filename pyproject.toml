@@ -16,7 +16,7 @@ readme = {file=["README.md"], content-type="text/markdown"}
 [project]
 name = "scikit-plots"
 # dynamic = ["version"]
-version = "0.3.8dev0"  # replace with the actual version from get_version()
+version = "0.3.8dev1"  # replace with the actual version from get_version()
 description = "An intuitive library to add plotting functionality to scikit-learn objects."
 dynamic = ["readme"]
 keywords = [
