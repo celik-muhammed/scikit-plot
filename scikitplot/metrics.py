@@ -494,144 +494,274 @@ def plot_roc_curve(y_true, y_probas, title='ROC Curves',
 
 
 def plot_roc(
-    y_true, y_probas, title='ROC Curves',
-    plot_micro=True, plot_macro=True, classes_to_plot=None,
-    ax=None, figsize=None, cmap='nipy_spectral',
-    title_fontsize="large", text_fontsize="medium",
-    show_labels=True, digits=3,
+    y_true,
+    y_probas,
+    title='ROC AUC Curves',
+    ax=None,
+    figsize=None,
+    title_fontsize="large",
+    text_fontsize="medium",
+    cmap='nipy_spectral',
+    class_index=1,
+    multi_class=None,
+    class_names=None,
+    classes_to_plot=None,   
+    plot_micro=True,
+    plot_macro=True,
+    show_labels=True,
+    digits=3,
 ):
-    """Generates the ROC curves from labels and predicted scores/probabilities
-
-    Args:
-        y_true (array-like, shape (n_samples)):
-            Ground truth (correct) target values.
-
-        y_probas (array-like, shape (n_samples, n_classes)):
-            Prediction probabilities for each class returned by a classifier.
-
-        title (string, optional): Title of the generated plot. Defaults to
-            "ROC Curves".
-
-        plot_micro (boolean, optional): Plot the micro average ROC curve.
-            Defaults to ``True``.
-
-        plot_macro (boolean, optional): Plot the macro average ROC curve.
-            Defaults to ``True``.
-
-        classes_to_plot (list-like, optional): Classes for which the ROC
-            curve should be plotted. e.g. [0, 'cold']. If given class does not exist,
-            it will be ignored. If ``None``, all classes will be plotted. Defaults to
-            ``None``
-
-        ax (:class:`matplotlib.axes.Axes`, optional): The axes upon which to
-            plot the curve. If None, the plot is drawn on a new set of axes.
-
-        figsize (2-tuple, optional): Tuple denoting figure size of the plot
-            e.g. (6, 6). Defaults to ``None``.
-
-        cmap (string or :class:`matplotlib.colors.Colormap` instance, optional):
-            Colormap used for plotting the projection. View Matplotlib Colormap
-            documentation for available options.
-            https://matplotlib.org/users/colormaps.html
-
-        title_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "large".
-
-        text_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "medium".
-        
-        show_labels (boolean, optional): Shows the labels in the plot.
-            Defaults to ``True``.
-
-        digits (int, optional): Number of digits for formatting output floating point values.
-            Use e.g. 2 or 4. Defaults to 3.
-
-    Returns:
-        ax (:class:`matplotlib.axes.Axes`): The axes on which the plot was
-            drawn.
-
-    Example:
-        >>> import scikitplot as skplt
-        >>> nb = GaussianNB()
-        >>> nb = nb.fit(X_train, y_train)
-        >>> y_probas = nb.predict_proba(X_test)
-        >>> skplt.metrics.plot_roc(y_test, y_probas)
-        <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-        >>> plt.show()
-
-        .. image:: _static/examples/plot_roc_curve.png
-           :align: center
-           :alt: ROC Curves
     """
-    y_true = np.array(y_true)
-    y_probas = np.array(y_probas)
+    Generates the ROC AUC curves from labels and predicted scores/probabilities.
 
-    classes = np.unique(y_true)
-    probas = y_probas
+    Parameters
+    ----------
+    y_true : array-like of shape (n_samples,)
+        Ground truth (correct) target values.
 
-    if classes_to_plot is None:
-        classes_to_plot = classes
+    y_probas : array-like of shape (n_samples,) or (n_samples, n_classes)
+        Predicted probabilities for each class or only target class probabilities. 
+        If 1D, it is treated as probabilities for the positive class in binary 
+        or multiclass classification with the `class_index`.
 
+    title : str, optional, default='ROC AUC Curves'
+        Title of the generated plot.
+
+    ax : matplotlib.axes.Axes, optional, default=None
+        The axes on which to plot.
+        If None, a new figure and axes are created.
+
+    figsize : tuple of int, optional, default=None
+        Size of the figure (width, height) in inches.
+
+    title_fontsize : str or int, optional, default='large'
+        Font size for the plot title.
+
+    text_fontsize : str or int, optional, default='medium'
+        Font size for the text in the plot.
+
+    cmap : str or matplotlib.colors.Colormap, optional, default='nipy_spectral'
+        Colormap used for plotting.
+        See Matplotlib Colormap documentation for options.
+
+    class_index : int, optional, default=1
+        Index of the class of interest for multi-class classification.
+        Ignored for binary classification.
+
+    multi_class : {'ovr', 'multinomial', None}, optional, default=None
+        Strategy for handling multiclass classification:
+        - 'ovr': One-vs-Rest, plotting binary problems for each class.
+        - 'multinomial' or None: Multinomial plot 
+          for the entire probability distribution.
+
+    class_names : list of str, optional, default=None
+        List of class names for the legend.
+        Order should match the order of classes in `y_probas`.
+
+    classes_to_plot : list-like, optional, default=None
+        Specific classes to plot. If given class does not exist,
+        it will be ignored. If None, all classes are plotted.
+        e.g. [0, 'cold']
+
+    plot_micro : bool, optional, default=False
+        Whether to plot the micro-average ROC AUC curve.
+
+    plot_macro : bool, optional, default=False
+        Whether to plot the macro-average ROC AUC curve.
+
+    show_labels : bool, optional, default=True
+        Whether to display the legend labels.
+
+    digits : int, optional, default=3
+        Number of digits for formatting AUC values in the plot.
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes with the plotted ROC AUC curves.
+
+    Example
+    -------
+    >>> import matplotlib.pyplot as plt
+    >>> # from sklearn.datasets import load_iris as load_data  # multi
+    >>> from sklearn.datasets import load_breast_cancer as load_data  # binary
+    >>> from sklearn.model_selection import train_test_split
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> import scikitplot as skplt
+    >>> X, y = load_data(return_X_y=True)
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
+    >>> model = GaussianNB()
+    >>> model.fit(X_train, y_train)
+    >>> y_probas = model.predict_proba(X_test)
+    >>> skplt.metrics.plot_roc(y_test, y_probas)
+    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
+    >>> plt.show()
+
+    Notes
+    -----
+    The implementation is specific to binary classification. For multiclass 
+    problems, the 'ovr' or 'multinomial' strategies can be used. When 
+    `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
+
+    .. image:: _static/examples/plot_roc_curve.png
+       :align: center
+       :alt: ROC AUC Curves
+    """
+    title_pad = None
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
 
-    ax.set_title(title, fontsize=title_fontsize)
+    y_true = np.array(y_true)
+    y_probas = np.array(y_probas)    
 
-    fpr_dict = dict()
-    tpr_dict = dict()
+    # Handle binary classification
+    if len(np.unique(y_true)) == 2:
+        # 1D y_probas (single class probabilities)
+        if y_probas.ndim == 1:
+            # Combine into a two-column
+            y_probas = np.column_stack([1 - y_probas, y_probas])
+    # Handle multi-class classification    
+    elif len(np.unique(y_true)) > 2:
+        if multi_class == 'ovr':
+            # Binarize y_true for multiclass classification
+            y_true = label_binarize(y_true, classes=np.unique(y_true))[:, class_index]
+            # Handle 1D y_probas (single class probabilities)
+            if y_probas.ndim == 1:
+                # Combine into a two-column binary format OvR
+                y_probas = np.column_stack([1 - y_probas, y_probas])
+            else:
+                # Combine into a two-column binary format OvR
+                y_probas = y_probas[:, class_index]
+                y_probas = np.column_stack([1 - y_probas, y_probas])
+                
+            # Add a subtitle indicating the use of the One-vs-Rest strategy
+            plt.suptitle(
+                t="One-vs-Rest (OVR) strategy for multi-class classification.",
+                fontsize=text_fontsize, x=0.512, y=0.902,
+                ha='center', va='center',
+                bbox=dict(facecolor='none', edgecolor='w', boxstyle='round,pad=0.2')
+            )
+            title_pad = 23
+        elif multi_class in ['multinomial', None]:
+            if y_probas.ndim == 1:
+                raise ValueError(
+                    "For multinomial classification, `y_probas` must be 2D."
+                    "For a 1D `y_probas` with more than 2 classes in `y_true`, "
+                    "only 'ovr' multi-class strategy is supported."
+                )
+        else:
+            raise ValueError("Unsupported `multi_class` strategy.")
 
+    # Initialize dictionaries to store cumulative percentages and gains
+    fpr_dict, tpr_dict = {}, {}
+
+    # Get unique classes and filter those to be plotted
+    classes = np.unique(y_true)
+    if len(classes) < 2:
+        raise ValueError(
+            'Cannot calculate Curve for classes with only one category.'
+        )
+    classes_to_plot = classes if classes_to_plot is None else classes_to_plot
     indices_to_plot = np.isin(classes, classes_to_plot)
-    for i, to_plot in enumerate(indices_to_plot):
-        fpr_dict[i], tpr_dict[i], _ = roc_curve(y_true, probas[:, i],
-                                                pos_label=classes[i])
-        if to_plot:
-            roc_auc = auc(fpr_dict[i], tpr_dict[i])
-            color = plt.get_cmap(cmap)(float(i) / len(classes))
-            ax.plot(fpr_dict[i], tpr_dict[i], lw=2, color=color,
-                    label='ROC curve of class {0} (area = {1:.{digits}f})'
-                          ''.format(classes[i], roc_auc, digits=digits))
+    
+    # Binarize y_true for multiclass classification, for micro
+    y_true_bin = label_binarize(y_true, classes=classes)
+    if len(classes) == 2:
+        y_true_bin = np.hstack((1 - y_true_bin, y_true_bin))
 
+    # Loop for all classes to get different class
+    for i, to_plot in enumerate(indices_to_plot):
+        fpr_dict[i], tpr_dict[i], _ = roc_curve(
+            y_true, y_probas[:, i], pos_label=classes[i]
+        )
+        roc_auc = auc(
+            fpr_dict[i], tpr_dict[i]
+        )        
+        if to_plot:
+            if class_names is None:
+                class_names = classes            
+            color = plt.get_cmap(cmap)( float(i) / len(classes) )
+            ax.plot(
+                fpr_dict[i], tpr_dict[i],
+                ls='-', lw=2, color=color,
+                label=(
+                    f'Class {classes[i]} '
+                    f'(area = {roc_auc:0>{digits}.{digits}f})'
+                ),
+            )
+
+    # Whether or to plot macro or micro
     if plot_micro:
-        binarized_y_true = label_binarize(y_true, classes=classes)
-        if len(classes) == 2:
-            binarized_y_true = np.hstack(
-                (1 - binarized_y_true, binarized_y_true))
-        fpr, tpr, _ = roc_curve(binarized_y_true.ravel(), probas.ravel())
-        roc_auc = auc(fpr, tpr)
-        ax.plot(fpr, tpr,
-                label='micro-average ROC curve '
-                      '(area = {0:.{digits}f})'.format(roc_auc, digits=digits),
-                color='deeppink', linestyle=':', linewidth=4)
+        fpr, tpr, _ = roc_curve(
+            y_true_bin.ravel(), y_probas.ravel()
+        )
+        roc_auc = auc(
+            fpr, tpr
+        )
+        ax.plot(
+            fpr, tpr,
+            ls=':', lw=3, color='deeppink',
+            label=(
+                'micro-average '
+                f'(area = {roc_auc:0>{digits}.{digits}f})'
+            ),
+        )
 
     if plot_macro:
         # Compute macro-average ROC curve and ROC area
         # First aggregate all false positive rates
-        all_fpr = np.unique(np.concatenate([fpr_dict[x] for x in range(len(classes))]))
-
+        all_fpr = np.unique(np.concatenate(
+            [ fpr_dict[i] for i in range(len(classes)) ]
+        ))
         # Then interpolate all ROC curves at this points
         mean_tpr = np.zeros_like(all_fpr)
         for i in range(len(classes)):
-            mean_tpr += np.interp(all_fpr, fpr_dict[i], tpr_dict[i])
+            mean_tpr += np.interp(
+                all_fpr, fpr_dict[i], tpr_dict[i]
+            )
 
         # Finally average it and compute AUC
         mean_tpr /= len(classes)
-        roc_auc = auc(all_fpr, mean_tpr)
+        roc_auc = auc(
+            all_fpr, mean_tpr
+        )
+        ax.plot(
+            all_fpr, mean_tpr,
+            ls=':', lw=3, color='navy',
+            label=(
+                'macro-average '
+                f'(area = {roc_auc:0>{digits}.{digits}f})'
+            ),
+        )
 
-        ax.plot(all_fpr, mean_tpr,
-                label='macro-average ROC curve '
-                      '(area = {0:.{digits}f})'.format(roc_auc, digits=digits),
-                color='navy', linestyle=':', linewidth=4)
+    # Plot the baseline
+    ax.plot([0, 1], [0, 1], ls='--', lw=1, c='gray', )  # label='Baseline'
 
-    ax.plot([0, 1], [0, 1], 'k--', lw=2)
-    ax.set_xlim([0.0, 1.0])
-    ax.set_ylim([0.0, 1.05])
+    # Set title, labels, and formatting
+    ax.set_title(title, fontsize=title_fontsize, pad=title_pad)
     ax.set_xlabel('False Positive Rate', fontsize=text_fontsize)
     ax.set_ylabel('True Positive Rate', fontsize=text_fontsize)
     ax.tick_params(labelsize=text_fontsize)
-    if show_labels is True:
-        ax.legend(loc='lower right', fontsize=text_fontsize)
+    
+    ax.set_xlim([0.0, 1.0])
+    ax.set_ylim([0.0, 1.05])
+    
+    # Set x-axis ticks and labels
+    # ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
+    # ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+    # ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
+    # ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+
+    # Enable grid and display legend
+    ax.grid(True)
+    if show_labels:
+        ax.legend(
+            loc='lower right', 
+            fontsize=text_fontsize, 
+            title='ROC AUC', 
+            alignment='left'
+        )
+
     return ax
 
 
@@ -767,126 +897,290 @@ def plot_precision_recall_curve(
 
 
 def plot_precision_recall(
-    y_true, y_probas,
-    title='Precision-Recall Curve',
-    plot_micro=True,
-    classes_to_plot=None, ax=None,
-    figsize=None, cmap='nipy_spectral',
+    y_true,
+    y_probas,
+    title='Precision-Recall Curves',
+    ax=None,
+    figsize=None,
     title_fontsize="large",
     text_fontsize="medium",
-    digits=3,
+    cmap='nipy_spectral',
+    class_index=1,
+    multi_class=None,
+    class_names=None,
+    classes_to_plot=None,   
+    plot_micro=True,
+    plot_macro=False,
+    show_labels=True,
+    digits=4,
+    area='pr_auc',
 ):
-    """Generates the Precision Recall Curve from labels and probabilities
-
-    Args:
-        y_true (array-like, shape (n_samples)):
-            Ground truth (correct) target values.
-
-        y_probas (array-like, shape (n_samples, n_classes)):
-            Prediction probabilities for each class returned by a classifier.
-
-        title (string, optional): Title of the generated plot. Defaults to
-            "Precision-Recall curve".
-
-        plot_micro (boolean, optional): Plot the micro average ROC curve.
-            Defaults to ``True``.
-
-        classes_to_plot (list-like, optional): Classes for which the precision-recall
-            curve should be plotted. e.g. [0, 'cold']. If given class does not exist,
-            it will be ignored. If ``None``, all classes will be plotted. Defaults to
-            ``None``.
-
-        ax (:class:`matplotlib.axes.Axes`, optional): The axes upon which to
-            plot the curve. If None, the plot is drawn on a new set of axes.
-
-        figsize (2-tuple, optional): Tuple denoting figure size of the plot
-            e.g. (6, 6). Defaults to ``None``.
-
-        cmap (string or :class:`matplotlib.colors.Colormap` instance, optional):
-            Colormap used for plotting the projection. View Matplotlib Colormap
-            documentation for available options.
-            https://matplotlib.org/users/colormaps.html
-
-        title_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "large".
-
-        text_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "medium".
-
-        digits (int, optional): Number of digits for formatting output floating point values.
-            Use e.g. 2 or 4. Defaults to 3.
-
-    Returns:
-        ax (:class:`matplotlib.axes.Axes`): The axes on which the plot was
-            drawn.
-
-    Example:
-        >>> import scikitplot as skplt
-        >>> nb = GaussianNB()
-        >>> nb.fit(X_train, y_train)
-        >>> y_probas = nb.predict_proba(X_test)
-        >>> skplt.metrics.plot_precision_recall(y_test, y_probas)
-        <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-        >>> plt.show()
-
-        .. image:: _static/examples/plot_precision_recall_curve.png
-           :align: center
-           :alt: Precision Recall Curve
     """
-    y_true = np.array(y_true)
-    y_probas = np.array(y_probas)
+    Generates the Precision-Recall Curves from labels and predicted scores/probabilities.
 
-    classes = np.unique(y_true)
-    probas = y_probas
+    Parameters
+    ----------
+    y_true : array-like of shape (n_samples,)
+        Ground truth (correct) target values.
 
-    if classes_to_plot is None:
-        classes_to_plot = classes
+    y_probas : array-like of shape (n_samples,) or (n_samples, n_classes)
+        Predicted probabilities for each class or only target class probabilities. 
+        If 1D, it is treated as probabilities for the positive class in binary 
+        or multiclass classification with the `class_index`.
 
-    binarized_y_true = label_binarize(y_true, classes=classes)
-    if len(classes) == 2:
-        binarized_y_true = np.hstack(
-            (1 - binarized_y_true, binarized_y_true))
+    title : str, optional, default='Precision-Recall Curves'
+        Title of the generated plot.
 
+    ax : matplotlib.axes.Axes, optional, default=None
+        The axes on which to plot.
+        If None, a new figure and axes are created.
+
+    figsize : tuple of int, optional, default=None
+        Size of the figure (width, height) in inches.
+
+    title_fontsize : str or int, optional, default='large'
+        Font size for the plot title.
+
+    text_fontsize : str or int, optional, default='medium'
+        Font size for the text in the plot.
+
+    cmap : str or matplotlib.colors.Colormap, optional, default='nipy_spectral'
+        Colormap used for plotting.
+        See Matplotlib Colormap documentation for options.
+
+    class_index : int, optional, default=1
+        Index of the class of interest for multi-class classification.
+        Ignored for binary classification.
+
+    multi_class : {'ovr', 'multinomial', None}, optional, default=None
+        Strategy for handling multiclass classification:
+        - 'ovr': One-vs-Rest, plotting binary problems for each class.
+        - 'multinomial' or None: Multinomial plot 
+          for the entire probability distribution.
+
+    class_names : list of str, optional, default=None
+        List of class names for the legend.
+        Order should match the order of classes in `y_probas`.
+
+    classes_to_plot : list-like, optional, default=None
+        Specific classes to plot. If given class does not exist,
+        it will be ignored. If None, all classes are plotted.
+        e.g. [0, 'cold']
+
+    plot_micro : bool, optional, default=True
+        Whether to plot the micro-average Precision-Recall AUC curve.
+
+    plot_macro : bool, optional, default=False
+        Whether to plot the macro-average Precision-Recall AUC curve.
+
+    show_labels : bool, optional, default=True
+        Whether to display the legend labels.
+
+    digits : int, optional, default=3
+        Number of digits for formatting AUC values in the plot.
+
+    area : {'average_precision', 'pr_auc'}, optional, default='pr_auc'
+        Strategy for calculating area score:
+        - Both calculation gives very close results.
+        - macro scores calculating by 'average_precision'.
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes with the plotted Precision-Recall AUC curves.
+
+    Example
+    -------
+    >>> import matplotlib.pyplot as plt
+    >>> # from sklearn.datasets import load_iris as load_data  # multi
+    >>> from sklearn.datasets import load_breast_cancer as load_data  # binary
+    >>> from sklearn.model_selection import train_test_split
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> import scikitplot as skplt
+    >>> X, y = load_data(return_X_y=True)
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
+    >>> model = GaussianNB()
+    >>> model.fit(X_train, y_train)
+    >>> y_probas = model.predict_proba(X_test)
+    >>> skplt.metrics.plot_precision_recall(y_test, y_probas)
+    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
+    >>> plt.show()
+
+    Notes
+    -----
+    The implementation is specific to binary classification. For multiclass 
+    problems, the 'ovr' or 'multinomial' strategies can be used. When 
+    `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
+
+    .. image:: _static/examples/plot_precision_recall_curve.png
+       :align: center
+       :alt: Precision-Recall AUC Curves
+    """
+    title_pad = None
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
 
-    ax.set_title(title, fontsize=title_fontsize)
+    y_true = np.array(y_true)
+    y_probas = np.array(y_probas)    
 
+    # Handle binary classification
+    if len(np.unique(y_true)) == 2:
+        # 1D y_probas (single class probabilities)
+        if y_probas.ndim == 1:
+            # Combine into a two-column
+            y_probas = np.column_stack([1 - y_probas, y_probas])
+    # Handle multi-class classification    
+    elif len(np.unique(y_true)) > 2:
+        if multi_class == 'ovr':
+            # Binarize y_true for multiclass classification
+            y_true = label_binarize(y_true, classes=np.unique(y_true))[:, class_index]
+            # Handle 1D y_probas (single class probabilities)
+            if y_probas.ndim == 1:
+                # Combine into a two-column binary format OvR
+                y_probas = np.column_stack([1 - y_probas, y_probas])
+            else:
+                # Combine into a two-column binary format OvR
+                y_probas = y_probas[:, class_index]
+                y_probas = np.column_stack([1 - y_probas, y_probas])
+                
+            # Add a subtitle indicating the use of the One-vs-Rest strategy
+            plt.suptitle(
+                t="One-vs-Rest (OVR) strategy for multi-class classification.",
+                fontsize=text_fontsize, x=0.512, y=0.902,
+                ha='center', va='center',
+                bbox=dict(facecolor='none', edgecolor='w', boxstyle='round,pad=0.2')
+            )
+            title_pad = 23
+        elif multi_class in ['multinomial', None]:
+            if y_probas.ndim == 1:
+                raise ValueError(
+                    "For multinomial classification, `y_probas` must be 2D."
+                    "For a 1D `y_probas` with more than 2 classes in `y_true`, "
+                    "only 'ovr' multi-class strategy is supported."
+                )
+        else:
+            raise ValueError("Unsupported `multi_class` strategy.")
+
+    # Initialize dictionaries to store cumulative percentages and gains
+    precision_dict, recall_dict = {}, {}
+
+    # Get unique classes and filter those to be plotted
+    classes = np.unique(y_true)
+    if len(classes) < 2:
+        raise ValueError(
+            'Cannot calculate Curve for classes with only one category.'
+        )
+    classes_to_plot = classes if classes_to_plot is None else classes_to_plot
     indices_to_plot = np.isin(classes, classes_to_plot)
-    for i, to_plot in enumerate(indices_to_plot):
-        if to_plot:
-            average_precision = average_precision_score(
-                binarized_y_true[:, i],
-                probas[:, i])
-            precision, recall, _ = precision_recall_curve(
-                y_true, probas[:, i], pos_label=classes[i])
-            color = plt.get_cmap(cmap)(float(i) / len(classes))
-            ax.plot(recall, precision, lw=2,
-                    label='Precision-recall curve of class {0} '
-                          '(area = {1:.{digits}f})'.format(classes[i],
-                                                     average_precision,
-                                                     digits=digits),
-                    color=color)
+    
+    # Binarize y_true for multiclass classification, for micro
+    y_true_bin = label_binarize(y_true, classes=classes)
+    if len(classes) == 2:
+        y_true_bin = np.hstack((1 - y_true_bin, y_true_bin))
 
+    # Loop for all classes to get different class
+    for i, to_plot in enumerate(indices_to_plot):
+        precision_dict[i], recall_dict[i], _ = precision_recall_curve(
+            y_true, y_probas[:, i], pos_label=classes[i]
+        )
+        if area == 'pr_auc' :
+            pr_auc = auc(
+                recall_dict[i], precision_dict[i]
+            )
+        else:
+            pr_auc = average_precision_score(
+                y_true_bin[:, i], y_probas[:, i], #pos_label=classes[i]
+            )
+        if to_plot:
+            if class_names is None:
+                class_names = classes            
+            color = plt.get_cmap(cmap)( float(i) / len(classes) )
+            ax.plot(
+                precision_dict[i], recall_dict[i],
+                ls='-', lw=2, color=color,
+                label=(
+                    f'Class {classes[i]} '
+                    f'(area = {pr_auc:0>{digits}.{digits}f})'
+                ),
+            )
+
+    # Whether or to plot macro or micro
     if plot_micro:
         precision, recall, _ = precision_recall_curve(
-            binarized_y_true.ravel(), probas.ravel())
-        average_precision = average_precision_score(binarized_y_true,
-                                                    probas,
-                                                    average='micro')
-        ax.plot(recall, precision,
-                label='micro-average Precision-recall curve '
-                      '(area = {0:.{digits}f})'.format(average_precision, digits=digits),
-                color='navy', linestyle=':', linewidth=4)
+            y_true_bin.ravel(), y_probas.ravel()
+        )
+        if area == 'pr_auc' :
+            pr_auc = auc(
+                recall, precision
+            )
+        else:
+            pr_auc = average_precision_score(
+                y_true_bin.ravel(), y_probas.ravel()
+            )
+        ax.plot(
+            precision, recall,
+            ls=':', lw=3, color='deeppink',
+            label=(
+                'micro-average '
+                f'(area = {pr_auc:0>{digits}.{digits}f})'
+            ),
+        )
 
+    if plot_macro:
+        # Compute macro-average ROC curve and ROC area
+        # First aggregate all false positive rates
+        all_precision = np.unique(np.concatenate(
+            [ precision_dict[i] for i in range(len(classes)) ]
+        ))
+        # Then interpolate all ROC curves at this points
+        mean_recall = np.zeros_like(all_precision)
+        for i in range(len(classes)):
+            mean_recall += np.interp(
+                all_precision, precision_dict[i], recall_dict[i]
+            )
+
+        # Finally average it and compute AUC
+        mean_recall /= len(classes)
+        pr_auc = average_precision_score(
+            y_true_bin.ravel(), y_probas.ravel(), average='macro'
+        )
+        ax.plot(
+            all_precision, mean_recall,
+            ls=':', lw=3, color='navy',
+            label=(
+                'macro-average '
+                f'(area = {pr_auc:0>{digits}.{digits}f})'
+            ),
+        )
+
+    # Plot the baseline
+    ax.plot([0, 1], [1, 0], ls='--', lw=1, c='gray', )  # label='Baseline'
+
+    # Set title, labels, and formatting
+    ax.set_title(title, fontsize=title_fontsize, pad=title_pad)
+    ax.set_xlabel('Recall', fontsize=text_fontsize)
+    ax.set_ylabel('Precision', fontsize=text_fontsize)
+    ax.tick_params(labelsize=text_fontsize)
+    
     ax.set_xlim([0.0, 1.0])
     ax.set_ylim([0.0, 1.05])
-    ax.set_xlabel('Recall')
-    ax.set_ylabel('Precision')
-    ax.tick_params(labelsize=text_fontsize)
-    ax.legend(loc='best', fontsize=text_fontsize)
+    
+    # Set x-axis ticks and labels
+    # ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
+    # ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+    # ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
+    # ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+
+    # Enable grid and display legend
+    ax.grid(True)
+    if show_labels:
+        ax.legend(
+            loc='lower left', 
+            fontsize=text_fontsize, 
+            title=f'PR-AUC by {area}', 
+            alignment='left'
+        )
+
     return ax
 
 
