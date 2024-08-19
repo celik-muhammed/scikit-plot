@@ -20,7 +20,7 @@ from sklearn.preprocessing import (
 from sklearn.utils import deprecated
 from sklearn.utils.multiclass import unique_labels
 
-from .utils import (
+from .utils.helpers import (
     validate_labels,
     cumulative_gain_curve,
     binary_ks_curve,
