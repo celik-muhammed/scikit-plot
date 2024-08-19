@@ -66,6 +66,7 @@ coverage.xml
 # IDE/editor droppings
 *.swp
 *.swo
+.vscode
 .vscode/settings.json
 
 # Spyder project settings

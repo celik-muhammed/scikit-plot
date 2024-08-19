@@ -14,22 +14,24 @@ import sys
 import codecs
 import pathlib
 
+import pytest
+
 from setuptools import (
     setup, find_packages, find_namespace_packages
 )
-from setuptools.command.test import test as TestCommand
+# from setuptools.command.test import test as TestCommand
 
 
-class PyTest(TestCommand):
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
+# class PyTest(TestCommand):
+#     def finalize_options(self):
+#         TestCommand.finalize_options(self)
+#         self.test_args = []
+#         self.test_suite = True
 
-    def run_tests(self):
-        import pytest
-        errcode = pytest.main(self.test_args)
-        sys.exit(errcode)
+#     def run_tests(self):
+#         import pytest
+#         errcode = pytest.main(self.test_args)
+#         sys.exit(errcode)
 
 
 ##########################################################################
@@ -40,7 +42,6 @@ class PyTest(TestCommand):
 ## Get the directory where setup.py is located
 HERE         = pathlib.Path(__file__).parent
 NAME         = 'scikit-plots'
-PACKAGE      = find_packages(where='.', include=['scikitplot', 'scikitplot.utils'])
 VERSION_PATH = os.path.join(HERE, 'scikitplot/__init__.py')
 DESCRIPTION  = 'An intuitive library to add plotting functionality to scikit-learn objects.'
 ## Read the contents of the README file
@@ -65,6 +66,23 @@ M_EMAIL      = 'muhammed.business.network@gmail.com'
 REPOSITORY   = 'https://github.com/celik-muhammed/scikit-plot'
 REQUIRE_PATH = 'requirements.txt'
 
+## Directories to ignore in find_packages
+EXCLUDES = [
+    "docs", "docs.*",
+    "examples", "examples.*",
+    "notebooks", "notebooks.*",
+    "tests", "tests.*",
+    "paper", "paper.*",
+    "binder", "binder.*",
+    "register",
+    "fixtures",
+    "bin",
+]
+PACKAGE = find_packages(
+    where='.', 
+    include=['scikitplot', 'scikitplot.utils'], 
+    exclude=EXCLUDES
+)
 
 ##########################################################################
 ## Helper Functions
@@ -168,12 +186,11 @@ config = {
     'python_requires': '>=3',
     'install_requires': list(get_requires()),
     'platforms': 'any',
-    'tests_require': ['pytest'],
     'extras_require': {
         'testing': ['pytest'],
     },
-    'test_suite': 'scikitplot.tests.test_scikitplot',
-    'cmdclass': {'test': PyTest},
+    # 'cmdclass': {'test': PyTest},
+    'cmdclass': {'test': pytest},
 }
 
 ##########################################################################

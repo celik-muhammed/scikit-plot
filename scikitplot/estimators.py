@@ -162,32 +162,34 @@ def plot_feature_importances(
             'The estimator does not have an attribute for feature '
             'importances or coefficients.'
         )
-
-    # Apply filtering based on the threshold
-    indices = np.arange(len(importances))
-    if threshold is not None:
-        indices = indices[np.abs(importances) > threshold]
+    # Obtain feature names
+    if feature_names is None:
+        if hasattr(clf, 'feature_names_in_'):
+            feature_names = clf.feature_names_in_
+        else:
+            feature_names = np.arange(len(importances))
+    else:
+        feature_names = np.array(feature_names)
 
     # Apply ordering based on orientation
+    indices = np.arange(len(importances))
     if order is None:
         order = 'ascending' if orientation == 'horizontal' else 'descending'
     if order == 'descending':
         indices = indices[np.argsort(importances[indices])[::-1]]
     elif order == 'ascending':
         indices = indices[np.argsort(importances[indices])]
-        
-    # Select features to plot
-    if feature_names is None:
-        if hasattr(clf, 'feature_names_in_'):
-            feature_names = clf.feature_names_in_
-        else:
-            feature_names = indices
-    else:
-        feature_names = np.array(feature_names)[indices]
-        
-    importances   = importances[indices]
-    feature_names = feature_names[indices]
 
+    # Apply filtering based on the threshold
+    if threshold is not None:
+        mask = np.abs(importances) > threshold
+        indices = indices[mask]
+        importances = importances[mask]
+        feature_names = feature_names[mask]
+    else:        
+        importances   = importances[indices]
+        feature_names = feature_names[indices]
+        
     # Prepare the color map
     cmap_obj = plt.get_cmap(cmap)
     
@@ -237,7 +239,7 @@ def plot_feature_importances(
             "'vertical' or 'horizontal'."
         )
     plt.tight_layout()
-    plt.legend([f'features: {idx}'])
+    plt.legend([f'features: {len(importances)}'])
     return ax
 
 

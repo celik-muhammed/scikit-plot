@@ -8,8 +8,22 @@ requires = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["."]
-# include = ["scikitplot", "scikitplot.utils"]
+where   = ["."]
+include = [
+    "scikitplot", 
+    "scikitplot.utils"
+]
+exclude = [
+    "docs", "docs.*",
+    "examples", "examples.*",
+    "notebooks", "notebooks.*",
+    "tests", "tests.*",
+    "paper", "paper.*",
+    "binder", "binder.*",
+    "register",
+    "fixtures",
+    "bin",
+]
 
 [tool.setuptools.dynamic]
 readme = {file=["README.md"], content-type="text/markdown"}
