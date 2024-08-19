@@ -40,7 +40,7 @@ class PyTest(TestCommand):
 ## Get the directory where setup.py is located
 HERE         = pathlib.Path(__file__).parent
 NAME         = 'scikit-plots'
-PACKAGE      = find_packages(where='scikitplot')
+PACKAGE      = find_packages(where='.', include=['scikitplot', 'scikitplot.utils'])
 VERSION_PATH = os.path.join(HERE, 'scikitplot/__init__.py')
 DESCRIPTION  = 'An intuitive library to add plotting functionality to scikit-learn objects.'
 ## Read the contents of the README file
