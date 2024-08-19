@@ -14,7 +14,9 @@ import sys
 import codecs
 import pathlib
 
-from setuptools import setup, find_packages
+from setuptools import (
+    setup, find_packages, find_namespace_packages
+)
 from setuptools.command.test import test as TestCommand
 
 
@@ -38,7 +40,7 @@ class PyTest(TestCommand):
 ## Get the directory where setup.py is located
 HERE         = pathlib.Path(__file__).parent
 NAME         = 'scikit-plots'
-PACKAGE      = 'scikitplot'
+PACKAGE      = find_namespace_packages(include=['scikitplot', 'scikitplot.*'])
 VERSION_PATH = os.path.join(PACKAGE, '__init__.py')
 DESCRIPTION  = 'An intuitive library to add plotting functionality to scikit-learn objects.'
 ## Read the contents of the README file
