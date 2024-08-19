@@ -7,8 +7,8 @@ requires = [
     "wheel"
 ]
 
-[tool.setuptools.packages.find]
-where = "scikitplot"
+[tool.setuptools]
+packages = ["scikitplot"]
 
 [tool.setuptools.dynamic]
 readme = {file=["README.md"], content-type="text/markdown"}
