@@ -40,7 +40,7 @@ class PyTest(TestCommand):
 ## Get the directory where setup.py is located
 HERE         = pathlib.Path(__file__).parent
 NAME         = 'scikit-plots'
-PACKAGE      = ['scikitplot', 'scikitplot.utils']
+PACKAGE      = find_namespace_packages(where='scikitplot')
 VERSION_PATH = os.path.join(PACKAGE, '__init__.py')
 DESCRIPTION  = 'An intuitive library to add plotting functionality to scikit-learn objects.'
 ## Read the contents of the README file
@@ -124,7 +124,7 @@ def get_requires(path=REQUIRE_PATH):
 ## https://setuptools.pypa.io/en/latest/deprecated/distutils/apiref.html#distutils.core.setup
 config = {
     # packages': find_packages(),  # Finds all packages automatically
-    'packages': [PACKAGE],
+    'packages': PACKAGE,
     'include_package_data': True,
     'name': NAME,
     'version': get_version(),
