@@ -30,12 +30,30 @@ from scikitplot.utils.helpers import (
 )
 
 
+## Define __all__ to specify the public interface of the module,
+## not required default all below func
+__all__ = [
+    'plot_calibration_curve',
+    'plot_confusion_matrix',
+    'plot_roc_curve', 'plot_roc',
+    'plot_precision_recall_curve', 'plot_precision_recall',
+    'plot_silhouette',
+]
+
+
 def plot_calibration_curve(
-    y_true, probas_list, clf_names=None, n_bins=10,
+    y_true, 
+    probas_list, 
     title='Calibration plots (Reliability Curves)',
-    ax=None, figsize=None, cmap='nipy_spectral',
-    title_fontsize="large", text_fontsize="medium",
-    pos_label=None, strategy="uniform",
+    ax=None, 
+    figsize=None, 
+    cmap='nipy_spectral',
+    title_fontsize="large", 
+    text_fontsize="medium",
+    pos_label=None, 
+    strategy="uniform",
+    clf_names=None, 
+    n_bins=10,
 ):
     """Plots calibration curves for a set of classifier probability estimates.
 
@@ -1308,13 +1326,3 @@ def plot_silhouette(
     ax.legend(loc='best', fontsize=text_fontsize)
 
     return ax
-
-
-## Define __all__ to specify the public interface of the module, not required default all above func
-__all__ = [
-    'plot_calibration_curve',
-    'plot_confusion_matrix',
-    'plot_roc_curve', 'plot_roc',
-    'plot_precision_recall_curve', 'plot_precision_recall',
-    'plot_silhouette',
-]

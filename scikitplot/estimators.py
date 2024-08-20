@@ -111,6 +111,10 @@ def plot_feature_importances(
     -------
     ax : matplotlib.axes.Axes
         The axes on which the plot was drawn.
+        
+    feature_names : list of str
+        List of feature names corresponding to the features. If None, feature
+        indices are used.
 
     Examples
     --------
@@ -127,7 +131,7 @@ def plot_feature_importances(
     >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
     >>> clf = make_pipeline(StandardScaler(), RandomForestClassifier())
     >>> clf.fit(X_train, y_train)
-    >>> skplt.estimators.plot_feature_importances(clf)
+    >>> skplt.estimators.plot_feature_importances(clf);
     <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
     >>> plt.show()
     """
@@ -171,25 +175,26 @@ def plot_feature_importances(
     else:
         feature_names = np.array(feature_names)
 
-    # Apply ordering based on orientation
+    # Apply filtering based on the threshold
     indices = np.arange(len(importances))
+
+    if threshold is not None:
+        mask = np.abs(importances) > threshold
+        importances = importances[mask]
+        feature_names = feature_names[mask]        
+        indices = np.arange(len(importances))
+    
+    # Apply ordering based on orientation
     if order is None:
         order = 'ascending' if orientation == 'horizontal' else 'descending'
     if order == 'descending':
-        indices = indices[np.argsort(importances[indices])[::-1]]
+        indices = indices[np.argsort(importances)[::-1]]
     elif order == 'ascending':
-        indices = indices[np.argsort(importances[indices])]
+        indices = indices[np.argsort(importances)]
 
-    # Apply filtering based on the threshold
-    if threshold is not None:
-        mask = np.abs(importances) > threshold
-        indices = indices[mask]
-        importances = importances[mask]
-        feature_names = feature_names[mask]
-    else:        
-        importances   = importances[indices]
-        feature_names = feature_names[indices]
-        
+    importances = importances[indices]
+    feature_names = feature_names[indices]
+    
     # Prepare the color map
     cmap_obj = plt.get_cmap(cmap)
     
@@ -240,7 +245,7 @@ def plot_feature_importances(
         )
     plt.tight_layout()
     plt.legend([f'features: {len(importances)}'])
-    return ax
+    return ax, feature_names
 
 
 def plot_learning_curve(
