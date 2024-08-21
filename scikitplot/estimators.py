@@ -1,12 +1,20 @@
 """
+This package/module is designed to be compatible with both Python 2 and Python 3.
+The imports below ensure consistent behavior across different Python versions by
+enforcing Python 3-like behavior in Python 2.
+
 The :mod:`scikitplot.estimators` module includes plots built specifically for
 scikit-learn estimator (classifier/regressor) instances e.g. Random Forest.
 You can use your own estimators, but these plots assume specific properties
 shared by scikit-learn estimators. The specific requirements are documented per
 function.
 """
+# code that needs to be compatible with both Python 2 and Python 3
 from __future__ import (
-    absolute_import, division, print_function, unicode_literals
+    absolute_import,  # Ensures that all imports are absolute by default, avoiding ambiguity.
+    division,         # Changes the division operator `/` to always perform true division.
+    print_function,   # Treats `print` as a function, consistent with Python 3 syntax.
+    unicode_literals  # Makes all string literals Unicode by default, similar to Python 3.
 )
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,8 +22,15 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import learning_curve
 
 
+## Define __all__ to specify the public interface of the module, not required default all above func
+__all__ = [
+    'plot_feature_importances',
+    'plot_learning_curve',
+]
+
+
 def plot_feature_importances(
-    clf,
+    model,
     title='Feature Importances',
     ax=None,
     figsize=None,
@@ -33,7 +48,7 @@ def plot_feature_importances(
     digits=4,
 ):
     """
-    Generates a plot of a classifier's feature importances.
+    Generates a plot of a sklearn model's feature importances.
 
     This function handles different types of classifiers and their respective
     feature importance or coefficient attributes. It supports models wrapped in pipelines.
@@ -48,8 +63,8 @@ def plot_feature_importances(
 
     Parameters
     ----------
-    clf : estimator object
-        A fitted classifier or pipeline containing a classifier.
+    model : estimator object
+        A fitted sklearn model or pipeline containing a classifier.
 
     title : str, optional
         Title of the generated plot.
@@ -111,10 +126,6 @@ def plot_feature_importances(
     -------
     ax : matplotlib.axes.Axes
         The axes on which the plot was drawn.
-        
-    feature_names : list of str
-        List of feature names corresponding to the features. If None, feature
-        indices are used.
 
     Examples
     --------
@@ -131,36 +142,34 @@ def plot_feature_importances(
     >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
     >>> clf = make_pipeline(StandardScaler(), RandomForestClassifier())
     >>> clf.fit(X_train, y_train)
-    >>> skplt.estimators.plot_feature_importances(clf);
+    >>> skplt.estimators.plot_feature_importances(clf)
     <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
     >>> plt.show()
     """
-    if figsize is None:
-        figsize = (16, 9)
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
         
     # Handle pipelines
-    if hasattr(clf, 'named_steps'):
-        clf = clf.named_steps[next(reversed(clf.named_steps))]
+    if hasattr(model, 'named_steps'):
+        model = model.named_steps[next(reversed(model.named_steps))]
 
     # Determine the appropriate attribute for feature importances or coefficients
-    if hasattr(clf, 'feature_importances_'):
-        importances = clf.feature_importances_
-    elif hasattr(clf, 'coef_'):
-        if clf.coef_.ndim > 1:  # Multi-class case
+    if hasattr(model, 'feature_importances_'):
+        importances = model.feature_importances_
+    elif hasattr(model, 'coef_'):
+        if model.coef_.ndim > 1:  # Multi-class case
             if class_index is not None:
-                importances = np.array(clf.coef_)[class_index]
+                importances = np.array(model.coef_)[class_index]
             else:
-                importances = np.mean(np.abs(clf.coef_), axis=0)
+                importances = np.mean(np.abs(model.coef_), axis=0)
         else:
-            importances = clf.coef_.ravel()
-    elif hasattr(clf, 'explained_variance_ratio_'):  # PCA, LDA
-        importances = clf.explained_variance_ratio_
-    elif hasattr(clf, 'lda_'):  # LDA (scikit-learn < 0.24)
-        importances = np.abs(clf.lda_.scalings_).ravel()
-    elif hasattr(clf, 'coef_'):  # QDA (scikit-learn >= 0.24)
-        importances = np.abs(clf.coef_).ravel()
+            importances = model.coef_.ravel()
+    elif hasattr(model, 'explained_variance_ratio_'):  # PCA, LDA
+        importances = model.explained_variance_ratio_
+    elif hasattr(model, 'lda_'):  # LDA (scikit-learn < 0.24)
+        importances = np.abs(model.lda_.scalings_).ravel()
+    elif hasattr(model, 'coef_'):  # QDA (scikit-learn >= 0.24)
+        importances = np.abs(model.coef_).ravel()
     else:
         raise TypeError(
             'The estimator does not have an attribute for feature '
@@ -168,33 +177,32 @@ def plot_feature_importances(
         )
     # Obtain feature names
     if feature_names is None:
-        if hasattr(clf, 'feature_names_in_'):
-            feature_names = clf.feature_names_in_
+        if hasattr(model, 'feature_names_in_'):
+            feature_names = model.feature_names_in_
         else:
-            feature_names = np.arange(len(importances))
+            feature_names = np.arange(len(importances), dtype=int)
     else:
         feature_names = np.array(feature_names)
 
-    # Apply filtering based on the threshold
-    indices = np.arange(len(importances))
-
-    if threshold is not None:
-        mask = np.abs(importances) > threshold
-        importances = importances[mask]
-        feature_names = feature_names[mask]        
-        indices = np.arange(len(importances))
-    
     # Apply ordering based on orientation
+    indices = np.arange(len(importances))
     if order is None:
         order = 'ascending' if orientation == 'horizontal' else 'descending'
     if order == 'descending':
-        indices = indices[np.argsort(importances)[::-1]]
+        indices = indices[np.argsort(importances[indices])[::-1]]
     elif order == 'ascending':
-        indices = indices[np.argsort(importances)]
+        indices = indices[np.argsort(importances[indices])]
 
-    importances = importances[indices]
-    feature_names = feature_names[indices]
-    
+    # Apply filtering based on the threshold
+    if threshold is not None:
+        mask = np.abs(importances) > threshold
+        indices = indices[mask]
+        importances = importances[mask]
+        feature_names = feature_names[mask]
+    else:        
+        importances   = importances[indices]
+        feature_names = feature_names[indices]
+        
     # Prepare the color map
     cmap_obj = plt.get_cmap(cmap)
     
@@ -227,15 +235,15 @@ def plot_feature_importances(
             )
     ax.set_title(title, fontsize=title_fontsize)
     if orientation == 'vertical':
-        ax.tick_params(axis='x', rotation=x_tick_rotation)
-        # ax.set_xticks(np.arange(len(importances)))
+        ax.set_xticks(np.arange(len(importances)))
         # ax.set_xticklabels(feature_names, rotation=x_tick_rotation)
+        ax.tick_params(axis='x', rotation=x_tick_rotation)
         ax.set_xlabel("Features", fontsize=text_fontsize)
         ax.set_ylabel("Importance", fontsize=text_fontsize)
     elif orientation == 'horizontal':
-        ax.tick_params(axis='y', rotation=x_tick_rotation)
-        # ax.set_yticks(np.arange(len(importances)))
+        ax.set_yticks(np.arange(len(importances)))
         # ax.set_yticklabels(feature_names, rotation=x_tick_rotation)
+        ax.tick_params(axis='y', rotation=x_tick_rotation)
         ax.set_xlabel("Importance", fontsize=text_fontsize)
         ax.set_ylabel("Features", fontsize=text_fontsize)
     else:
@@ -243,17 +251,30 @@ def plot_feature_importances(
             "Invalid value for orientation: must be "
             "'vertical' or 'horizontal'."
         )
+    
+    # ax.set_xlim([ax.get_xlim()[0], ax.get_xlim()[1] * 1.1])
+    ax.set_ylim([ax.get_ylim()[0], ax.get_ylim()[1] * 1.15])  # Increase the upper limit by 15%
+    
     plt.tight_layout()
     plt.legend([f'features: {len(importances)}'])
-    return ax, feature_names
+    return ax
 
 
 def plot_learning_curve(
-    clf, X, y, title='Learning Curve',
-    cv=None, shuffle=False, random_state=None,
-    train_sizes=None, n_jobs=1, scoring=None,
-    ax=None, figsize=None, title_fontsize="large",
+    clf, 
+    X, 
+    y, 
+    title='Learning Curve',
+    ax=None, 
+    figsize=None, 
+    title_fontsize="large",
     text_fontsize="medium",
+    cv=None, 
+    scoring=None,
+    train_sizes=None, 
+    shuffle=False, 
+    random_state=None,
+    n_jobs=1, 
 ):
     """Generates a plot of the train and test learning curves for a classifier.
 
@@ -340,33 +361,43 @@ def plot_learning_curve(
     if train_sizes is None:
         train_sizes = np.linspace(.1, 1.0, 5)
 
-    ax.set_title(title, fontsize=title_fontsize)
-    ax.set_xlabel("Training examples", fontsize=text_fontsize)
-    ax.set_ylabel("Score", fontsize=text_fontsize)
     train_sizes, train_scores, test_scores = learning_curve(
-        clf, X, y, cv=cv, n_jobs=n_jobs, train_sizes=train_sizes,
-        scoring=scoring, shuffle=shuffle, random_state=random_state)
+        clf, 
+        X, 
+        y, 
+        cv=cv, 
+        scoring=scoring,
+        train_sizes=train_sizes, 
+        shuffle=shuffle, 
+        random_state=random_state,
+        n_jobs=n_jobs,
+    )    
     train_scores_mean = np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)
     test_scores_mean = np.mean(test_scores, axis=1)
     test_scores_std = np.std(test_scores, axis=1)
-    ax.grid()
-    ax.fill_between(train_sizes, train_scores_mean - train_scores_std,
-                    train_scores_mean + train_scores_std, alpha=0.1, color="r")
-    ax.fill_between(train_sizes, test_scores_mean - test_scores_std,
-                    test_scores_mean + test_scores_std, alpha=0.1, color="g")
-    ax.plot(train_sizes, train_scores_mean, 'o-', color="r",
-            label="Training score")
-    ax.plot(train_sizes, test_scores_mean, 'o-', color="g",
-            label="Cross-validation score")
+    
+    ax.fill_between(
+        train_sizes, train_scores_mean - train_scores_std,
+        train_scores_mean + train_scores_std, alpha=0.1, color="r"
+    )
+    ax.fill_between(
+        train_sizes, test_scores_mean - test_scores_std,
+        test_scores_mean + test_scores_std, alpha=0.1, color="g"
+    )
+    ax.plot(
+        train_sizes, train_scores_mean, 'o-', color="r",
+        label="Training score"
+    )
+    ax.plot(
+        train_sizes, test_scores_mean, 'o-', color="g",
+        label="Cross-validation score"
+    )    
+    ax.set_title(title, fontsize=title_fontsize)
+    ax.set_xlabel("Training examples", fontsize=text_fontsize)
+    ax.set_ylabel("Score", fontsize=text_fontsize)
     ax.tick_params(labelsize=text_fontsize)
+    ax.grid()
     ax.legend(loc="best", fontsize=text_fontsize)
 
     return ax
-
-
-## Define __all__ to specify the public interface of the module, not required default all above func
-__all__ = [
-    'plot_feature_importances',
-    'plot_learning_curve',
-]

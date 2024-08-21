@@ -19,19 +19,7 @@ import pytest
 from setuptools import (
     setup, find_packages, find_namespace_packages
 )
-# from setuptools.command.test import test as TestCommand
-
-
-# class PyTest(TestCommand):
-#     def finalize_options(self):
-#         TestCommand.finalize_options(self)
-#         self.test_args = []
-#         self.test_suite = True
-
-#     def run_tests(self):
-#         import pytest
-#         errcode = pytest.main(self.test_args)
-#         sys.exit(errcode)
+# import test_commands
 
 
 ##########################################################################

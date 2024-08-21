@@ -1,22 +1,43 @@
 """
+This package/module is designed to be compatible with both Python 2 and Python 3.
+The imports below ensure consistent behavior across different Python versions by
+enforcing Python 3-like behavior in Python 2.
+
 The :mod:`scikitplot.decomposition` module includes plots built specifically
 for scikit-learn estimators that are used for dimensionality reduction
 e.g. PCA. You can use your own estimators, but these plots assume specific
 properties shared by scikit-learn estimators. The specific requirements are
 documented per function.
 """
+# code that needs to be compatible with both Python 2 and Python 3
 from __future__ import (
-    absolute_import, division, print_function, unicode_literals
+    absolute_import,  # Ensures that all imports are absolute by default, avoiding ambiguity.
+    division,         # Changes the division operator `/` to always perform true division.
+    print_function,   # Treats `print` as a function, consistent with Python 3 syntax.
+    unicode_literals  # Makes all string literals Unicode by default, similar to Python 3.
 )
+import warnings
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
+## Define __all__ to specify the public interface of the module, not required default all above func
+__all__ = [
+    'plot_pca_component_variance',
+    'plot_pca_2d_projection',
+]
+
+
 def plot_pca_component_variance(
-    clf, title='PCA Component Explained Variances',
-    target_explained_variance=0.75,
-    ax=None, figsize=None, title_fontsize="large",
+    clf, 
+    title='PCA Component Explained Variances',
+    ax=None, 
+    figsize=None, 
+    title_fontsize="large",
     text_fontsize="medium",
+    target_explained_variance=0.75,
+    x_tick_rotation=90,
 ):
     """Plots PCA components' explained variance ratios. (new in v0.2.2)
 
@@ -43,6 +64,10 @@ def plot_pca_component_variance(
         text_fontsize (string or int, optional): Matplotlib-style fontsizes.
             Use e.g. "small", "medium", "large" or integer-values. Defaults to
             "medium".
+            
+        x_tick_rotation : int, optional
+            Rotates x-axis tick labels by the specified angle. Defaults to None
+            (automatically set based on orientation).
 
     Returns:
         ax (:class:`matplotlib.axes.Axes`): The axes on which the plot was
@@ -60,14 +85,12 @@ def plot_pca_component_variance(
            :align: center
            :alt: PCA Component variances
     """
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, figsize=figsize)
+        
     if not hasattr(clf, 'explained_variance_ratio_'):
         raise TypeError('"clf" does not have explained_variance_ratio_ '
                         'attribute. Has the PCA been fitted?')
-
-    if ax is None:
-        fig, ax = plt.subplots(1, 1, figsize=figsize)
-
-    ax.set_title(title, fontsize=title_fontsize)
 
     cumulative_sum_ratios = np.cumsum(clf.explained_variance_ratio_)
 
@@ -77,11 +100,7 @@ def plot_pca_component_variance(
     ax.plot(range(len(clf.explained_variance_ratio_) + 1),
             np.concatenate(([0], np.cumsum(clf.explained_variance_ratio_))),
             '*-')
-    ax.grid(True)
-    ax.set_xlabel('First n principal components', fontsize=text_fontsize)
-    ax.set_ylabel('Explained variance ratio of first n components',
-                  fontsize=text_fontsize)
-    ax.set_ylim([-0.02, 1.02])
+    
     if idx < len(cumulative_sum_ratios):
         ax.plot(idx+1, cumulative_sum_ratios[idx], 'ro',
                 label='{0:0.3f} Explained variance ratio for '
@@ -90,18 +109,53 @@ def plot_pca_component_variance(
                 markersize=4, markeredgewidth=4)
         ax.axhline(cumulative_sum_ratios[idx],
                    linestyle=':', lw=3, color='black')
-    ax.tick_params(labelsize=text_fontsize)
-    ax.legend(loc="best", fontsize=text_fontsize)
 
+    # Set title, labels, and formatting
+    ax.set_title(title, fontsize=title_fontsize)
+    ax.set_xlabel(
+        'First n principal components', 
+        fontsize=text_fontsize
+    )
+    ax.set_ylabel(
+        'Explained variance ratio of first n components',
+        fontsize=text_fontsize
+    )
+    ax.tick_params(labelsize=text_fontsize)
+    ax.tick_params(axis='x', rotation=x_tick_rotation)
+    
+    # ax.set_xlim([0.0, 1.0])
+    ax.set_ylim([-0.02, 1.02])
+    
+    # Set x-axis ticks and labels
+    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(1))
+    ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.0f'))
+    ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
+    ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+    
+    # Enable grid and display legend
+    ax.grid(True)
+    ax.legend(
+        loc="best",
+        fontsize=text_fontsize
+    )
+    plt.tight_layout()
     return ax
 
 
 def plot_pca_2d_projection(
-    clf, X, y, title='PCA 2-D Projection',
-    biplot=False, feature_labels=None,
-    ax=None, figsize=None, title_fontsize="large",
-    text_fontsize="medium", cmap='Spectral',
-    dimensions=[0, 1], label_dots=False, 
+    clf, 
+    X, 
+    y, 
+    title='PCA 2-D Projection',
+    ax=None, 
+    figsize=None, 
+    title_fontsize="large",
+    text_fontsize="medium", 
+    cmap='Spectral',
+    biplot=False, 
+    feature_labels=None,
+    dimensions=[0, 1], 
+    label_dots=False, 
 ):
     """Plots the 2-dimensional projection of PCA on a given dataset.
 
@@ -163,18 +217,15 @@ def plot_pca_2d_projection(
            :align: center
            :alt: PCA 2D Projection
     """
-    transformed_X = clf.transform(X)
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
 
-    ax.set_title(title, fontsize=title_fontsize)
-
+    transformed_X = clf.transform(X)
     # Get unique classes from y, preserving order of class occurence in y
     _, class_indexes = np.unique(np.array(y), return_index=True)
     classes = np.array(y)[np.sort(class_indexes)]
 
     colors = plt.get_cmap(cmap)(np.linspace(0, 1, len(classes)))
-
     for label, color in zip(classes, colors):
         ax.scatter(transformed_X[y == label, dimensions[0]], transformed_X[y == label, dimensions[1]],
                    alpha=0.8, lw=2, label=label, color=color)
@@ -197,17 +248,18 @@ def plot_pca_2d_projection(
                     feature_labels[i] if feature_labels else "Variable" + str(i),
                     color='b', fontsize=text_fontsize)
 
-    ax.legend(loc='best', shadow=False, scatterpoints=1,
-              fontsize=text_fontsize)
+    # Set title, labels, and formatting
+    ax.set_title(title, fontsize=title_fontsize)
     ax.set_xlabel(f'Principal Component {dimensions[0]+1}', fontsize=text_fontsize)
     ax.set_ylabel(f'Principal Component {dimensions[1]+1}', fontsize=text_fontsize)
     ax.tick_params(labelsize=text_fontsize)
-
+    
+    # Display legend
+    ax.legend(
+        loc='best',
+        shadow=False,
+        scatterpoints=1,
+        fontsize=text_fontsize
+    )
+    plt.tight_layout()
     return ax
-
-
-## Define __all__ to specify the public interface of the module, not required default all above func
-__all__ = [
-    'plot_pca_component_variance',
-    'plot_pca_2d_projection',
-]

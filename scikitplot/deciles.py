@@ -1,12 +1,20 @@
 """
+This package/module is designed to be compatible with both Python 2 and Python 3.
+The imports below ensure consistent behavior across different Python versions by
+enforcing Python 3-like behavior in Python 2.
+
 The :mod:`scikitplot.deciles` module includes plots for machine learning
 evaluation decile analysis e.g. Gain, Lift and Decile charts, etc.
 
 References:
 [1] https://github.com/tensorbored/kds/blob/master/kds/metrics.py#L5
 """
+# code that needs to be compatible with both Python 2 and Python 3
 from __future__ import (
-    absolute_import, division, print_function, unicode_literals
+    absolute_import,  # Ensures that all imports are absolute by default, avoiding ambiguity.
+    division,         # Changes the division operator `/` to always perform true division.
+    print_function,   # Treats `print` as a function, consistent with Python 3 syntax.
+    unicode_literals  # Makes all string literals Unicode by default, similar to Python 3.
 )
 import warnings
 import numpy as np
@@ -25,6 +33,18 @@ from scikitplot.utils.helpers import (
     cumulative_gain_curve,
     binary_ks_curve,
 )
+
+
+## Define __all__ to specify the public interface of the module, not required default all above func
+__all__ = [
+    'print_labels',
+    'decile_table',
+    'plot_cumulative_gain',
+    'plot_lift',
+    'plot_lift_decile_wise',
+    'plot_ks_statistic',
+    'report',
+]
 
 
 def print_labels():
@@ -157,7 +177,268 @@ def decile_table(
     if labels is True:
         print_labels()
 
+    plt.tight_layout()
     return dt
+
+
+def plot_cumulative_gain(
+    y_true,
+    y_probas,
+    title='Cumulative Gain Curves',
+    ax=None,
+    figsize=None,
+    title_fontsize="large",
+    text_fontsize="medium",
+    cmap=None,
+    class_index=1,
+    multi_class=None,
+    class_names=None,
+    classes_to_plot=None,   
+    plot_micro=True,
+    plot_macro=True,
+    show_labels=True,
+):
+    """
+    Generates the Cumulative Gains Plot from labels and scores/probabilities.
+
+    The cumulative gains chart is used to determine the effectiveness of a
+    binary classifier. It compares the model's performance with random guessing.
+
+    Parameters
+    ----------
+    y_true : array-like of shape (n_samples,)
+        Ground truth (correct) target values.
+
+    y_probas : array-like of shape (n_samples,) or (n_samples, n_classes)
+        Predicted probabilities for each class or only target class probabilities. 
+        If 1D, it is treated as probabilities for the positive class in binary 
+        or multiclass classification with the `class_index`.
+
+    title : str, optional, default='Cumulative Gain Curves'
+        Title of the generated plot.
+
+    ax : matplotlib.axes.Axes, optional, default=None
+        The axes on which to plot.
+        If None, a new figure and axes are created.
+
+    figsize : tuple of int, optional, default=None
+        Size of the figure (width, height) in inches.
+
+    title_fontsize : str or int, optional, default='large'
+        Font size for the plot title.
+
+    text_fontsize : str or int, optional, default='medium'
+        Font size for the text in the plot.
+
+    cmap : None, str or matplotlib.colors.Colormap, optional, default='viridis'
+        Colormap used for plotting.
+        See Matplotlib Colormap documentation for options.
+        - https://matplotlib.org/users/colormaps.html
+        - plt.colormaps()
+        - plt.get_cmap()  # None == 'viridis'
+
+    class_index : int, optional, default=1
+        Index of the class of interest for multi-class classification.
+        Ignored for binary classification.
+
+    multi_class : {'ovr', 'multinomial', None}, optional, default=None
+        Strategy for handling multiclass classification:
+        - 'ovr': One-vs-Rest, plotting binary problems for each class.
+        - 'multinomial' or None: Multinomial plot 
+          for the entire probability distribution.
+
+    class_names : list of str, optional, default=None
+        List of class names for the legend.
+        Order should match the order of classes in `y_probas`.
+
+    classes_to_plot : list-like, optional, default=None
+        Specific classes to plot. If given class does not exist,
+        it will be ignored. If None, all classes are plotted.
+        e.g. [0, 'cold']
+
+    plot_micro : bool, optional, default=True
+        Whether to plot the micro-average Cumulative Gain curve.
+
+    plot_macro : bool, optional, default=True
+        Whether to plot the macro-average Cumulative Gain curve.
+
+    show_labels : bool, optional, default=True
+        Whether to display the legend labels.
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes with the plotted cumulative gain curves.
+
+    Example
+    -------
+    >>> # from sklearn.datasets import load_iris as load_data  # multi
+    >>> from sklearn.datasets import load_breast_cancer as load_data  # binary
+    >>> from sklearn.model_selection import train_test_split
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> import matplotlib.pyplot as plt
+    >>> import scikitplot as skplt
+    >>> X, y = load_data(return_X_y=True)
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
+    >>> model = LogisticRegression()
+    >>> model.fit(X_train, y_train)
+    >>> y_probas = model.predict_proba(X_test)
+    >>> skplt.deciles.plot_cumulative_gain(y_test, y_probas)
+    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
+    >>> plt.show()
+
+    Notes
+    -----
+    The implementation is specific to binary classification. For multiclass 
+    problems, the 'ovr' or 'multinomial' strategies can be used. When 
+    `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
+
+    References
+    ----------
+    [1] http://mlwiki.org/index.php/Cumulative_Gain_Chart
+
+    .. image:: _static/examples/plot_cumulative_gain.png
+       :align: center
+       :alt: Cumulative Gain Curves
+    """
+    title_pad = None
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, figsize=figsize)
+
+    y_true = np.array(y_true)
+    y_probas = np.array(y_probas)    
+
+    # Handle binary classification
+    if len(np.unique(y_true)) == 2:
+        # 1D y_probas (single class probabilities)
+        if y_probas.ndim == 1:
+            # Combine into a two-column
+            y_probas = np.column_stack([1 - y_probas, y_probas])
+    # Handle multi-class classification    
+    elif len(np.unique(y_true)) > 2:
+        if multi_class == 'ovr':
+            # Binarize y_true for multiclass classification
+            y_true = label_binarize(y_true, classes=np.unique(y_true))[:, class_index]
+            # Handle 1D y_probas (single class probabilities)
+            if y_probas.ndim == 1:
+                # Combine into a two-column binary format OvR
+                y_probas = np.column_stack([1 - y_probas, y_probas])
+            else:
+                # Combine into a two-column binary format OvR
+                y_probas = y_probas[:, class_index]
+                y_probas = np.column_stack([1 - y_probas, y_probas])
+                
+            # Add a subtitle indicating the use of the One-vs-Rest strategy
+            plt.suptitle(
+                t="One-vs-Rest (OVR) strategy for multi-class classification.",
+                fontsize=text_fontsize, x=0.512, y=0.902,
+                ha='center', va='center',
+                bbox=dict(facecolor='none', edgecolor='w', boxstyle='round,pad=0.2')
+            )
+            title_pad = 23
+        elif multi_class in ['multinomial', None]:
+            if y_probas.ndim == 1:
+                raise ValueError(
+                    "For multinomial classification, `y_probas` must be 2D."
+                    "For a 1D `y_probas` with more than 2 classes in `y_true`, "
+                    "only 'ovr' multi-class strategy is supported."
+                )
+        else:
+            raise ValueError("Unsupported `multi_class` strategy.")
+
+    # Initialize dictionaries to store cumulative percentages and gains
+    percentages_dict, gains_dict = {}, {}
+
+    # Get unique classes and filter those to be plotted
+    classes = np.unique(y_true)
+    if len(classes) < 2:
+        raise ValueError(
+            'Cannot calculate Curve for classes with only one category.'
+        )
+    classes_to_plot = classes if classes_to_plot is None else classes_to_plot
+    indices_to_plot = np.isin(classes, classes_to_plot)
+    
+    # Binarize y_true for multiclass classification, for micro
+    y_true_bin = label_binarize(y_true, classes=classes)
+    if len(classes) == 2:
+        y_true_bin = np.hstack((1 - y_true_bin, y_true_bin))
+
+    # Loop for all classes to get different class gain
+    for i, to_plot in enumerate(indices_to_plot):
+        percentages_dict[i], gains_dict[i] = cumulative_gain_curve(
+            y_true_bin[:, i], y_probas[:, i], #pos_label=classes[i],
+        )    
+        if to_plot:
+            if class_names is None:
+                class_names = classes            
+            color = plt.get_cmap(cmap)( float(i) / len(classes) )
+            ax.plot(
+                percentages_dict[i], gains_dict[i],
+                ls='-', lw=2, color=color,
+                label='Class {}'.format(class_names[i]),
+            )
+
+    # Whether or to plot macro or micro
+    if plot_micro:
+        percentage, gain = cumulative_gain_curve(
+            y_true_bin.ravel(), y_probas.ravel()
+        )
+        ax.plot(
+            percentage, gain,
+            ls=':', lw=3, color='deeppink',
+            label='micro-average',
+        )
+
+    if plot_macro:
+        # First aggregate all percentages
+        all_perc = np.unique(np.concatenate(
+            [ percentages_dict[i] for i in range(len(classes)) ]
+        ))
+        # Then interpolate all cumulative gain
+        mean_gain = np.zeros_like(all_perc)
+        for i in range(len(classes)):
+            mean_gain += np.interp(
+                all_perc, percentages_dict[i], gains_dict[i]
+            )
+
+        mean_gain /= len(classes)
+
+        ax.plot(
+            all_perc, mean_gain,
+            ls=':', lw=3, color='navy',
+            label='macro-average',
+        )
+
+    # Plot the baseline
+    ax.plot([0, 1], [0, 1], ls='--', lw=1, c='gray', label='Baseline')
+
+    # Set title, labels, and formatting
+    ax.set_title(title, fontsize=title_fontsize, pad=title_pad)
+    ax.set_ylabel('Gain', fontsize=text_fontsize)
+    ax.set_xlabel('Percentage of sample', fontsize=text_fontsize)
+    ax.tick_params(labelsize=text_fontsize)
+    
+    ax.set_xlim([0.0, 1.0])
+    ax.set_ylim([0.0, 1.05])
+    
+    # Set x-axis ticks and labels
+    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
+    ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+    ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
+    ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+
+    # Enable grid and display legend
+    ax.grid(True)
+    if show_labels:
+        ax.legend(
+            loc='lower right', 
+            fontsize=text_fontsize, 
+            title='Cumulative Gain Curves', 
+            alignment='left'
+        )
+
+    plt.tight_layout()
+    return ax
 
 
 def plot_lift(
@@ -168,7 +449,7 @@ def plot_lift(
     figsize=None,
     title_fontsize="large",
     text_fontsize="medium",
-    cmap='nipy_spectral',
+    cmap=None,
     class_index=1,
     multi_class=None,
     class_names=None,
@@ -211,10 +492,12 @@ def plot_lift(
     text_fontsize : str or int, optional, default='medium'
         Font size for the text in the plot.
 
-    cmap : str or matplotlib.colors.Colormap, optional, default='nipy_spectral'
+    cmap : None, str or matplotlib.colors.Colormap, optional, default='viridis'
         Colormap used for plotting.
         See Matplotlib Colormap documentation for options.
         - https://matplotlib.org/users/colormaps.html
+        - plt.colormaps()
+        - plt.get_cmap()  # None == 'viridis'
 
     class_index : int, optional, default=1
         Index of the class of interest for multi-class classification.
@@ -337,11 +620,16 @@ def plot_lift(
         )
     classes_to_plot = classes if classes_to_plot is None else classes_to_plot
     indices_to_plot = np.isin(classes, classes_to_plot)
+    
+    # Binarize y_true for multiclass classification, for micro
+    y_true_bin = label_binarize(y_true, classes=classes)
+    if len(classes) == 2:
+        y_true_bin = np.hstack((1 - y_true_bin, y_true_bin))
 
     # Loop for all classes to get different class gain
     for i, to_plot in enumerate(indices_to_plot):
         percentages_dict[i], gains_dict[i] = cumulative_gain_curve(
-            y_true, y_probas[:, i], pos_label=classes[i]
+            y_true_bin[:, i], y_probas[:, i], #pos_label=classes[i],
         )
         percentages = percentages_dict[i][1:]
         gains = gains_dict[i][1:]    
@@ -359,15 +647,11 @@ def plot_lift(
 
     # Whether or to plot macro or micro
     if plot_micro:
-        y_true_bin = label_binarize(y_true, classes=classes)
-        if len(classes) == 2:
-            y_true_bin = np.hstack((1 - y_true_bin, y_true_bin))
-
-        perc, gain = cumulative_gain_curve(
+        percentage, gain = cumulative_gain_curve(
             y_true_bin.ravel(), y_probas.ravel()
         )
         ax.plot(
-            perc, gain,
+            percentage, gain,
             ls=':', lw=3, color='deeppink',
             label='micro-average',
         )
@@ -401,8 +685,8 @@ def plot_lift(
     ax.set_xlabel('Percentage of sample', fontsize=text_fontsize)
     ax.tick_params(labelsize=text_fontsize)
     
-    ax.set_xlim([0.0, 1.0])
-    ax.set_ylim([0.0, 1.05])
+    # ax.set_xlim([0.0, 1.0])
+    # ax.set_ylim([0.0, 1.05])
     
     # Set x-axis ticks and labels
     ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
@@ -420,6 +704,7 @@ def plot_lift(
             alignment='left'
         )
 
+    plt.tight_layout()
     return ax
 
 
@@ -490,269 +775,16 @@ def plot_lift_decile_wise(
     # plt.plot(list(np.arange(1,11)), np.ones(10), 'k--',marker='o')
     plt.plot([1, 10], [1, 1], 'k--', marker='o', label='Random')
 
+    # Set title, labels, and formatting
     # plt.title(title, fontsize=title_fontsize)
     plt.xlabel('Deciles', fontsize=text_fontsize)
     plt.ylabel('Lift @ Decile', fontsize=text_fontsize)
-    plt.legend()
-    plt.grid(True)
-    # plt.show()
-    return ax
-
-
-def plot_cumulative_gain(
-    y_true,
-    y_probas,
-    title='Cumulative Gain Curves',
-    ax=None,
-    figsize=None,
-    title_fontsize="large",
-    text_fontsize="medium",
-    cmap='nipy_spectral',
-    class_index=1,
-    multi_class=None,
-    class_names=None,
-    classes_to_plot=None,   
-    plot_micro=True,
-    plot_macro=True,
-    show_labels=True,
-):
-    """
-    Generates the Cumulative Gains Plot from labels and scores/probabilities.
-
-    The cumulative gains chart is used to determine the effectiveness of a
-    binary classifier. It compares the model's performance with random guessing.
-
-    Parameters
-    ----------
-    y_true : array-like of shape (n_samples,)
-        Ground truth (correct) target values.
-
-    y_probas : array-like of shape (n_samples,) or (n_samples, n_classes)
-        Predicted probabilities for each class or only target class probabilities. 
-        If 1D, it is treated as probabilities for the positive class in binary 
-        or multiclass classification with the `class_index`.
-
-    title : str, optional, default='Cumulative Gain Curves'
-        Title of the generated plot.
-
-    ax : matplotlib.axes.Axes, optional, default=None
-        The axes on which to plot.
-        If None, a new figure and axes are created.
-
-    figsize : tuple of int, optional, default=None
-        Size of the figure (width, height) in inches.
-
-    title_fontsize : str or int, optional, default='large'
-        Font size for the plot title.
-
-    text_fontsize : str or int, optional, default='medium'
-        Font size for the text in the plot.
-
-    cmap : str or matplotlib.colors.Colormap, optional, default='nipy_spectral'
-        Colormap used for plotting.
-        See Matplotlib Colormap documentation for options.
-        - https://matplotlib.org/users/colormaps.html
-
-    class_index : int, optional, default=1
-        Index of the class of interest for multi-class classification.
-        Ignored for binary classification.
-
-    multi_class : {'ovr', 'multinomial', None}, optional, default=None
-        Strategy for handling multiclass classification:
-        - 'ovr': One-vs-Rest, plotting binary problems for each class.
-        - 'multinomial' or None: Multinomial plot 
-          for the entire probability distribution.
-
-    class_names : list of str, optional, default=None
-        List of class names for the legend.
-        Order should match the order of classes in `y_probas`.
-
-    classes_to_plot : list-like, optional, default=None
-        Specific classes to plot. If given class does not exist,
-        it will be ignored. If None, all classes are plotted.
-        e.g. [0, 'cold']
-
-    plot_micro : bool, optional, default=True
-        Whether to plot the micro-average Cumulative Gain curve.
-
-    plot_macro : bool, optional, default=True
-        Whether to plot the macro-average Cumulative Gain curve.
-
-    show_labels : bool, optional, default=True
-        Whether to display the legend labels.
-
-    Returns
-    -------
-    matplotlib.axes.Axes
-        The axes with the plotted cumulative gain curves.
-
-    Example
-    -------
-    >>> # from sklearn.datasets import load_iris as load_data  # multi
-    >>> from sklearn.datasets import load_breast_cancer as load_data  # binary
-    >>> from sklearn.model_selection import train_test_split
-    >>> from sklearn.linear_model import LogisticRegression
-    >>> import matplotlib.pyplot as plt
-    >>> import scikitplot as skplt
-    >>> X, y = load_data(return_X_y=True)
-    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
-    >>> model = LogisticRegression()
-    >>> model.fit(X_train, y_train)
-    >>> y_probas = model.predict_proba(X_test)
-    >>> skplt.deciles.plot_cumulative_gain(y_test, y_probas)
-    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-    >>> plt.show()
-
-    Notes
-    -----
-    The implementation is specific to binary classification. For multiclass 
-    problems, the 'ovr' or 'multinomial' strategies can be used. When 
-    `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
-
-    References
-    ----------
-    [1] http://mlwiki.org/index.php/Cumulative_Gain_Chart
-
-    .. image:: _static/examples/plot_cumulative_gain.png
-       :align: center
-       :alt: Cumulative Gain Curves
-    """
-    title_pad = None
-    if ax is None:
-        fig, ax = plt.subplots(1, 1, figsize=figsize)
-
-    y_true = np.array(y_true)
-    y_probas = np.array(y_probas)    
-
-    # Handle binary classification
-    if len(np.unique(y_true)) == 2:
-        # 1D y_probas (single class probabilities)
-        if y_probas.ndim == 1:
-            # Combine into a two-column
-            y_probas = np.column_stack([1 - y_probas, y_probas])
-    # Handle multi-class classification    
-    elif len(np.unique(y_true)) > 2:
-        if multi_class == 'ovr':
-            # Binarize y_true for multiclass classification
-            y_true = label_binarize(y_true, classes=np.unique(y_true))[:, class_index]
-            # Handle 1D y_probas (single class probabilities)
-            if y_probas.ndim == 1:
-                # Combine into a two-column binary format OvR
-                y_probas = np.column_stack([1 - y_probas, y_probas])
-            else:
-                # Combine into a two-column binary format OvR
-                y_probas = y_probas[:, class_index]
-                y_probas = np.column_stack([1 - y_probas, y_probas])
-                
-            # Add a subtitle indicating the use of the One-vs-Rest strategy
-            plt.suptitle(
-                t="One-vs-Rest (OVR) strategy for multi-class classification.",
-                fontsize=text_fontsize, x=0.512, y=0.902,
-                ha='center', va='center',
-                bbox=dict(facecolor='none', edgecolor='w', boxstyle='round,pad=0.2')
-            )
-            title_pad = 23
-        elif multi_class in ['multinomial', None]:
-            if y_probas.ndim == 1:
-                raise ValueError(
-                    "For multinomial classification, `y_probas` must be 2D."
-                    "For a 1D `y_probas` with more than 2 classes in `y_true`, "
-                    "only 'ovr' multi-class strategy is supported."
-                )
-        else:
-            raise ValueError("Unsupported `multi_class` strategy.")
-
-    # Initialize dictionaries to store cumulative percentages and gains
-    percentages_dict = {}
-    gains_dict = {}
-
-    # Get unique classes and filter those to be plotted
-    classes = np.unique(y_true)
-    if len(classes) < 2:
-        raise ValueError(
-            'Cannot calculate Curve for classes with only one category.'
-        )
-    classes_to_plot = classes if classes_to_plot is None else classes_to_plot
-    indices_to_plot = np.isin(classes, classes_to_plot)
-
-    # Loop for all classes to get different class gain
-    for i, to_plot in enumerate(indices_to_plot):
-        percentages_dict[i], gains_dict[i] = cumulative_gain_curve(
-            y_true, y_probas[:, i], pos_label=classes[i]
-        )    
-        if to_plot:
-            if class_names is None:
-                class_names = classes            
-            color = plt.get_cmap(cmap)( float(i) / len(classes) )
-            ax.plot(
-                percentages_dict[i], gains_dict[i],
-                ls='-', lw=2, color=color,
-                label='Class {}'.format(class_names[i]),
-            )
-
-    # Whether or to plot macro or micro
-    if plot_micro:
-        y_true_bin = label_binarize(y_true, classes=classes)
-        if len(classes) == 2:
-            y_true_bin = np.hstack((1 - y_true_bin, y_true_bin))
-
-        perc, gain = cumulative_gain_curve(
-            y_true_bin.ravel(), y_probas.ravel()
-        )
-        ax.plot(
-            perc, gain,
-            ls=':', lw=3, color='deeppink',
-            label='micro-average',
-        )
-
-    if plot_macro:
-        # First aggregate all percentages
-        all_perc = np.unique(np.concatenate(
-            [ percentages_dict[i] for i in range(len(classes)) ]
-        ))
-        # Then interpolate all cumulative gain
-        mean_gain = np.zeros_like(all_perc)
-        for i in range(len(classes)):
-            mean_gain += np.interp(
-                all_perc, percentages_dict[i], gains_dict[i]
-            )
-
-        mean_gain /= len(classes)
-
-        ax.plot(
-            all_perc, mean_gain,
-            ls=':', lw=3, color='navy',
-            label='macro-average',
-        )
-
-    # Plot the baseline
-    ax.plot([0, 1], [0, 1], ls='--', lw=1, c='gray', label='Baseline')
-
-    # Set title, labels, and formatting
-    ax.set_title(title, fontsize=title_fontsize, pad=title_pad)
-    ax.set_ylabel('Gain', fontsize=text_fontsize)
-    ax.set_xlabel('Percentage of sample', fontsize=text_fontsize)
-    ax.tick_params(labelsize=text_fontsize)
     
-    ax.set_xlim([0.0, 1.0])
-    ax.set_ylim([0.0, 1.05])
-    
-    # Set x-axis ticks and labels
-    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
-    ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
-    ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
-    ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
-
     # Enable grid and display legend
-    ax.grid(True)
-    if show_labels:
-        ax.legend(
-            loc='upper right', 
-            fontsize=text_fontsize, 
-            title='Cumulative Gain Curves', 
-            alignment='left'
-        )
-
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    # plt.show()
     return ax
 
 
@@ -829,7 +861,6 @@ def plot_ks_statistic(
 
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
-    ax.set_title(title, fontsize=title_fontsize)
 
     ax.plot(thresholds, pct1, lw=3, label='Class {}'.format(classes[0]))
     ax.plot(thresholds, pct2, lw=3, label='Class {}'.format(classes[1]))
@@ -840,14 +871,19 @@ def plot_ks_statistic(
                 ),
                linestyle = ':', lw=3, color='black')
 
-    ax.set_xlim([0.0, 1.0])
-    ax.set_ylim([0.0, 1.0])
-
+    # Set title, labels, and formatting
+    ax.set_title(title, fontsize=title_fontsize)
     ax.set_xlabel('Threshold', fontsize=text_fontsize)
     ax.set_ylabel('Percentage below threshold', fontsize=text_fontsize)
     ax.tick_params(labelsize=text_fontsize)
+    
+    ax.set_xlim([0.0, 1.0])
+    ax.set_ylim([0.0, 1.0])
+    
+    # Display legend
     ax.legend(loc='lower right', fontsize=text_fontsize)
 
+    plt.tight_layout()
     return ax
 
 
@@ -936,16 +972,5 @@ def report(
     plot_ks_statistic(y_true,y_prob)
     
     dc = decile_table(y_true, y_prob, labels=labels, digits=digits)
+    plt.tight_layout()
     return (dc)
-
-
-## Define __all__ to specify the public interface of the module, not required default all above func
-__all__ = [
-    'print_labels',
-    'decile_table',
-    'plot_lift',
-    'plot_lift_decile_wise',
-    'plot_cumulative_gain',
-    'plot_ks_statistic',
-    'report',
-]

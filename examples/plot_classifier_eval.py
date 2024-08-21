@@ -1,6 +1,6 @@
 """
-An example showing the plot_pca_2d_projection
-method used by a scikit-learn PCA object
+An example showing the plot_roc_curve method
+used by a scikit-learn classifier
 """
 from sklearn.datasets import (
     make_classification,
@@ -14,7 +14,6 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_predict
-from sklearn.decomposition import PCA
 import numpy as np; np.random.seed(0)
 # importing pylab or pyplot
 import matplotlib.pyplot as plt
@@ -23,24 +22,37 @@ import matplotlib.pyplot as plt
 import scikitplot as skplt
 
 # Load the data
-X, y = data_10_classes(return_X_y=True, as_frame=False)
+X, y = data_3_classes(return_X_y=True, as_frame=True)
 X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.5, random_state=0)
 
-# Create an instance of the PCA
-pca = PCA(random_state=0).fit(X_train)
-
 # Create an instance of the LogisticRegression
-# model = LogisticRegression(max_iter=int(1e5), random_state=0).fit(X_train, y_train)
+model = LogisticRegression(max_iter=int(1e5), random_state=0).fit(X_train, y_train)
 
 # Perform predictions
-# y_val_prob = model.predict_proba(X_val)
+y_val_pred = model.predict(X_val)
+y_train_pred = model.predict(X_train)
 
-# Plot!
-ax = skplt.decomposition.plot_pca_2d_projection(pca, X_train, y_train);
+fig1 = skplt.metrics.plot_classifier_eval(
+    y_val, y_val_pred, 
+    labels=np.unique(y),
+    figsize=(8, 2)
+);
+# plt.show(block=True)
+fig2 = skplt.metrics.plot_classifier_eval(
+    y_train, y_train_pred, 
+    labels=np.unique(y),
+    figsize=(8, 2),
+);
+# plt.show(block=True)
 
+# Save the combined figure as an image file
+combined_fig = skplt.utils.combine_and_save_figures(
+    (fig1, fig2),
+    to_save=False
+);
 # Adjust layout to make sure everything fits
 plt.tight_layout()
 # Save the plot to a file
-plt.savefig('plot_pca_2d_projection.png')
+plt.savefig('plot_classifier_eval.png')
 # Display the plot
 plt.show(block=True)

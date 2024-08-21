@@ -1,5 +1,6 @@
 # Include the LICENSE file from the LICENSE directory
-include LICENSE/LICENSE
+include LICENSE
+include LICENSES/LICENSE_MIT
 
 # Include other files as needed
 include README.md

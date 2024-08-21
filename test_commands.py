@@ -1,9 +1,9 @@
 """
 # test_commands.py
 """
-from setuptools.command.test import test as TestCommand
-import pytest
 import sys
+import pytest
+from setuptools.command.test import test as TestCommand
 
 class PyTest(TestCommand):
     def finalize_options(self):

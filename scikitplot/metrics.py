@@ -1,39 +1,50 @@
 """
+This package/module is designed to be compatible with both Python 2 and Python 3.
+The imports below ensure consistent behavior across different Python versions by
+enforcing Python 3-like behavior in Python 2.
+
 The :mod:`scikitplot.metrics` module includes plots for machine learning
 evaluation metrics e.g. confusion matrix, silhouette scores, etc.
 """
+# code that needs to be compatible with both Python 2 and Python 3
 from __future__ import (
-    absolute_import, division, print_function, unicode_literals
+    absolute_import,  # Ensures that all imports are absolute by default, avoiding ambiguity.
+    division,         # Changes the division operator `/` to always perform true division.
+    print_function,   # Treats `print` as a function, consistent with Python 3 syntax.
+    unicode_literals  # Makes all string literals Unicode by default, similar to Python 3.
 )
 import warnings
 import itertools
 import numpy as np
 import pandas as pd
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-from sklearn.metrics import (
-    confusion_matrix, average_precision_score,
-    silhouette_score, silhouette_samples,
-    auc, roc_curve, precision_recall_curve,
-)
 from sklearn.preprocessing import (
     label_binarize, LabelEncoder
 )
-from sklearn.utils import deprecated
+from sklearn.metrics import (
+    classification_report, confusion_matrix,
+    average_precision_score,
+    silhouette_score,
+    silhouette_samples,
+    auc, roc_curve, precision_recall_curve,
+)
 from sklearn.utils.multiclass import unique_labels
 from sklearn.calibration import calibration_curve
+from sklearn.utils import deprecated
 
-from scikitplot.utils.helpers import (
+from .utils.helpers import (
     validate_labels,
     cumulative_gain_curve,
     binary_ks_curve,
 )
 
 
-## Define __all__ to specify the public interface of the module,
-## not required default all below func
+## Define __all__ to specify the public interface of the module, not required default all above func
 __all__ = [
     'plot_calibration_curve',
+    'plot_classifier_eval',
     'plot_confusion_matrix',
     'plot_roc_curve', 'plot_roc',
     'plot_precision_recall_curve', 'plot_precision_recall',
@@ -42,18 +53,11 @@ __all__ = [
 
 
 def plot_calibration_curve(
-    y_true, 
-    probas_list, 
+    y_true, probas_list, clf_names=None, n_bins=10,
     title='Calibration plots (Reliability Curves)',
-    ax=None, 
-    figsize=None, 
-    cmap='nipy_spectral',
-    title_fontsize="large", 
-    text_fontsize="medium",
-    pos_label=None, 
-    strategy="uniform",
-    clf_names=None, 
-    n_bins=10,
+    ax=None, figsize=None, cmap='nipy_spectral',
+    title_fontsize="large", text_fontsize="medium",
+    pos_label=None, strategy="uniform",
 ):
     """Plots calibration curves for a set of classifier probability estimates.
 
@@ -146,7 +150,11 @@ def plot_calibration_curve(
            :align: center
            :alt: Calibration Curves
     """
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, figsize=figsize)
+        
     y_true = np.asarray(y_true)
+    
     if not isinstance(probas_list, list):
         raise ValueError('`probas_list` does not contain a list.')
 
@@ -163,11 +171,6 @@ def plot_calibration_curve(
         raise ValueError('Length {} of `clf_names` does not match length {} of'
                          ' `probas_list`'.format(len(clf_names),
                                                  len(probas_list)))
-
-    if ax is None:
-        fig, ax = plt.subplots(1, 1, figsize=figsize)
-
-    ax.plot([0, 1], [0, 1], "k:", label="Perfectly calibrated")
 
     for i, probas in enumerate(probas_list):
         probas = np.asarray(probas)
@@ -192,15 +195,166 @@ def plot_calibration_curve(
         ax.plot(mean_predicted_value, fraction_of_positives, 's-',
                 label=clf_names[i], color=color)
 
+    # Plot the baseline
+    ax.plot([0, 1], [0, 1], "k:", label="Perfectly calibrated")
+    
+    # Set title, labels, and formatting
     ax.set_title(title, fontsize=title_fontsize)
-
     ax.set_xlabel('Mean predicted value', fontsize=text_fontsize)
     ax.set_ylabel('Fraction of positives', fontsize=text_fontsize)
 
     ax.set_ylim([-0.05, 1.05])
+    
+    # Display legend
     ax.legend(loc='lower right')
 
+    plt.tight_layout()
     return ax
+
+
+def plot_classifier_eval(
+    y_true,
+    y_pred,
+    title=None,
+    ax=None,
+    figsize=None,
+    title_fontsize="large",                          
+    text_fontsize="medium",
+    cmap='viridis', 
+    x_tick_rotation=0, 
+    labels=None,
+    normalize=None,
+    digits=3,
+):
+    figsize = (8, 3) if figsize is None else figsize
+    title = '' if title is None else title
+    if ax is None:
+        # Create a figure with two subplots, adjusting the width ratios
+        fig, ax = plt.subplots(
+            1, 2, 
+            figsize=figsize, 
+            gridspec_kw={'width_ratios': [5, 5]}
+        )
+    
+    y_true = np.asarray(y_true)
+    y_pred = np.asarray(y_pred)
+    
+    classes = unique_labels(y_true, y_pred)    
+    if labels is None:
+        labels = classes
+    else:
+        labels = np.asarray(labels)
+        validate_labels(classes, labels, "labels")
+        
+    
+    # Generate the classification report
+    report = classification_report(
+        y_true, 
+        y_pred, 
+        labels=labels,
+        digits=digits,
+        zero_division=np.NaN,
+    )
+    # Generate the confusion matrix
+    cm = confusion_matrix(
+        y_true, 
+        y_pred,
+        labels=labels,
+        normalize = normalize,
+    )
+    cm = np.around(cm, decimals=2)
+    
+    # Plot the classification report on the first subplot
+    ax[0].axis('off')
+    ax[0].set_title(f'{title.capitalize()} Classification Report\n', fontsize=11)
+    ax[0].text(
+        0, 0.5, '\n'*3 + report, 
+        ha='left', va='center', 
+        fontfamily='monospace',
+        fontsize=8,
+    )
+    
+    # Choose a colormap
+    cmap_ = plt.get_cmap(cmap)
+    
+    # Plot the confusion matrix on the second subplot
+    cax = ax[1].matshow(
+        cm, 
+        cmap=cmap_, 
+        aspect='auto'
+    )
+    
+    # Remove the edge of the matshow
+    ax[1].spines['top'].set_visible(False)
+    ax[1].spines['bottom'].set_visible(False)
+    ax[1].spines['left'].set_visible(False)
+    ax[1].spines['right'].set_visible(False)
+    
+    # Also remove the colorbar edge
+    cbar = fig.colorbar(mappable=cax, ax=ax[1])
+    cbar.outline.set_edgecolor('none')
+    
+    # Annotate the matrix with dynamic text color
+    threshold = cm.max() / 2.0
+    for (i, j), val in np.ndenumerate(cm):
+        # val == cm[i, j]
+        cmap_method = (
+            cmap_.get_over 
+            if val > threshold else 
+            cmap_.get_under
+        )
+        # Get the color at the top end of the colormap
+        rgba = cmap_method()  # Get the RGB values
+        
+        # Calculate the luminance of this color
+        luminance = 0.2126 * rgba[0] + 0.7152 * rgba[1] + 0.0722 * rgba[2]
+        
+        # If luminance is low (dark color), use white text; otherwise, use black text
+        text_color = {True:'w', False:'k'}[(luminance < 0.5)]
+        ax[1].text(
+            j, i, f'{val}', 
+            ha='center', va='center', 
+            fontsize=text_fontsize, 
+            color=text_color,
+        )
+    
+    # Set title and axis labels
+    ax[1].set_title(
+        f'{title.capitalize()} Confusion Matrix\n', 
+        fontsize=title_fontsize
+    )
+    ax[1].set_xlabel(
+        'Predicted Labels', 
+        fontsize=text_fontsize
+    )
+    ax[1].set_ylabel(
+        'True Labels', 
+        fontsize=text_fontsize
+    )    
+    # Set class labels for x and y axis
+    ax[1].set_xticks(np.arange(len(labels)))
+    ax[1].set_yticks(np.arange(len(labels)))
+    ax[1].set_xticklabels(
+        labels,
+        fontsize=text_fontsize,
+    )
+    ax[1].set_yticklabels(
+        labels, 
+        fontsize=text_fontsize,
+        rotation=x_tick_rotation
+    )
+    
+    # Move x-axis labels to the bottom and y-axis labels to the right
+    ax[1].xaxis.set_label_position('bottom')
+    ax[1].xaxis.tick_bottom()
+    ax[1].yaxis.set_label_position('left')
+    ax[1].yaxis.tick_left()
+    
+    # Adjust layout with additional space
+    plt.tight_layout()    
+    # Show the plot
+    # plt.show()
+    return fig
 
 
 def plot_confusion_matrix(
@@ -286,12 +440,12 @@ def plot_confusion_matrix(
            :align: center
            :alt: Confusion matrix
     """
-    y_true = np.asarray(y_true)
-    y_pred = np.asarray(y_pred)
-
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
 
+    y_true = np.asarray(y_true)
+    y_pred = np.asarray(y_pred)
+    
     cm = confusion_matrix(y_true, y_pred, labels=labels)
     if labels is None:
         classes = unique_labels(y_true, y_pred)
@@ -323,25 +477,11 @@ def plot_confusion_matrix(
         pred_classes = classes[pred_label_indexes]
         cm = cm[:, pred_label_indexes]
 
-    if title:
-        ax.set_title(title, fontsize=title_fontsize)
-    elif normalize:
-        ax.set_title('Normalized Confusion Matrix', fontsize=title_fontsize)
-    else:
-        ax.set_title('Confusion Matrix', fontsize=title_fontsize)
 
     image = ax.imshow(cm, interpolation='nearest', cmap=plt.get_cmap(cmap))
 
     if show_colorbar == True:
         plt.colorbar(mappable=image)
-        
-    x_tick_marks = np.arange(len(pred_classes))
-    y_tick_marks = np.arange(len(true_classes))
-    ax.set_xticks(x_tick_marks)
-    ax.set_xticklabels(pred_classes, fontsize=text_fontsize,
-                       rotation=x_tick_rotation)
-    ax.set_yticks(y_tick_marks)
-    ax.set_yticklabels(true_classes, fontsize=text_fontsize)
 
     thresh = cm.max() / 2.
 
@@ -354,10 +494,26 @@ def plot_confusion_matrix(
                         fontsize=text_fontsize,
                         color="white" if cm[i, j] > thresh else "black")
 
-    ax.set_ylabel('True label', fontsize=text_fontsize)
+    # Set title, labels, and formatting
+    if title:
+        ax.set_title(title, fontsize=title_fontsize)
+    elif normalize:
+        ax.set_title('Normalized Confusion Matrix', fontsize=title_fontsize)
+    else:
+        ax.set_title('Confusion Matrix', fontsize=title_fontsize)
     ax.set_xlabel('Predicted label', fontsize=text_fontsize)
+    ax.set_ylabel('True label', fontsize=text_fontsize)
+        
+    x_tick_marks = np.arange(len(pred_classes))
+    y_tick_marks = np.arange(len(true_classes))
+    ax.set_xticks(x_tick_marks)
+    ax.set_xticklabels(pred_classes, fontsize=text_fontsize,
+                       rotation=x_tick_rotation)
+    ax.set_yticks(y_tick_marks)
+    ax.set_yticklabels(true_classes, fontsize=text_fontsize)
+    
     ax.grid(False)
-
+    plt.tight_layout()
     return ax
 
 
@@ -671,7 +827,7 @@ def plot_roc(
         else:
             raise ValueError("Unsupported `multi_class` strategy.")
 
-    # Initialize dictionaries to store cumulative percentages and gains
+    # Initialize dictionaries to store
     fpr_dict, tpr_dict = {}, {}
 
     # Get unique classes and filter those to be plotted
@@ -781,6 +937,7 @@ def plot_roc(
             alignment='left'
         )
 
+    plt.tight_layout()
     return ax
 
 
@@ -1080,7 +1237,7 @@ def plot_precision_recall(
         else:
             raise ValueError("Unsupported `multi_class` strategy.")
 
-    # Initialize dictionaries to store cumulative percentages and gains
+    # Initialize dictionaries to store
     precision_dict, recall_dict = {}, {}
 
     # Get unique classes and filter those to be plotted
@@ -1200,6 +1357,7 @@ def plot_precision_recall(
             alignment='left'
         )
 
+    plt.tight_layout()
     return ax
 
 
@@ -1269,6 +1427,9 @@ def plot_silhouette(
            :align: center
            :alt: Silhouette Plot
     """
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, figsize=figsize)
+        
     cluster_labels = np.asarray(cluster_labels)
 
     le = LabelEncoder()
@@ -1280,20 +1441,8 @@ def plot_silhouette(
 
     sample_silhouette_values = silhouette_samples(X, cluster_labels,
                                                   metric=metric)
-
-    if ax is None:
-        fig, ax = plt.subplots(1, 1, figsize=figsize)
-
-    ax.set_title(title, fontsize=title_fontsize)
-    ax.set_xlim([-0.1, 1])
-
-    ax.set_ylim([0, len(X) + (n_clusters + 1) * 10 + 10])
-
-    ax.set_xlabel('Silhouette coefficient values', fontsize=text_fontsize)
-    ax.set_ylabel('Cluster label', fontsize=text_fontsize)
-
+    
     y_lower = 10
-
     for i in range(n_clusters):
         ith_cluster_silhouette_values = sample_silhouette_values[
             cluster_labels_encoded == i]
@@ -1319,10 +1468,20 @@ def plot_silhouette(
         label='Silhouette score: {0:.{digits}f}'.format(silhouette_avg, digits=2)
     )
 
-    ax.set_yticks([])  # Clear the y-axis labels / ticks
-    ax.set_xticks(np.arange(-0.1, 1.0, 0.2))
-
+    # Set title, labels, and formatting
+    ax.set_title(title, fontsize=title_fontsize)
+    ax.set_xlabel('Silhouette coefficient values', fontsize=text_fontsize)
+    ax.set_ylabel('Cluster label', fontsize=text_fontsize)
     ax.tick_params(labelsize=text_fontsize)
+    
+    ax.set_xticks(np.arange(-0.1, 1.0, 0.2))
+    ax.set_yticks([])  # Clear the y-axis labels / ticks
+
+    ax.set_xlim([-0.1, 1])
+    ax.set_ylim([0, len(X) + (n_clusters + 1) * 10 + 10])
+    
+    # Display legend
     ax.legend(loc='best', fontsize=text_fontsize)
 
+    plt.tight_layout()
     return ax

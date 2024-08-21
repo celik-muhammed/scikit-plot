@@ -1,13 +1,20 @@
-
 """
+This package/module is designed to be compatible with both Python 2 and Python 3.
+The imports below ensure consistent behavior across different Python versions by
+enforcing Python 3-like behavior in Python 2.
+
 Helper functions and generic utilities for use in scikitplot code.
 """
-
+# code that needs to be compatible with both Python 2 and Python 3
 from __future__ import (
-    absolute_import, division, print_function, unicode_literals
+    absolute_import,  # Ensures that all imports are absolute by default, avoiding ambiguity.
+    division,         # Changes the division operator `/` to always perform true division.
+    print_function,   # Treats `print` as a function, consistent with Python 3 syntax.
+    unicode_literals  # Makes all string literals Unicode by default, similar to Python 3.
 )
-
 import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 from sklearn.preprocessing import LabelEncoder
 
@@ -15,10 +22,90 @@ from sklearn.preprocessing import LabelEncoder
 ## Define __all__ to specify the public interface of the module,
 ## not required default all belove func
 __all__ = [
+    'combine_and_save_figures',
     'validate_labels',
     'cumulative_gain_curve',
     'binary_ks_curve',
 ]
+
+
+def combine_and_save_figures(figures, save_path='combined_figures.png', figsize=None, dpi=100, to_save=True):
+    """
+    Combine multiple figures into a single image, save it (if specified), and return the combined figure.
+
+    Parameters
+    ----------
+    figures : tuple of matplotlib.figure.Figure
+        Tuple containing the figures to be combined.
+        
+    save_path : str, optional
+        Path where the combined figure image will be saved. 
+        Default is 'combined_figure.png'.
+        
+    figsize : tuple of two int or float, optional
+        Size of the combined figure (width, height) in inches. If None, defaults to 
+        (12, 3.15 * num_figures), where num_figures is the number of figures to combine.
+        Default is None.
+        
+    dpi : int, optional
+        Dots per inch (DPI) for the saved figure. Higher DPI results in better resolution.
+        Default is 100.
+        
+    to_save : bool, optional
+        Whether to save the combined figure to a file. If False, the figure is not saved.
+        Default is True.
+
+    Returns
+    -------
+    combined_fig : matplotlib.figure.Figure
+        The combined figure containing all the individual figures.
+
+    Examples
+    --------
+    >>> import matplotlib.pyplot as plt
+    >>> fig1, ax1 = plt.subplots()
+    >>> ax1.plot([1, 2, 3], [4, 5, 6])
+    >>> ax1.set_title('Figure 1')
+
+    >>> fig2, ax2 = plt.subplots()
+    >>> ax2.bar(['A', 'B', 'C'], [3, 7, 2])
+    >>> ax2.set_title('Figure 2')
+
+    >>> # Save the combined figure with default figsize
+    >>> combined_fig = combine_and_save_figures((fig1, fig2), 'output.png', dpi=150, to_save=True)
+
+    >>> # Combine figures without saving to a file and with custom figsize
+    >>> combined_fig = combine_and_save_figures((fig1, fig2), dpi=150, to_save=False, figsize=(14, 7))
+    """
+    num_figures = len(figures)
+    if figsize is None:
+        figsize = (12, 3.15 * num_figures)
+        
+    combined_fig, ax = plt.subplots(num_figures, 1, figsize=figsize, dpi=dpi)
+    
+    # If only one figure, ax will not be a list, so we make it a list
+    if num_figures == 1:
+        ax = [ax]
+
+    for i, fig_item in enumerate(figures):
+        canvas = mpl.backends.backend_agg.FigureCanvasAgg(fig_item)
+        canvas.draw()
+        image = canvas.buffer_rgba()
+        ax[i].imshow(image)
+        ax[i].axis('off')
+
+    # Adjust the layout so there’s no overlap
+    combined_fig.tight_layout()
+
+    # Save the combined figure as an image file if to_save is True
+    if to_save:
+        combined_fig.savefig(save_path, bbox_inches='tight', pad_inches=0.1, dpi=dpi)
+
+    # Optional: Close the input figures to free up memory
+    for fig_item in figures:
+        plt.close(fig_item)
+
+    return combined_fig
 
 
 def validate_labels(
@@ -212,11 +299,11 @@ def cumulative_gain_curve(
     y_true = (y_true == pos_label)
 
     # Ensure y_score is continuous and not binary
-    # if np.unique(y_score).size == 2:
-    #     raise ValueError(
-    #         "`y_score` should contain continuous values, "
-    #         "not binary (0/1) scores. Provide non-thresholded scores."
-    #     )
+    if np.unique(y_score).size == 2:
+        raise ValueError(
+            "`y_score` should contain continuous values, "
+            "not binary (0/1) scores. Provide non-thresholded scores."
+        )
 
     # Sort instances by their scores in descending order
     sorted_indices = np.argsort(y_score)[::-1]
@@ -231,7 +318,10 @@ def cumulative_gain_curve(
     # Normalize gains by the total number of positive instances
     total_positives = float(np.sum(y_true))
     if total_positives == 0:
-        raise ValueError("The positive class does not appear in `y_true`, resulting in a gain of zero.")
+        raise ValueError(
+            "The positive class does not appear in `y_true`, "
+            "resulting in a gain of zero."
+        )
     gains = gains / float(total_positives)
 
     # Normalize percentages by the total number of instances
