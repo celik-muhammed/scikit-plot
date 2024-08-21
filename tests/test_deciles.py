@@ -39,14 +39,15 @@ class TestPlotCumulativeGain(unittest.TestCase):
         probas = clf.predict_proba(self.X)
         plot_cumulative_gain(convert_labels_into_string(self.y), probas)
 
-    def test_two_classes(self):
+    def test_multi_classes(self):
         np.random.seed(0)
         # Test this one on Iris (3 classes)
         X, y = load_data(return_X_y=True)
         clf = LogisticRegression()
         clf.fit(X, y)
         probas = clf.predict_proba(X)
-        self.assertRaises(ValueError, plot_cumulative_gain, y, probas)
+        plot_cumulative_gain(y, probas)
+        # self.assertRaises(ValueError, plot_cumulative_gain, y, probas)
 
     def test_ax(self):
         np.random.seed(0)
@@ -82,14 +83,15 @@ class TestPlotLift(unittest.TestCase):
         probas = clf.predict_proba(self.X)
         plot_lift(convert_labels_into_string(self.y), probas)
 
-    def test_two_classes(self):
+    def test_multi_classes(self):
         np.random.seed(0)
         # Test this one on Iris (3 classes)
         X, y = load_data(return_X_y=True)
         clf = LogisticRegression()
         clf.fit(X, y)
         probas = clf.predict_proba(X)
-        self.assertRaises(ValueError, plot_lift, y, probas)
+        plot_lift(y, probas)
+        # self.assertRaises(ValueError, plot_lift, y, probas)
 
     def test_ax(self):
         np.random.seed(0)

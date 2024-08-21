@@ -299,7 +299,12 @@ def cumulative_gain_curve(
     y_true = (y_true == pos_label)
 
     # Ensure y_score is continuous and not binary
-    if np.unique(y_score).size == 2:
+    if (np.array_equal(np.unique(y_score), [0, 1]) or
+        np.array_equal(np.unique(y_score), [-1, 1]) or
+        np.array_equal(np.unique(y_score), [0]) or
+        np.array_equal(np.unique(y_score), [-1]) or
+        np.array_equal(np.unique(y_score), [1])
+       ):
         raise ValueError(
             "`y_score` should contain continuous values, "
             "not binary (0/1) scores. Provide non-thresholded scores."
