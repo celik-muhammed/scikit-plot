@@ -1,6 +1,16 @@
-# Scikit-plots
+# Welcome to 101 Scikit-plots
 
-![roc_curves](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/master/docs/_static/readme_collage.jpg)
+### Single line functions for detailed visualizations
+### The quickest and easiest way to go from analysis...
+
+| Sample Plots | Sample Plots |
+|:------------:|:------------:|
+| ![Image 1](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/muhammed-dev/examples/plot_classifier_eval.png) | ![Image 2](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/muhammed-dev/examples/plot_confusion_matrix.png) |
+| ![Image 3](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/muhammed-dev/examples/plot_calibration_curve.png) | ![Image 4](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/muhammed-dev/examples/plot_learning_curve.png) |
+| ![Image 5](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/muhammed-dev/examples/plot_feature_importances.png) | ![Image 6](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/muhammed-dev/examples/plot_silhouette.png) |
+| ![Image 7](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/muhammed-dev/examples/plot_precision_recall.png) | ![Image 8](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/muhammed-dev/examples/plot_roc.png) |
+| ![Image 9](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/muhammed-dev/examples/plot_pca_component_variance.png) | ![Image 10](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/muhammed-dev/examples/plot_pca_2d_projection.png) |
+| ![Image 11](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/muhammed-dev/examples/plot_lift.png) | ![Image 12](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/muhammed-dev/examples/plot_cumulative_gain.png) |
 
 Scikit-plot is the result of an unartistic data scientist's dreadful realization that *visualization is one of the most crucial components in the data science process, not just a mere afterthought*.
 
@@ -16,23 +26,38 @@ Let's use scikit-plot with the sample digits dataset from scikit-learn.
 
 ```python
 # The usual train-test split mumbo-jumbo
-from sklearn.datasets import load_digits
+from sklearn.datasets import (
+    make_classification,
+    load_breast_cancer as data_2_classes,
+    load_iris as data_3_classes,
+    load_digits as data_10_classes,
+)
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import LinearSVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_predict
+import numpy as np; np.random.seed(0)
+# importing pylab or pyplot
+import matplotlib.pyplot as plt
 
-X, y = load_digits(return_X_y=True)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
-nb = GaussianNB()
-nb.fit(X_train, y_train)
-predicted_probas = nb.predict_proba(X_test)
+# Load the data
+X, y = data_10_classes(return_X_y=True, as_frame=False)
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.5, random_state=0)
+
+# Create an instance of the LogisticRegression
+model = LogisticRegression(max_iter=int(1e5), random_state=0).fit(X_train, y_train)
+
+# Perform predictions
+y_val_prob = model.predict_proba(X_val)
 
 # The magic happens here
 import matplotlib.pyplot as plt
 import scikitplot as skplt
-skplt.metrics.plot_roc(y_test, predicted_probas)
-plt.show()
+skplt.metrics.plot_roc(y_test, predicted_probas);
 ```
-![roc_curves](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/master/examples/roc_curves.png)
+![roc_curves](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/muhammed-dev/examples/plot_roc.png)
 
 Pretty.
 
@@ -56,8 +81,7 @@ keras_clf.fit(X_train, y_train, batch_size=64, nb_epoch=10, verbose=2)
 probas = keras_clf.predict_proba(X_test, batch_size=64)
 
 # Now plot.
-skplt.metrics.plot_precision_recall_curve(y_test, probas)
-plt.show()
+skplt.metrics.plot_precision_recall_curve(y_test, probas);
 ```
 ![p_r_curves](https://raw.githubusercontent.com/celik-muhammed/scikit-plot/master/examples/p_r_curves.png)
 
@@ -70,21 +94,15 @@ The possibilities are endless.
 > Migrating as `skplt.deciles` module: https://github.com/tensorbored/kds
 
 ```python
-# REPRODUCABLE EXAMPLE
-# Load Dataset and train-test split
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
-from sklearn import tree
-
-X, y = load_iris(return_X_y=True)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33,random_state=3)
-clf = tree.DecisionTreeClassifier(max_depth=1,random_state=3)
-clf = clf.fit(X_train, y_train)
-y_prob = clf.predict_proba(X_test)
-
-# The magic happens here
+# Import what's needed for the Functions API
+import matplotlib.pyplot as plt
 import scikitplot as skplt
-skplt.deciles.report(y_test, y_prob[:,1], plot_style='ggplot')
+
+clf = LogisticRegression(random_state=0).fit(X_train, y_train)
+y_prob = clf.predict_proba(X_val)
+
+# Now plot.
+skplt.deciles.report(y_val, y_prob[:,1], plot_style='ggplot')
 ```
 Choose among multiple ``plot_style`` list using ``plt.style.available``, to generate quick and beautiful plots.
 
@@ -125,9 +143,9 @@ Reporting a bug? Suggesting a feature? Want to add your own plot to the library?
 
 ## Citing Scikit-plots
 
-Are you using Scikit-plot in an academic paper? You should be! Reviewers love eye candy.
+Are you using Scikit-plots in an academic paper? You should be! Reviewers love eye candy.
 
-If so, please consider citing Scikit-plot with DOI [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.293191.svg)](https://doi.org/10.5281/zenodo.293191)
+If so, please consider citing Scikit-plots with DOI [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.293191.svg)](https://doi.org/10.5281/zenodo.293191)
 
 #### APA
 
