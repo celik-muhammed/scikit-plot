@@ -29,11 +29,10 @@ X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.5, random_st
 model = RandomForestClassifier(random_state=0).fit(X_train, y_train)
 
 # Plot!
-ax = skplt.estimators.plot_feature_importances(
+ax, features = skplt.estimators.plot_feature_importances(
     model, 
     feature_names=['petal length', 'petal width', 'sepal length', 'sepal width'],
 );
-
 # Adjust layout to make sure everything fits
 plt.tight_layout()
 # Save the plot to a file
