@@ -32,8 +32,9 @@ model = LogisticRegression(max_iter=int(1e5), random_state=0).fit(X_train, y_tra
 y_val_prob = model.predict_proba(X_val)
 
 # Plot!
-ax = skplt.metrics.plot_roc(y_val, y_val_prob);
-
+ax = skplt.metrics.plot_roc(
+    y_val, y_val_prob
+);
 # Adjust layout to make sure everything fits
 plt.tight_layout()
 # Save the plot to a file

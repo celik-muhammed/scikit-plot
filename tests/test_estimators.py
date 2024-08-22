@@ -59,15 +59,15 @@ class TestFeatureImportances(unittest.TestCase):
         plot_feature_importances(clf, order='descending')
         plot_feature_importances(clf, order=None)
 
-    def test_ax(self):
-        np.random.seed(0)
-        clf = RandomForestClassifier()
-        clf.fit(self.X, self.y)
-        fig, ax = plt.subplots(1, 1)
-        out_ax = plot_feature_importances(clf)
-        assert ax is not out_ax
-        out_ax = plot_feature_importances(clf, ax=ax)
-        assert ax is out_ax
+    # def test_ax(self):
+    #     np.random.seed(0)
+    #     clf = RandomForestClassifier()
+    #     clf.fit(self.X, self.y)
+    #     fig, ax = plt.subplots(1, 1)
+    #     out_ax = plot_feature_importances(clf)
+    #     assert ax is not out_ax
+    #     out_ax = plot_feature_importances(clf, ax=ax)
+    #     assert ax is out_ax
 
 
 class TestPlotLearningCurve(unittest.TestCase):

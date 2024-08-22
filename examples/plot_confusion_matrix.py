@@ -32,8 +32,10 @@ model = LogisticRegression(max_iter=int(1e5), random_state=0).fit(X_train, y_tra
 y_val_pred = model.predict(X_val)
 
 # Plot!
-ax = skplt.metrics.plot_confusion_matrix(y_val, y_val_pred, normalize=False);
-
+ax = skplt.metrics.plot_confusion_matrix(
+    y_val, y_val_pred, 
+    normalize=False
+);
 # Adjust layout to make sure everything fits
 plt.tight_layout()
 # Save the plot to a file

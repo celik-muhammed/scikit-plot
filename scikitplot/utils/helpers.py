@@ -26,6 +26,8 @@ __all__ = [
     'validate_labels',
     'cumulative_gain_curve',
     'binary_ks_curve',
+    'sigmoid',
+    'softmax',
 ]
 
 
@@ -527,3 +529,51 @@ def binary_ks_curve(
         thresholds[np.argmax(differences)]
     )
     return thresholds, pct1, pct2, ks_statistic, max_distance_at, lb.classes_
+
+
+def sigmoid(x):
+    """
+    Compute the sigmoid function for the input array x.
+
+    The sigmoid function is defined as:
+    
+        sigmoid(x) = 1 / (1 + exp(-x))
+
+    Parameters
+    ----------
+    x : array-like
+        Input array for which to compute the sigmoid.
+
+    Returns
+    -------
+    array-like
+        The sigmoid of each element in x, with the same shape as x.
+    """
+    return 1 / (1 + np.exp(-x))
+
+
+def softmax(x):
+    """
+    Compute the softmax function for each row of the input array x.
+
+    The softmax function is defined as:
+
+        softmax(x) = exp(x) / sum(exp(x))
+
+    This implementation is numerically stable by subtracting the max value in x before
+    exponentiation to prevent overflow.
+
+    Parameters
+    ----------
+    x : array-like
+        Input array of shape (n_samples, n_features) for which to compute the softmax.
+        Each row represents a different sample, and each column represents a different
+        feature or class score.
+
+    Returns
+    -------
+    array-like
+        The softmax of each row in x, with the same shape as x.
+    """
+    e_x = np.exp(x - np.max(x, axis=-1, keepdims=True))
+    return e_x / np.sum(e_x, axis=-1, keepdims=True)

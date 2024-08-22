@@ -26,8 +26,11 @@ X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.5, random_st
 model = KMeans(n_clusters=4, random_state=1)
 
 # Plot!
-ax = skplt.cluster.plot_elbow_curve(model, X_train, cluster_ranges=range(1, 11));
-
+ax = skplt.cluster.plot_elbow(
+    model, 
+    X_train, 
+    cluster_ranges=range(1, 11)
+);
 # Adjust layout to make sure everything fits
 plt.tight_layout()
 # Save the plot to a file

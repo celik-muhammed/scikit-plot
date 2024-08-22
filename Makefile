@@ -48,7 +48,7 @@ examples:
 
 ## test target: Runs pytest on the tests/ directory.
 ## Run this target to execute unit tests.
-test:
+test: clean
 	pytest tests/
 	echo "pytest completed."
 

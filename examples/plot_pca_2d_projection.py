@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 import scikitplot as skplt
 
 # Load the data
-X, y = data_10_classes(return_X_y=True, as_frame=False)
+X, y = data_3_classes(return_X_y=True, as_frame=True)
 X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.5, random_state=0)
 
 # Create an instance of the PCA
@@ -36,8 +36,9 @@ pca = PCA(random_state=0).fit(X_train)
 # y_val_prob = model.predict_proba(X_val)
 
 # Plot!
-ax = skplt.decomposition.plot_pca_2d_projection(pca, X_train, y_train);
-
+ax = skplt.decomposition.plot_pca_2d_projection(
+    pca, X_train, y_train, biplot=True, feature_labels=X.columns.tolist()
+);
 # Adjust layout to make sure everything fits
 plt.tight_layout()
 # Save the plot to a file

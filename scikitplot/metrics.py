@@ -21,7 +21,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 from sklearn.preprocessing import (
-    label_binarize, LabelEncoder
+    label_binarize, LabelEncoder,
+    MinMaxScaler,
 )
 from sklearn.metrics import (
     classification_report, confusion_matrix,
@@ -38,6 +39,8 @@ from .utils.helpers import (
     validate_labels,
     cumulative_gain_curve,
     binary_ks_curve,
+    sigmoid,
+    softmax,
 )
 
 
@@ -53,161 +56,290 @@ __all__ = [
 
 
 def plot_calibration_curve(
-    y_true, probas_list, clf_names=None, n_bins=10,
-    title='Calibration plots (Reliability Curves)',
-    ax=None, figsize=None, cmap='nipy_spectral',
-    title_fontsize="large", text_fontsize="medium",
-    pos_label=None, strategy="uniform",
+    y_true, 
+    y_prob_list, 
+    y_is_decision, 
+    title='Calibration Curves (Reliability Diagrams)',
+    ax=None, 
+    figsize=None, 
+    title_fontsize="large", 
+    text_fontsize="medium",
+    cmap=None,
+    n_bins=10,
+    clf_names=None, 
+    multi_class=None,
+    class_index=1, 
+    class_names=None,
+    classes_to_plot=[1],
+    strategy="uniform",
 ):
-    """Plots calibration curves for a set of classifier probability estimates.
-
-    Plotting the calibration curves of a classifier is useful for determining
-    whether or not you can interpret their predicted probabilities directly as
-    as confidence level. For instance, a well-calibrated binary classifier
-    should classify the samples such that for samples to which it gave a score
-    of 0.8, around 80% should actually be from the positive class.
-
-    This function currently only works for binary classification.
-
-    Args:
-        y_true (array-like, shape (n_samples)):
-            Ground truth (correct) target values.
-
-        probas_list (list of array-like, shape (n_samples, 2) or (n_samples,)):
-            A list containing the outputs of binary classifiers'
-            :func:`predict_proba` method or :func:`decision_function` method.
-
-        clf_names (list of str, optional): A list of strings, where each string
-            refers to the name of the classifier that produced the
-            corresponding probability estimates in `probas_list`. If ``None``,
-            the names "Classifier 1", "Classifier 2", etc. will be used.
-
-        n_bins (int, optional): Number of bins. A bigger number requires more
-            data.
-
-        title (string, optional): Title of the generated plot. Defaults to
-            "Calibration plots (Reliability Curves)".
-
-        ax (:class:`matplotlib.axes.Axes`, optional): The axes upon which to
-            plot the curve. If None, the plot is drawn on a new set of axes.
-
-        figsize (2-tuple, optional): Tuple denoting figure size of the plot
-            e.g. (6, 6). Defaults to ``None``.
-
-        cmap (string or :class:`matplotlib.colors.Colormap` instance, optional):
-            Colormap used for plotting the projection. View Matplotlib Colormap
-            documentation for available options.
-            https://matplotlib.org/users/colormaps.html
-
-        title_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "large".
-
-        text_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "medium".
-
-        pos_label (int, float, bool, str, optional): The positive label for binary
-            classification. If `None`, the positive label is inferred from `y_true`.
-            If `y_true` contains string labels or labels other than {0, 1} or {-1, 1},
-            you must specify this parameter explicitly.
-
-        strategy (str, optional): Strategy used to define the widths of the bins.
-            uniform
-                The bins have identical widths.
-            quantile
-                The bins have the same number of samples and depend on `y_prob`.
-
-    Returns:
-        :class:`matplotlib.axes.Axes`: The axes on which the plot was drawn.
-
-    Example:
-        >>> import scikitplot as skplt
-        >>> from sklearn.ensemble import RandomForestClassifier
-        >>> from sklearn.linear_model import LogisticRegression
-        >>> from sklearn.naive_bayes import GaussianNB
-        >>> from sklearn.svm import LinearSVC
-        >>> from sklearn.metrics import calibration_curve
-        >>> rf = RandomForestClassifier()
-        >>> lr = LogisticRegression()
-        >>> nb = GaussianNB()
-        >>> svm = LinearSVC()
-        >>> rf_probas = rf.fit(X_train, y_train).predict_proba(X_test)
-        >>> lr_probas = lr.fit(X_train, y_train).predict_proba(X_test)
-        >>> nb_probas = nb.fit(X_train, y_train).predict_proba(X_test)
-        >>> svm_scores = svm.fit(X_train, y_train).decision_function(X_test)
-        >>> probas_list = [rf_probas, lr_probas, nb_probas, svm_scores]
-        >>> clf_names = ['Random Forest', 'Logistic Regression',
-        ...              'Gaussian Naive Bayes', 'Support Vector Machine']
-        >>> skplt.metrics.plot_calibration_curve(y_test,
-        ...                                      probas_list,
-        ...                                      clf_names,
-        ...                                      pos_label='1')
-        <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-        >>> plt.show()
-
-        .. image:: _static/examples/plot_calibration_curve.png
-           :align: center
-           :alt: Calibration Curves
     """
+    Plot calibration curves for a set of classifier probability estimates.
+
+    This function plots calibration curves, also known as reliability curves,
+    which are useful to assess the calibration of probabilistic models.
+    For a well-calibrated model, the predicted probability should match the
+    observed frequency of the positive class.
+
+    Parameters
+    ----------
+    y_true : array-like of shape (n_samples,)
+        Ground truth (correct) target values.
+
+    y_prob_list : list of array-like, shape (n_samples, 2) or (n_samples,)
+        A list containing the outputs of classifiers' `predict_proba` method
+        or `decision_function` method.
+        
+    y_is_decision : list of bool
+        A list containing the which probability method of classifiers used
+        `predict_proba` method as False or `decision_function` method as True.
+
+    title : str, optional, default='Calibration plots (Reliability Curves)'
+        Title of the generated plot.
+
+    ax : matplotlib.axes.Axes, optional
+        The axes upon which to plot the curve. If None, a new figure and axes
+        will be created.
+
+    figsize : tuple, optional
+        Tuple denoting the figure size of the plot, e.g., (6, 6). Defaults to `None`.
+
+    title_fontsize : str or int, optional, default='large'
+        Font size of the plot title. Accepts Matplotlib-style sizes like "small",
+        "medium", "large", or an integer.
+
+    text_fontsize : str or int, optional, default='medium'
+        Font size of the plot text (axis labels). Accepts Matplotlib-style sizes
+        like "small", "medium", "large", or an integer.
+
+    cmap : str or matplotlib.colors.Colormap, optional, default=None
+        Colormap used for plotting. If None, the default 'viridis' colormap is used.
+        See Matplotlib colormap documentation for options.
+
+    n_bins : int, optional, default=10
+        Number of bins to use in the calibration curve. A higher number requires
+        more data to produce reliable results.
+
+    clf_names : list of str or None, optional, default=None
+        A list of classifier names corresponding to the probability estimates in
+        `probas_list`. If None, the names will be generated automatically as
+        "Classifier 1", "Classifier 2", etc.
+
+    multi_class : {'ovr', 'multinomial', None}, optional, default=None
+        Strategy for handling multiclass classification:
+        - 'ovr': One-vs-Rest, plotting binary problems for each class.
+        - 'multinomial' or None: Multinomial plot 
+          for the entire probability distribution.
+        - Not Implemented.
+
+    class_index : int, optional, default=1
+        Index of the class of interest for multi-class classification. Ignored for
+        binary classification. Related to multi_classparams, Not Implemented.
+
+    class_names : list of str or None, optional, default=None
+        List of class names for the legend. The order should match the classes in
+        `probas_list`. If None, class indices will be used.
+
+    classes_to_plot : list-like, optional, default=[1]
+        Specific classes to plot. If a given class does not exist, it will be ignored.
+        If None, all classes are plotted.
+
+    strategy : str, optional, default='uniform'
+        Strategy used to define the widths of the bins:
+        - 'uniform': Bins have identical widths.
+        - 'quantile': Bins have the same number of samples and depend on `y_probas`.
+
+    Returns
+    -------
+    ax : matplotlib.axes.Axes
+        The axes on which the plot was drawn.
+
+    Examples
+    --------
+    >>> from sklearn.ensemble import RandomForestClassifier
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> from sklearn.naive_bayes import GaussianNB
+    >>> from sklearn.svm import LinearSVC
+    >>> import scikitplot as skplt
+    >>> rf = RandomForestClassifier()
+    >>> lr = LogisticRegression()
+    >>> nb = GaussianNB()
+    >>> svm = LinearSVC()
+    >>> rf_probas = rf.fit(X_train, y_train).predict_proba(X_test)
+    >>> lr_probas = lr.fit(X_train, y_train).predict_proba(X_test)
+    >>> nb_probas = nb.fit(X_train, y_train).predict_proba(X_test)
+    >>> svm_scores = svm.fit(X_train, y_train).decision_function(X_test)
+    >>> probas_list = [rf_probas, lr_probas, nb_probas, svm_scores]
+    >>> clf_names = ['Random Forest', 'Logistic Regression',
+    ...              'Gaussian Naive Bayes', 'Support Vector Machine']
+    >>> skplt.metrics.plot_calibration_curve(y_test,
+    ...                                      probas_list,
+    ...                                      y_is_decision,)
+    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
+    >>> plt.show()
+
+    Notes
+    -----
+    - The calibration curve is plotted for the class specified by `classes_to_plot`.
+    - This function currently only works for binary and multi-class classification.
+
+    """
+    title_pad = None
+    # Create a new figure and axes if none are provided
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
-        
+
+    # Check if the length of clf_list matches y_prob_list
+    if len(y_is_decision) != len(y_prob_list):
+        raise ValueError(
+            f'Length of `y_is_decision` ({len(y_is_decision)}) does not match '
+            f'length of `y_prob_list` ({len(y_prob_list)}).'
+        )
+
+    # Handle the case where clf_names are not provided
+    if clf_names is None:
+        clf_names = [
+            f'Classifier {i+1}' for i, model in enumerate(y_prob_list)
+        ]
+    
+    # Check if the length of clf_list matches y_prob_list
+    if len(clf_names) != len(y_prob_list):
+        raise ValueError(
+            f'Length of `clf_names` ({len(clf_names)}) does not match '
+            f'length of `y_prob_list` ({len(y_prob_list)}).'
+        )
+
+    # Ensure y_prob_list is a list of arrays
+    if isinstance(y_prob_list, list):
+        y_prob_list = list(map(np.asarray, y_prob_list))
+    else:
+        raise ValueError(
+            '`y_prob_list` must be a list of arrays.'
+        )
+
     y_true = np.asarray(y_true)
     
-    if not isinstance(probas_list, list):
-        raise ValueError('`probas_list` does not contain a list.')
+    for j, y_probas in enumerate(y_prob_list):
+        # Handle binary classification
+        if len(np.unique(y_true)) == 2:
+            # 1D y_probas (single class probabilities)
+            if y_probas.ndim == 1:
+                if y_is_decision[j]:
+                    # `y_probas` to the range [0, 1]
+                    y_probas = np.asarray(sigmoid(y_probas))
+                # Combine into a two-column
+                y_probas = np.column_stack([1 - y_probas, y_probas])
+        # Handle multi-class classification
+        elif len(np.unique(y_true)) > 2:
+            if multi_class == 'ovr':
+                # Handle 1D y_probas (single class probabilities)
+                if y_probas.ndim == 1:
+                    if y_is_decision[j]:
+                        # `y_probas` to the range [0, 1]
+                        y_probas = np.asarray(softmax(y_probas))
+                    # Combine into a two-column binary format OvR
+                    y_probas = np.column_stack([1 - y_probas, y_probas])
+                else:
+                    if y_is_decision[j]:
+                        # `y_probas` to the range [0, 1]
+                        y_probas = np.asarray(sigmoid(y_probas))
+                    # Combine into a two-column binary format OvR
+                    y_probas = y_probas[:, class_index]
+                    y_probas = np.column_stack([1 - y_probas, y_probas])
+                    
+                # Add a subtitle indicating the use of the One-vs-Rest strategy
+                plt.suptitle(
+                    t="One-vs-Rest (OVR) strategy for multi-class classification.",
+                    fontsize=text_fontsize, x=0.512, y=0.902,
+                    ha='center', va='center',
+                    bbox=dict(facecolor='none', edgecolor='w', boxstyle='round,pad=0.2')
+                )
+                title_pad = 25
+            elif multi_class in ['multinomial', None]:
+                if y_probas.ndim == 1:
+                    raise ValueError(
+                        "For multinomial classification, `y_probas` must be 2D."
+                        "For a 1D `y_probas` with more than 2 classes in `y_true`, "
+                        "only 'ovr' multi-class strategy is supported."
+                    )
+                if y_is_decision[j]:
+                    # `y_probas` to the range [0, 1]
+                    y_probas = np.asarray(softmax(y_probas))
+            else:
+                raise ValueError("Unsupported `multi_class` strategy.")
 
+        y_prob_list[j] = y_probas
+        
+    if len(np.unique(y_true)) > 2:
+        if multi_class == 'ovr':
+            # Binarize y_true for multiclass classification
+            y_true = y_true_bin = label_binarize(
+                y_true, classes=np.unique(y_true)
+            )[:, class_index]
+
+    # Initialize dictionaries to store results
+    fraction_of_positives_dict, mean_predicted_value_dict = {}, {}
+
+    # Get unique classes and filter the ones to plot
     classes = np.unique(y_true)
-    if len(classes) > 2:
-        raise ValueError('plot_calibration_curve only '
-                         'works for binary classification')
-
-    if clf_names is None:
-        clf_names = ['Classifier {}'.format(x+1)
-                     for x in range(len(probas_list))]
-
-    if len(clf_names) != len(probas_list):
-        raise ValueError('Length {} of `clf_names` does not match length {} of'
-                         ' `probas_list`'.format(len(clf_names),
-                                                 len(probas_list)))
-
-    for i, probas in enumerate(probas_list):
-        probas = np.asarray(probas)
-        if probas.ndim > 2:
-            raise ValueError('Index {} in probas_list has invalid '
-                             'shape {}'.format(i, probas.shape))
-        if probas.ndim == 2:
-            probas = probas[:, 1]
-
-        if probas.shape != y_true.shape:
-            raise ValueError('Index {} in probas_list has invalid '
-                             'shape {}'.format(i, probas.shape))
-
-        probas = (probas - probas.min()) / (probas.max() - probas.min())
-
-        fraction_of_positives, mean_predicted_value = calibration_curve(
-            y_true, probas, n_bins=n_bins,
-            pos_label=pos_label, strategy=strategy
+    if len(classes) < 2:
+        raise ValueError(
+            'Cannot calculate calibration curve for a single class.'
         )
-        color = plt.get_cmap(cmap)(float(i) / len(probas_list))
 
-        ax.plot(mean_predicted_value, fraction_of_positives, 's-',
-                label=clf_names[i], color=color)
+    classes_to_plot = classes if classes_to_plot is None else classes_to_plot
+    indices_to_plot = np.isin(classes, classes_to_plot)
 
-    # Plot the baseline
-    ax.plot([0, 1], [0, 1], "k:", label="Perfectly calibrated")
-    
-    # Set title, labels, and formatting
-    ax.set_title(title, fontsize=title_fontsize)
+    # Binarize y_true for multiclass classification
+    y_true_bin = label_binarize(y_true, classes=classes)
+    if len(classes) == 2:
+        y_true_bin = np.hstack((1 - y_true_bin, y_true_bin))
+
+    # Loop through classes and classifiers
+    for i, to_plot in enumerate(indices_to_plot):
+        for j, y_probas in enumerate(y_prob_list):
+            # Calculate the calibration curve
+            fraction_of_positives_dict[i], mean_predicted_value_dict[i] = calibration_curve(
+                y_true_bin[:, i],
+                y_probas[:, i],
+                n_bins=n_bins,
+                strategy=strategy,            
+            )
+            # Plot if the class is to be plotted
+            if to_plot:
+                if class_names is None:
+                    class_names = classes
+                color = plt.get_cmap(cmap)(float(j) / len(clf_names))
+                ax.plot(
+                    mean_predicted_value_dict[i], fraction_of_positives_dict[i],
+                    marker='s', ls='-', color=color, lw=2,
+                    label=f'Class {class_names[i]}, {clf_names[j]}',
+                )
+
+    # Plot the diagonal line for reference
+    ax.plot([0, 1], [0, 1], ls='--', lw=1, c='gray')
+
+    # Set plot title, labels, and formatting
+    ax.set_title(title, fontsize=title_fontsize, pad=title_pad)
     ax.set_xlabel('Mean predicted value', fontsize=text_fontsize)
     ax.set_ylabel('Fraction of positives', fontsize=text_fontsize)
-
+    ax.tick_params(labelsize=text_fontsize)
+    
     ax.set_ylim([-0.05, 1.05])
     
-    # Display legend
-    ax.legend(loc='lower right')
-
+    # Set x-axis ticks and labels
+    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
+    ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+    ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
+    ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+    
+    # Enable grid and display legend
+    ax.grid(True)
+    ax.legend(
+        loc='lower right', 
+        title='Classifier',
+        alignment='left'
+    )
     plt.tight_layout()
     return ax
 
@@ -358,11 +490,22 @@ def plot_classifier_eval(
 
 
 def plot_confusion_matrix(
-    y_true, y_pred, labels=None, true_labels=None,
-    pred_labels=None, title=None, normalize=False,
-    hide_zeros=False, hide_counts=False, x_tick_rotation=0, ax=None,
-    figsize=None, cmap='Blues', title_fontsize="large",
-    text_fontsize="medium", show_colorbar=True,
+    y_true, 
+    y_pred, 
+    labels=None, 
+    true_labels=None,
+    pred_labels=None, 
+    title=None, 
+    normalize=False,
+    hide_zeros=False, 
+    hide_counts=False, 
+    x_tick_rotation=0, 
+    ax=None,
+    figsize=None, 
+    cmap='Blues', 
+    title_fontsize="large",
+    text_fontsize="medium", 
+    show_colorbar=True,
 ):
     """Generates confusion matrix plot from predictions and true labels
 
@@ -407,10 +550,12 @@ def plot_confusion_matrix(
         figsize (2-tuple, optional): Tuple denoting figure size of the plot
             e.g. (6, 6). Defaults to ``None``.
 
-        cmap (string or :class:`matplotlib.colors.Colormap` instance, optional):
-            Colormap used for plotting the projection. View Matplotlib Colormap
-            documentation for available options.
-            https://matplotlib.org/users/colormaps.html
+        cmap : None, str or matplotlib.colors.Colormap, optional, default='viridis'
+            Colormap used for plotting.
+            See Matplotlib Colormap documentation for options.
+            - https://matplotlib.org/users/colormaps.html
+            - plt.colormaps() # 'nipy_spectral' etc.
+            - plt.get_cmap()  # None == 'viridis'
 
         title_fontsize (string or int, optional): Matplotlib-style fontsizes.
             Use e.g. "small", "medium", "large" or integer-values. Defaults to
@@ -676,11 +821,11 @@ def plot_roc(
     figsize=None,
     title_fontsize="large",
     text_fontsize="medium",
-    cmap='nipy_spectral',
+    cmap=None,
     class_index=1,
     multi_class=None,
     class_names=None,
-    classes_to_plot=None,   
+    classes_to_plot=None,
     plot_micro=True,
     plot_macro=True,
     show_labels=True,
@@ -715,9 +860,12 @@ def plot_roc(
     text_fontsize : str or int, optional, default='medium'
         Font size for the text in the plot.
 
-    cmap : str or matplotlib.colors.Colormap, optional, default='nipy_spectral'
+    cmap : None, str or matplotlib.colors.Colormap, optional, default='viridis'
         Colormap used for plotting.
         See Matplotlib Colormap documentation for options.
+        - https://matplotlib.org/users/colormaps.html
+        - plt.colormaps() # 'nipy_spectral' etc.
+        - plt.get_cmap()  # None == 'viridis'
 
     class_index : int, optional, default=1
         Index of the class of interest for multi-class classification.
@@ -1075,12 +1223,12 @@ def plot_precision_recall_curve(
 def plot_precision_recall(
     y_true,
     y_probas,
-    title='Precision-Recall Curves',
+    title='Precision-Recall AUC Curves',
     ax=None,
     figsize=None,
     title_fontsize="large",
     text_fontsize="medium",
-    cmap='nipy_spectral',
+    cmap=None,
     class_index=1,
     multi_class=None,
     class_names=None,
@@ -1104,7 +1252,7 @@ def plot_precision_recall(
         If 1D, it is treated as probabilities for the positive class in binary 
         or multiclass classification with the `class_index`.
 
-    title : str, optional, default='Precision-Recall Curves'
+    title : str, optional, default='Precision-Recall AUC Curves'
         Title of the generated plot.
 
     ax : matplotlib.axes.Axes, optional, default=None
@@ -1120,9 +1268,12 @@ def plot_precision_recall(
     text_fontsize : str or int, optional, default='medium'
         Font size for the text in the plot.
 
-    cmap : str or matplotlib.colors.Colormap, optional, default='nipy_spectral'
+    cmap : None, str or matplotlib.colors.Colormap, optional, default='viridis'
         Colormap used for plotting.
         See Matplotlib Colormap documentation for options.
+        - https://matplotlib.org/users/colormaps.html
+        - plt.colormaps()
+        - plt.get_cmap()  # None == 'viridis'
 
     class_index : int, optional, default=1
         Index of the class of interest for multi-class classification.
@@ -1362,10 +1513,17 @@ def plot_precision_recall(
 
 
 def plot_silhouette(
-    X, cluster_labels, title='Silhouette Analysis',
-    metric='euclidean', copy=True, ax=None, figsize=None,
-    cmap='nipy_spectral', title_fontsize="large",
-    text_fontsize="medium", digits=3,
+    X, 
+    cluster_labels, 
+    title='Silhouette Analysis',
+    metric='euclidean', 
+    copy=True, 
+    ax=None, 
+    figsize=None,
+    cmap='nipy_spectral', 
+    title_fontsize="large",
+    text_fontsize="medium", 
+    digits=3,
 ):
     """Plots silhouette analysis of clusters provided.
 

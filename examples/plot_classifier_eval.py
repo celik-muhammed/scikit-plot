@@ -16,6 +16,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_predict
 import numpy as np; np.random.seed(0)
 # importing pylab or pyplot
+# import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 # Import scikit-plot
@@ -35,15 +36,16 @@ y_train_pred = model.predict(X_train)
 fig1 = skplt.metrics.plot_classifier_eval(
     y_val, y_val_pred, 
     labels=np.unique(y),
-    figsize=(8, 2)
+    figsize=(8, 2),
+    title='Val',
 );
 # plt.show(block=True)
 fig2 = skplt.metrics.plot_classifier_eval(
     y_train, y_train_pred, 
     labels=np.unique(y),
     figsize=(8, 2),
+    title='Train',
 );
-# plt.show(block=True)
 
 # Save the combined figure as an image file
 combined_fig = skplt.utils.combine_and_save_figures(

@@ -28,8 +28,9 @@ X, y = data_10_classes(return_X_y=True, as_frame=False)
 model = LogisticRegression(max_iter=int(1e5), random_state=0)
 
 # Plot!
-ax = skplt.estimators.plot_learning_curve(model, X, y);
-
+ax = skplt.estimators.plot_learning_curve(
+    model, X, y
+);
 # Adjust layout to make sure everything fits
 plt.tight_layout()
 # Save the plot to a file

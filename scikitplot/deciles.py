@@ -28,7 +28,7 @@ from sklearn.preprocessing import (
 from sklearn.utils import deprecated
 from sklearn.utils.multiclass import unique_labels
 
-from scikitplot.utils.helpers import (
+from .utils.helpers import (
     validate_labels,
     cumulative_gain_curve,
     binary_ks_curve,
@@ -306,7 +306,7 @@ def plot_cumulative_gain(
         fig, ax = plt.subplots(1, 1, figsize=figsize)
 
     y_true = np.array(y_true)
-    y_probas = np.array(y_probas)    
+    y_probas = np.array(y_probas)
 
     # Handle binary classification
     if len(np.unique(y_true)) == 2:

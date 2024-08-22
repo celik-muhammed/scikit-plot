@@ -257,14 +257,14 @@ def plot_feature_importances(
     
     plt.tight_layout()
     plt.legend([f'features: {len(importances)}'])
-    return ax
+    return ax, feature_names
 
 
 def plot_learning_curve(
     clf, 
     X, 
     y, 
-    title='Learning Curve',
+    title='Learning Curves',
     ax=None, 
     figsize=None, 
     title_fontsize="large",
@@ -291,7 +291,7 @@ def plot_learning_curve(
             None for unsupervised learning.
 
         title (string, optional): Title of the generated plot. Defaults to
-            "Learning Curve"
+            "Learning Curves"
 
         cv (int, cross-validation generator, iterable, optional): Determines
             the cross-validation strategy to be used for splitting.
@@ -353,7 +353,7 @@ def plot_learning_curve(
 
         .. image:: _static/examples/plot_learning_curve.png
            :align: center
-           :alt: Learning Curve
+           :alt: Learning Curves
     """
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)

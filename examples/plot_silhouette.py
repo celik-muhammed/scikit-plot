@@ -28,8 +28,9 @@ model = KMeans(n_clusters=4, random_state=0)
 cluster_labels = model.fit_predict(X_train)
 
 # Plot!
-ax = skplt.metrics.plot_silhouette(X_train, cluster_labels);
-
+ax = skplt.metrics.plot_silhouette(
+    X_train, cluster_labels
+);
 # Adjust layout to make sure everything fits
 plt.tight_layout()
 # Save the plot to a file

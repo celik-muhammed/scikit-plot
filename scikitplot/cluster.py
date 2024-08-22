@@ -23,11 +23,48 @@ from sklearn.base import clone
 from joblib import Parallel, delayed
 
 
-def plot_elbow_curve(
-    clf, X, title='Elbow Plot',
-    cluster_ranges=None, n_jobs=1,
+## Define __all__ to specify the public interface of the module, not required default all above func
+__all__ = [
+    # '_clone_and_score_clusterer',
+    'plot_elbow',
+]
+
+
+def _clone_and_score_clusterer(clf, X, n_clusters):
+    """Clones and scores clusterer instance.
+
+    Args:
+        clf: Clusterer instance that implements ``fit``,``fit_predict``, and
+            ``score`` methods, and an ``n_clusters`` hyperparameter.
+            e.g. :class:`sklearn.cluster.KMeans` instance
+
+        X (array-like, shape (n_samples, n_features)):
+            Data to cluster, where n_samples is the number of samples and
+            n_features is the number of features.
+
+        n_clusters (int): Number of clusters
+
+    Returns:
+        score: Score of clusters
+
+        time: Number of seconds it took to fit cluster
+    """
+    start = time.time()
+    clf = clone(clf)
+    setattr(clf, 'n_clusters', n_clusters)
+    return clf.fit(X).score(X), time.time() - start
+
+
+def plot_elbow(
+    clf, 
+    X, 
+    title='Elbow Curves',
+    cluster_ranges=None, 
+    n_jobs=1,
     show_cluster_time=True, 
-    ax=None, figsize=None, title_fontsize="large",
+    ax=None, 
+    figsize=None, 
+    title_fontsize="large",
     text_fontsize="medium",
 ):
     """Plots elbow curve of different values of K for KMeans clustering.
@@ -116,35 +153,3 @@ def plot_elbow_curve(
         ax2.tick_params(colors=ax2_color, labelsize=text_fontsize)
 
     return ax
-
-
-def _clone_and_score_clusterer(clf, X, n_clusters):
-    """Clones and scores clusterer instance.
-
-    Args:
-        clf: Clusterer instance that implements ``fit``,``fit_predict``, and
-            ``score`` methods, and an ``n_clusters`` hyperparameter.
-            e.g. :class:`sklearn.cluster.KMeans` instance
-
-        X (array-like, shape (n_samples, n_features)):
-            Data to cluster, where n_samples is the number of samples and
-            n_features is the number of features.
-
-        n_clusters (int): Number of clusters
-
-    Returns:
-        score: Score of clusters
-
-        time: Number of seconds it took to fit cluster
-    """
-    start = time.time()
-    clf = clone(clf)
-    setattr(clf, 'n_clusters', n_clusters)
-    return clf.fit(X).score(X), time.time() - start
-
-
-## Define __all__ to specify the public interface of the module, not required default all above func
-__all__ = [
-    'plot_elbow_curve',
-    '_clone_and_score_clusterer',
-]
