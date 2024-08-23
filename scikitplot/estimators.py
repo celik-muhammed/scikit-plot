@@ -129,7 +129,6 @@ def plot_feature_importances(
 
     Examples
     --------
-    >>> import matplotlib.pyplot as plt
     >>> # from sklearn.datasets import load_iris as load_data  # multi
     >>> from sklearn.datasets import load_breast_cancer as load_data  # binary
     >>> from sklearn.model_selection import train_test_split
@@ -137,14 +136,14 @@ def plot_feature_importances(
     >>> from sklearn.linear_model import LogisticRegression
     >>> from sklearn.ensemble import RandomForestClassifier
     >>> from sklearn.pipeline import make_pipeline
+    >>> import matplotlib.pyplot as plt
     >>> import scikitplot as skplt
     >>> X, y = load_data(return_X_y=True)
     >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
     >>> clf = make_pipeline(StandardScaler(), RandomForestClassifier())
     >>> clf.fit(X_train, y_train)
-    >>> skplt.estimators.plot_feature_importances(clf)
-    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-    >>> plt.show()
+    >>> ax, features = skplt.estimators.plot_feature_importances(clf);
+    >>> features
     """
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
@@ -155,21 +154,19 @@ def plot_feature_importances(
 
     # Determine the appropriate attribute for feature importances or coefficients
     if hasattr(model, 'feature_importances_'):
-        importances = model.feature_importances_
+        importances = np.asarray(model.feature_importances_)
+    # LDA (scikit-learn < 0.24)
     elif hasattr(model, 'coef_'):
         if model.coef_.ndim > 1:  # Multi-class case
             if class_index is not None:
-                importances = np.array(model.coef_)[class_index]
+                importances = np.asarray(model.coef_)[class_index]
             else:
                 importances = np.mean(np.abs(model.coef_), axis=0)
         else:
-            importances = model.coef_.ravel()
-    elif hasattr(model, 'explained_variance_ratio_'):  # PCA, LDA
-        importances = model.explained_variance_ratio_
-    elif hasattr(model, 'lda_'):  # LDA (scikit-learn < 0.24)
-        importances = np.abs(model.lda_.scalings_).ravel()
-    elif hasattr(model, 'coef_'):  # QDA (scikit-learn >= 0.24)
-        importances = np.abs(model.coef_).ravel()
+            importances = np.asarray(model.coef_).ravel()
+    # PCA
+    elif hasattr(model, 'explained_variance_ratio_'):
+        importances = np.asarray(model.explained_variance_ratio_)
     else:
         raise TypeError(
             'The estimator does not have an attribute for feature '
@@ -177,21 +174,29 @@ def plot_feature_importances(
         )
     # Obtain feature names
     if feature_names is None:
+        # sklearn models
         if hasattr(model, 'feature_names_in_'):
-            feature_names = model.feature_names_in_
+            feature_names = np.asarray(model.feature_names_in_)
+        # catboost
+        elif hasattr(model, 'feature_names_'):
+            feature_names = np.asarray(model.feature_names_in_)
         else:
             feature_names = np.arange(len(importances), dtype=int)
     else:
-        feature_names = np.array(feature_names)
+        feature_names = np.asarray(feature_names)
 
     # Apply ordering based on orientation
     indices = np.arange(len(importances))
     if order is None:
-        order = 'ascending' if orientation == 'horizontal' else 'descending'
+        order = (
+            'ascending' 
+            if orientation == 'horizontal' else 
+            'descending'
+        )
     if order == 'descending':
-        indices = indices[np.argsort(importances[indices])[::-1]]
+        indices = indices[ np.argsort(importances[indices])[::-1] ]
     elif order == 'ascending':
-        indices = indices[np.argsort(importances[indices])]
+        indices = indices[ np.argsort(importances[indices]) ]
 
     # Apply filtering based on the threshold
     if threshold is not None:
@@ -208,8 +213,7 @@ def plot_feature_importances(
     
     # Plot bars based on orientation
     for idx, imp in enumerate(importances):
-        color = cmap_obj(float(idx) / len(importances))
-        
+        color = cmap_obj(float(idx) / len(importances))        
         if orientation == 'vertical':
             bar = ax.bar(x=feature_names[idx], height=imp, color=color)
         elif orientation == 'horizontal':
@@ -222,7 +226,9 @@ def plot_feature_importances(
 
     # Set default x_tick_rotation based on orientation
     if x_tick_rotation is None:
-        x_tick_rotation = 0 if orientation == 'horizontal' else 90
+        x_tick_rotation = (
+            0 if orientation == 'horizontal' else 90
+        )
 
     if display_labels:
         for bars in ax.containers:

@@ -2,7 +2,6 @@
 This package/module is designed to be compatible with both Python 2 and Python 3.
 The imports below ensure consistent behavior across different Python versions by
 enforcing Python 3-like behavior in Python 2.
-
 """
 # code that needs to be compatible with both Python 2 and Python 3
 from __future__ import (
@@ -18,8 +17,8 @@ from . import (
     cluster,
     deciles, 
 )
-# https://packaging.python.org/en/latest/discussions/versioning/#valid-version-numbers
-__version__ = '0.3.8dev11'
-
 from scikitplot.classifiers import classifier_factory
 from scikitplot.clustering import clustering_factory
+
+# https://packaging.python.org/en/latest/discussions/versioning/#valid-version-numbers
+__version__ = '0.3.8dev12'
