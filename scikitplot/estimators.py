@@ -179,7 +179,7 @@ def plot_feature_importances(
             feature_names = np.asarray(model.feature_names_in_)
         # catboost
         elif hasattr(model, 'feature_names_'):
-            feature_names = np.asarray(model.feature_names_in_)
+            feature_names = np.asarray(model.feature_names_)
         else:
             feature_names = np.arange(len(importances), dtype=int)
     else:

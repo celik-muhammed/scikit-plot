@@ -20,9 +20,9 @@
 clean:
 	# mkdir -p current_dir
 	rm -rf `find -L -type d -name .ipynb_checkpoints`
-	rm -rf build dist
-	rm -rf scikit_plots.egg-info
 	rm -rf `find -L -type d -name __pycache__` .pytest_cache
+	rm -rf docs/build
+	rm -rf build dist scikit_plots.egg-info
 	echo "clean completed."
 
 

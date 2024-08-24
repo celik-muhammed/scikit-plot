@@ -200,76 +200,81 @@ def plot_cumulative_gain(
 ):
     """
     Generates the Cumulative Gains Plot from labels and scores/probabilities.
-
+    
     The cumulative gains chart is used to determine the effectiveness of a
     binary classifier. It compares the model's performance with random guessing.
-
+    
     Parameters
     ----------
     y_true : array-like of shape (n_samples,)
         Ground truth (correct) target values.
-
+    
     y_probas : array-like of shape (n_samples,) or (n_samples, n_classes)
         Predicted probabilities for each class or only target class probabilities. 
         If 1D, it is treated as probabilities for the positive class in binary 
         or multiclass classification with the `class_index`.
-
+    
     title : str, optional, default='Cumulative Gain Curves'
         Title of the generated plot.
-
+    
     ax : matplotlib.axes.Axes, optional, default=None
-        The axes on which to plot.
-        If None, a new figure and axes are created.
-
+        The axes on which to plot. If None, a new figure and axes are created.
+    
     figsize : tuple of int, optional, default=None
         Size of the figure (width, height) in inches.
-
+    
     title_fontsize : str or int, optional, default='large'
         Font size for the plot title.
-
+    
     text_fontsize : str or int, optional, default='medium'
         Font size for the text in the plot.
-
+    
     cmap : None, str or matplotlib.colors.Colormap, optional, default='viridis'
-        Colormap used for plotting.
-        See Matplotlib Colormap documentation for options.
+        Colormap used for plotting. See Matplotlib Colormap documentation for options:
         - https://matplotlib.org/users/colormaps.html
         - plt.colormaps()
         - plt.get_cmap()  # None == 'viridis'
-
+    
     class_index : int, optional, default=1
-        Index of the class of interest for multi-class classification.
-        Ignored for binary classification.
-
+        Index of the class of interest for multi-class classification. Ignored for
+        binary classification.
+    
     multi_class : {'ovr', 'multinomial', None}, optional, default=None
         Strategy for handling multiclass classification:
         - 'ovr': One-vs-Rest, plotting binary problems for each class.
-        - 'multinomial' or None: Multinomial plot 
-          for the entire probability distribution.
-
+        - 'multinomial' or None: Multinomial plot for the entire probability distribution.
+    
     class_names : list of str, optional, default=None
-        List of class names for the legend.
-        Order should match the order of classes in `y_probas`.
-
+        List of class names for the legend. Order should match the order of classes in `y_probas`.
+    
     classes_to_plot : list-like, optional, default=None
-        Specific classes to plot. If given class does not exist,
-        it will be ignored. If None, all classes are plotted.
-        e.g. [0, 'cold']
-
+        Specific classes to plot. If a given class does not exist, it will be ignored. 
+        If None, all classes are plotted. e.g. [0, 'cold']
+    
     plot_micro : bool, optional, default=True
         Whether to plot the micro-average Cumulative Gain curve.
-
+    
     plot_macro : bool, optional, default=True
         Whether to plot the macro-average Cumulative Gain curve.
-
+    
     show_labels : bool, optional, default=True
         Whether to display the legend labels.
-
+    
     Returns
     -------
     matplotlib.axes.Axes
         The axes with the plotted cumulative gain curves.
-
+    
+    Notes
+    -----
+    The implementation is specific to binary classification. For multiclass 
+    problems, the 'ovr' or 'multinomial' strategies can be used. When 
+    `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
+    
+    References
+    ----------
+    [1] http://mlwiki.org/index.php/Cumulative_Gain_Chart
+    
     Example
     -------
     >>> # from sklearn.datasets import load_iris as load_data  # multi
@@ -284,19 +289,7 @@ def plot_cumulative_gain(
     >>> model.fit(X_train, y_train)
     >>> y_probas = model.predict_proba(X_test)
     >>> skplt.deciles.plot_cumulative_gain(y_test, y_probas)
-    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-    >>> plt.show()
-
-    Notes
-    -----
-    The implementation is specific to binary classification. For multiclass 
-    problems, the 'ovr' or 'multinomial' strategies can be used. When 
-    `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
-
-    References
-    ----------
-    [1] http://mlwiki.org/index.php/Cumulative_Gain_Chart
-
+    
     .. image:: _static/examples/plot_cumulative_gain.png
        :align: center
        :alt: Cumulative Gain Curves
@@ -460,78 +453,83 @@ def plot_lift(
 ):
     """
     Generate a Lift Curve from true labels and predicted probabilities.
-
+    
     The lift curve evaluates the performance of a classifier by comparing
     the lift (or improvement) achieved by using the model compared to random 
     guessing. The implementation supports binary classification directly and 
     multiclass classification through One-vs-Rest (OVR) or multinomial strategies.
-
+    
     Parameters
     ----------
     y_true : array-like of shape (n_samples,)
         Ground truth (correct) target values.
-
+    
     y_probas : array-like of shape (n_samples,) or (n_samples, n_classes)
         Predicted probabilities for each class or only target class probabilities. 
         If 1D, it is treated as probabilities for the positive class in binary 
         or multiclass classification with the `class_index`.
-
+    
     title : str, default='Lift Curves'
         Title of the plot.
-
+    
     ax : matplotlib.axes.Axes, optional, default=None
-        The axes on which to plot.
-        If None, a new figure and axes are created.
-
+        The axes on which to plot. If None, a new figure and axes are created.
+    
     figsize : tuple of int, optional, default=None
         Size of the figure (width, height) in inches.
-
+    
     title_fontsize : str or int, optional, default='large'
         Font size for the plot title.
-
+    
     text_fontsize : str or int, optional, default='medium'
         Font size for the text in the plot.
-
+    
     cmap : None, str or matplotlib.colors.Colormap, optional, default='viridis'
-        Colormap used for plotting.
-        See Matplotlib Colormap documentation for options.
+        Colormap used for plotting. See Matplotlib Colormap documentation for options:
         - https://matplotlib.org/users/colormaps.html
         - plt.colormaps()
         - plt.get_cmap()  # None == 'viridis'
-
+    
     class_index : int, optional, default=1
-        Index of the class of interest for multi-class classification.
-        Ignored for binary classification.
-
+        Index of the class of interest for multi-class classification. Ignored for
+        binary classification.
+    
     multi_class : {'ovr', 'multinomial', None}, optional, default=None
         Strategy for handling multiclass classification:
         - 'ovr': One-vs-Rest, plotting binary problems for each class.
-        - 'multinomial' or None: Multinomial plot 
-          for the entire probability distribution.
-
+        - 'multinomial' or None: Multinomial plot for the entire probability distribution.
+    
     class_names : list of str, optional, default=None
-        List of class names for the legend.
-        Order should match the order of classes in `y_probas`.
-
+        List of class names for the legend. Order should match the order of classes in `y_probas`.
+    
     classes_to_plot : list-like, optional, default=None
-        Specific classes to plot. If given class does not exist,
-        it will be ignored. If None, all classes are plotted.
-        e.g. [0, 'cold']
-
+        Specific classes to plot. If a given class does not exist, it will be ignored. 
+        If None, all classes are plotted. e.g. [0, 'cold']
+    
     plot_micro : bool, optional, default=False
         Whether to plot the micro-average Lift curve.
-
+    
     plot_macro : bool, optional, default=False
         Whether to plot the macro-average Lift curve.
-
+    
     show_labels : bool, optional, default=True
         Whether to display the legend labels.
-
+    
     Returns
     -------
     matplotlib.axes.Axes
         The axes with the plotted lift curves.
-
+    
+    Notes
+    -----
+    The implementation is specific to binary classification. For multiclass 
+    problems, the 'ovr' or 'multinomial' strategies can be used. When 
+    `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
+    
+    References
+    ----------
+    [1] http://www2.cs.uregina.ca/~dbd/cs831/notes/lift_chart/lift_chart.html
+    
     Example
     -------
     >>> # from sklearn.datasets import load_iris as load_data  # multi
@@ -546,20 +544,8 @@ def plot_lift(
     >>> model.fit(X_train, y_train)
     >>> y_probas = model.predict_proba(X_test)
     >>> skplt.deciles.plot_lift(y_test, y_probas)
-    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-    >>> plt.show()
-
-    Notes
-    -----
-    The implementation is specific to binary classification. For multiclass 
-    problems, the 'ovr' or 'multinomial' strategies can be used. When 
-    `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
-
-    References
-    ----------
-    [1] http://www2.cs.uregina.ca/~dbd/cs831/notes/lift_chart/lift_chart.html
-
-    .. image:: _static/examples/plot_lift_curve.png
+    
+    .. image:: _static/examples/plot_lift.png
        :align: center
        :alt: Lift Curves
     """

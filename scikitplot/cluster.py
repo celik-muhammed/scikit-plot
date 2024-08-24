@@ -112,11 +112,11 @@ def plot_elbow(
     Example:
         >>> import scikitplot as skplt
         >>> kmeans = KMeans(random_state=1)
-        >>> skplt.cluster.plot_elbow_curve(kmeans, cluster_ranges=range(1, 30))
+        >>> skplt.cluster.plot_elbow(kmeans, cluster_ranges=range(1, 30))
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: _static/examples/plot_elbow_curve.png
+        .. image:: _static/examples/plot_elbow.png
            :align: center
            :alt: Elbow Curve
     """

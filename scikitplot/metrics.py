@@ -75,85 +75,89 @@ def plot_calibration_curve(
 ):
     """
     Plot calibration curves for a set of classifier probability estimates.
-
+    
     This function plots calibration curves, also known as reliability curves,
     which are useful to assess the calibration of probabilistic models.
     For a well-calibrated model, the predicted probability should match the
     observed frequency of the positive class.
-
+    
     Parameters
     ----------
     y_true : array-like of shape (n_samples,)
         Ground truth (correct) target values.
-
+    
     y_prob_list : list of array-like, shape (n_samples, 2) or (n_samples,)
-        A list containing the outputs of classifiers' `predict_proba` method
-        or `decision_function` method.
-        
+        A list containing the outputs of classifiers' `predict_proba` or
+        `decision_function` methods.
+    
     y_is_decision : list of bool
-        A list containing the which probability method of classifiers used
-        `predict_proba` method as False or `decision_function` method as True.
-
+        A list indicating whether the classifier's probability method is
+        `decision_function` (True) or `predict_proba` (False).
+    
     title : str, optional, default='Calibration plots (Reliability Curves)'
         Title of the generated plot.
-
+    
     ax : matplotlib.axes.Axes, optional
         The axes upon which to plot the curve. If None, a new figure and axes
         will be created.
-
+    
     figsize : tuple, optional
         Tuple denoting the figure size of the plot, e.g., (6, 6). Defaults to `None`.
-
+    
     title_fontsize : str or int, optional, default='large'
         Font size of the plot title. Accepts Matplotlib-style sizes like "small",
         "medium", "large", or an integer.
-
+    
     text_fontsize : str or int, optional, default='medium'
         Font size of the plot text (axis labels). Accepts Matplotlib-style sizes
         like "small", "medium", "large", or an integer.
-
+    
     cmap : str or matplotlib.colors.Colormap, optional, default=None
         Colormap used for plotting. If None, the default 'viridis' colormap is used.
         See Matplotlib colormap documentation for options.
-
+    
     n_bins : int, optional, default=10
         Number of bins to use in the calibration curve. A higher number requires
         more data to produce reliable results.
-
+    
     clf_names : list of str or None, optional, default=None
         A list of classifier names corresponding to the probability estimates in
-        `probas_list`. If None, the names will be generated automatically as
+        `y_prob_list`. If None, the names will be generated automatically as
         "Classifier 1", "Classifier 2", etc.
-
+    
     multi_class : {'ovr', 'multinomial', None}, optional, default=None
         Strategy for handling multiclass classification:
         - 'ovr': One-vs-Rest, plotting binary problems for each class.
-        - 'multinomial' or None: Multinomial plot 
-          for the entire probability distribution.
-        - Not Implemented.
-
+        - 'multinomial' or None: Multinomial plot for the entire probability distribution.
+        - Not Implemented: Strategy not yet available.
+    
     class_index : int, optional, default=1
-        Index of the class of interest for multi-class classification. Ignored for
-        binary classification. Related to multi_classparams, Not Implemented.
-
+        Index of the class of interest for multiclass classification. Ignored for
+        binary classification. Related to `multi_class` parameter. Not Implemented.
+    
     class_names : list of str or None, optional, default=None
         List of class names for the legend. The order should match the classes in
-        `probas_list`. If None, class indices will be used.
-
+        `y_prob_list`. If None, class indices will be used.
+    
     classes_to_plot : list-like, optional, default=[1]
         Specific classes to plot. If a given class does not exist, it will be ignored.
         If None, all classes are plotted.
-
+    
     strategy : str, optional, default='uniform'
         Strategy used to define the widths of the bins:
         - 'uniform': Bins have identical widths.
-        - 'quantile': Bins have the same number of samples and depend on `y_probas`.
-
+        - 'quantile': Bins have the same number of samples and depend on `y_prob_list`.
+    
     Returns
     -------
     ax : matplotlib.axes.Axes
         The axes on which the plot was drawn.
-
+    
+    Notes
+    -----
+    - The calibration curve is plotted for the class specified by `classes_to_plot`.
+    - This function currently supports binary and multiclass classification.
+    
     Examples
     --------
     >>> from sklearn.ensemble import RandomForestClassifier
@@ -171,18 +175,9 @@ def plot_calibration_curve(
     >>> svm_scores = svm.fit(X_train, y_train).decision_function(X_test)
     >>> probas_list = [rf_probas, lr_probas, nb_probas, svm_scores]
     >>> clf_names = ['Random Forest', 'Logistic Regression',
-    ...              'Gaussian Naive Bayes', 'Support Vector Machine']
-    >>> skplt.metrics.plot_calibration_curve(y_test,
-    ...                                      probas_list,
-    ...                                      y_is_decision,)
-    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-    >>> plt.show()
-
-    Notes
-    -----
-    - The calibration curve is plotted for the class specified by `classes_to_plot`.
-    - This function currently only works for binary and multi-class classification.
-
+    >>>              'Gaussian Naive Bayes', 'Support Vector Machine']
+    >>> skplt.metrics.plot_calibration_curve(y_test, probas_list, y_is_decision)
+    
     """
     title_pad = None
     # Create a new figure and axes if none are provided
@@ -577,13 +572,11 @@ def plot_confusion_matrix(
         >>> rf = RandomForestClassifier()
         >>> rf = rf.fit(X_train, y_train)
         >>> y_pred = rf.predict(X_test)
-        >>> skplt.metrics.plot_confusion_matrix(y_test, y_pred, normalize=True)
-        <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-        >>> plt.show()
+        >>> skplt.metrics.plot_confusion_matrix(y_test, y_pred, normalize=True);
 
-        .. image:: _static/examples/plot_confusion_matrix.png
-           :align: center
-           :alt: Confusion matrix
+    .. image:: _static/examples/plot_confusion_matrix.png
+       :align: center
+       :alt: Confusion matrix
     """
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
@@ -716,8 +709,6 @@ def plot_roc_curve(y_true, y_probas, title='ROC Curves',
         >>> nb = nb.fit(X_train, y_train)
         >>> y_probas = nb.predict_proba(X_test)
         >>> skplt.metrics.plot_roc_curve(y_test, y_probas)
-        <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-        >>> plt.show()
 
         .. image:: _static/examples/plot_roc_curve.png
            :align: center
@@ -833,76 +824,76 @@ def plot_roc(
 ):
     """
     Generates the ROC AUC curves from labels and predicted scores/probabilities.
-
+    
     Parameters
     ----------
     y_true : array-like of shape (n_samples,)
         Ground truth (correct) target values.
-
+    
     y_probas : array-like of shape (n_samples,) or (n_samples, n_classes)
         Predicted probabilities for each class or only target class probabilities. 
         If 1D, it is treated as probabilities for the positive class in binary 
         or multiclass classification with the `class_index`.
-
+    
     title : str, optional, default='ROC AUC Curves'
         Title of the generated plot.
-
+    
     ax : matplotlib.axes.Axes, optional, default=None
-        The axes on which to plot.
-        If None, a new figure and axes are created.
-
+        The axes on which to plot. If None, a new figure and axes are created.
+    
     figsize : tuple of int, optional, default=None
         Size of the figure (width, height) in inches.
-
+    
     title_fontsize : str or int, optional, default='large'
         Font size for the plot title.
-
+    
     text_fontsize : str or int, optional, default='medium'
         Font size for the text in the plot.
-
+    
     cmap : None, str or matplotlib.colors.Colormap, optional, default='viridis'
-        Colormap used for plotting.
-        See Matplotlib Colormap documentation for options.
+        Colormap used for plotting. See Matplotlib Colormap documentation for options.
         - https://matplotlib.org/users/colormaps.html
         - plt.colormaps() # 'nipy_spectral' etc.
         - plt.get_cmap()  # None == 'viridis'
-
+    
     class_index : int, optional, default=1
-        Index of the class of interest for multi-class classification.
-        Ignored for binary classification.
-
+        Index of the class of interest for multi-class classification. Ignored for binary classification.
+    
     multi_class : {'ovr', 'multinomial', None}, optional, default=None
         Strategy for handling multiclass classification:
         - 'ovr': One-vs-Rest, plotting binary problems for each class.
-        - 'multinomial' or None: Multinomial plot 
-          for the entire probability distribution.
-
+        - 'multinomial' or None: Multinomial plot for the entire probability distribution.
+    
     class_names : list of str, optional, default=None
-        List of class names for the legend.
-        Order should match the order of classes in `y_probas`.
-
+        List of class names for the legend. Order should match the order of classes in `y_probas`.
+    
     classes_to_plot : list-like, optional, default=None
-        Specific classes to plot. If given class does not exist,
-        it will be ignored. If None, all classes are plotted.
+        Specific classes to plot. If given class does not exist, it will be ignored. If None, all classes are plotted.
         e.g. [0, 'cold']
-
+    
     plot_micro : bool, optional, default=False
         Whether to plot the micro-average ROC AUC curve.
-
+    
     plot_macro : bool, optional, default=False
         Whether to plot the macro-average ROC AUC curve.
-
+    
     show_labels : bool, optional, default=True
         Whether to display the legend labels.
-
+    
     digits : int, optional, default=3
         Number of digits for formatting AUC values in the plot.
-
+    
     Returns
     -------
     matplotlib.axes.Axes
         The axes with the plotted ROC AUC curves.
-
+    
+    Notes
+    -----
+    The implementation is specific to binary classification. For multiclass 
+    problems, the 'ovr' or 'multinomial' strategies can be used. When 
+    `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
+    
     Example
     -------
     >>> import matplotlib.pyplot as plt
@@ -917,15 +908,7 @@ def plot_roc(
     >>> model.fit(X_train, y_train)
     >>> y_probas = model.predict_proba(X_test)
     >>> skplt.metrics.plot_roc(y_test, y_probas)
-    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-    >>> plt.show()
-
-    Notes
-    -----
-    The implementation is specific to binary classification. For multiclass 
-    problems, the 'ovr' or 'multinomial' strategies can be used. When 
-    `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
-
+    
     .. image:: _static/examples/plot_roc_curve.png
        :align: center
        :alt: ROC AUC Curves
@@ -1241,81 +1224,81 @@ def plot_precision_recall(
 ):
     """
     Generates the Precision-Recall Curves from labels and predicted scores/probabilities.
-
+    
     Parameters
     ----------
     y_true : array-like of shape (n_samples,)
         Ground truth (correct) target values.
-
+    
     y_probas : array-like of shape (n_samples,) or (n_samples, n_classes)
-        Predicted probabilities for each class or only target class probabilities. 
-        If 1D, it is treated as probabilities for the positive class in binary 
+        Predicted probabilities for each class or only target class probabilities.
+        If 1D, it is treated as probabilities for the positive class in binary
         or multiclass classification with the `class_index`.
-
+    
     title : str, optional, default='Precision-Recall AUC Curves'
         Title of the generated plot.
-
+    
     ax : matplotlib.axes.Axes, optional, default=None
-        The axes on which to plot.
-        If None, a new figure and axes are created.
-
+        The axes on which to plot. If None, a new figure and axes are created.
+    
     figsize : tuple of int, optional, default=None
         Size of the figure (width, height) in inches.
-
+    
     title_fontsize : str or int, optional, default='large'
         Font size for the plot title.
-
+    
     text_fontsize : str or int, optional, default='medium'
         Font size for the text in the plot.
-
+    
     cmap : None, str or matplotlib.colors.Colormap, optional, default='viridis'
-        Colormap used for plotting.
-        See Matplotlib Colormap documentation for options.
+        Colormap used for plotting. See Matplotlib Colormap documentation for options.
         - https://matplotlib.org/users/colormaps.html
         - plt.colormaps()
         - plt.get_cmap()  # None == 'viridis'
-
+    
     class_index : int, optional, default=1
-        Index of the class of interest for multi-class classification.
-        Ignored for binary classification.
-
+        Index of the class of interest for multi-class classification. Ignored for binary classification.
+    
     multi_class : {'ovr', 'multinomial', None}, optional, default=None
         Strategy for handling multiclass classification:
         - 'ovr': One-vs-Rest, plotting binary problems for each class.
-        - 'multinomial' or None: Multinomial plot 
-          for the entire probability distribution.
-
+        - 'multinomial' or None: Multinomial plot for the entire probability distribution.
+    
     class_names : list of str, optional, default=None
-        List of class names for the legend.
-        Order should match the order of classes in `y_probas`.
-
+        List of class names for the legend. Order should match the order of classes in `y_probas`.
+    
     classes_to_plot : list-like, optional, default=None
-        Specific classes to plot. If given class does not exist,
-        it will be ignored. If None, all classes are plotted.
+        Specific classes to plot. If a given class does not exist, it will be ignored. If None, all classes are plotted.
         e.g. [0, 'cold']
-
+    
     plot_micro : bool, optional, default=True
         Whether to plot the micro-average Precision-Recall AUC curve.
-
+    
     plot_macro : bool, optional, default=False
         Whether to plot the macro-average Precision-Recall AUC curve.
-
+    
     show_labels : bool, optional, default=True
         Whether to display the legend labels.
-
+    
     digits : int, optional, default=3
         Number of digits for formatting AUC values in the plot.
-
+    
     area : {'average_precision', 'pr_auc'}, optional, default='pr_auc'
-        Strategy for calculating area score:
-        - Both calculation gives very close results.
-        - macro scores calculating by 'average_precision'.
-
+        Strategy for calculating the area score:
+        - Both calculations give very close results.
+        - Macro scores are calculated using 'average_precision'.
+    
     Returns
     -------
     matplotlib.axes.Axes
         The axes with the plotted Precision-Recall AUC curves.
-
+    
+    Notes
+    -----
+    The implementation is specific to binary classification. For multiclass
+    problems, the 'ovr' or 'multinomial' strategies can be used. When
+    `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
+    
     Example
     -------
     >>> import matplotlib.pyplot as plt
@@ -1330,16 +1313,8 @@ def plot_precision_recall(
     >>> model.fit(X_train, y_train)
     >>> y_probas = model.predict_proba(X_test)
     >>> skplt.metrics.plot_precision_recall(y_test, y_probas)
-    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-    >>> plt.show()
-
-    Notes
-    -----
-    The implementation is specific to binary classification. For multiclass 
-    problems, the 'ovr' or 'multinomial' strategies can be used. When 
-    `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
-
-    .. image:: _static/examples/plot_precision_recall_curve.png
+    
+    .. image:: _static/examples/plot_precision_recall.png
        :align: center
        :alt: Precision-Recall AUC Curves
     """

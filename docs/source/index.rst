@@ -1,0 +1,18 @@
+.. title:: Index
+
+.. Define the overall structure, that affects the prev-next buttons and the order
+   of the sections in the top navbar.
+
+.. toctree::
+   :hidden:
+   :maxdepth: 2
+
+   Install <install.rst>
+   user_guide.rst
+   API <api/index.rst>
+   Community <https://blog.scikit-learn.org/>
+   getting_started.rst
+   Glossary <glossary.rst>
+   Development <>
+   FAQ <faq.rst>
+   about.rst
