@@ -38,3 +38,4 @@ pydata-sphinx-theme
 scikit-image
 myst-parser
 nbsphinx
+jupyterlite-sphinx
