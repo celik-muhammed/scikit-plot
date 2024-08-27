@@ -2,7 +2,9 @@ name: scikit-plot-env
 
 dependencies:
 - python=3
+- numpydoc
 - numpy
+- pandas
 - scipy
 - scikit-learn
 - matplotlib

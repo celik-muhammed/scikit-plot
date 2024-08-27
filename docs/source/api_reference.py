@@ -24,7 +24,7 @@ def _get_submodule(module_name, submodule_name):
     """Get the submodule docstring and automatically add the hook.
 
     `module_name` is e.g. `scikitplot.utils`, and `submodule_name` is e.g.
-    `helpers`, so we get the docstring and hook for `sklearn.utils.helpers`
+    `helpers`, so we get the docstring and hook for `scikitplot.utils.helpers`
     submodule. `module_name` is used to reset the current module because autosummary
     automatically changes the current module.
     """
@@ -98,18 +98,6 @@ API_REFERENCE = {
                     "show_versions",
                 ],
             },
-        ],
-    },
-    "scikitplot.base": {
-        "short_summary": "Base classes and utility functions.",
-        "description": None,
-        "sections": [
-            {
-                "title": None,
-                "autosummary": [
-                    # 
-                ],
-            }
         ],
     },
     "scikitplot.cluster": {
@@ -192,35 +180,25 @@ API_REFERENCE = {
                 ],
             },
             {
-                "title": "Regression metrics",
-                "description": _get_guide("regression_metrics"),
-                "autosummary": [
-                    # 
-                ],
-            },
-            {
                 "title": "Clustering metrics",
-                "description": (
-                    _get_submodule("sklearn.metrics", "cluster")
-                    + "\n\n"
-                    + _get_guide("clustering_evaluation")
-                ),
+                "description": _get_guide("metrics"),
                 "autosummary": [
                     "plot_silhouette",
                 ],
             },
+            # {
+            #     "title": "Regression metrics",
+            #     "description": _get_guide("regression_metrics"),
+            #     "autosummary": [
+            #         # 
+            #     ],
+            # },
         ],
     },
     "scikitplot.utils": {
         "short_summary": "Utilities.",
         "description": _get_guide("developers-utils", is_developer=True),
         "sections": [
-            {
-                "title": None,
-                "autosummary": [
-                    # 
-                ],
-            },
             {
                 "title": "Optimal mathematical operations",
                 "description": _get_submodule("scikitplot.utils", "helpers"),
@@ -268,17 +246,17 @@ Example:
 
 DEPRECATED_API_REFERENCE = {
     "3.7": [
-        "scikitplot.classifiers",
-        "scikitplot.clustering",
-        "scikitplot.plotters",
+        "classifiers",
+        "clustering",
+        "plotters",
     ],
 }
 """
 
 DEPRECATED_API_REFERENCE = {
     "3.7": [
-        "scikitplot.classifiers",
-        "scikitplot.clustering",
-        "scikitplot.plotters",
+        "classifiers",
+        "clustering",
+        "plotters",
     ]
 }  # type: ignore

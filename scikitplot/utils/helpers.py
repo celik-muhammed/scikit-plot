@@ -68,14 +68,11 @@ def combine_and_save_figures(figures, save_path='combined_figures.png', figsize=
     >>> fig1, ax1 = plt.subplots()
     >>> ax1.plot([1, 2, 3], [4, 5, 6])
     >>> ax1.set_title('Figure 1')
-
     >>> fig2, ax2 = plt.subplots()
     >>> ax2.bar(['A', 'B', 'C'], [3, 7, 2])
     >>> ax2.set_title('Figure 2')
-
     >>> # Save the combined figure with default figsize
     >>> combined_fig = combine_and_save_figures((fig1, fig2), 'output.png', dpi=150, to_save=True)
-
     >>> # Combine figures without saving to a file and with custom figsize
     >>> combined_fig = combine_and_save_figures((fig1, fig2), dpi=150, to_save=False, figsize=(14, 7))
     """
@@ -139,8 +136,8 @@ def validate_labels(
         If there are duplicate labels in `passed_labels` or if any labels
         in `passed_labels` are not found in `known_classes`.
 
-    Example
-    -------
+    Examples
+    --------
     >>> known_classes = ["A", "B", "C"]
     >>> passed_labels = ["A", "B"]
     >>> validate_labels(known_classes, passed_labels, "true_labels")
@@ -239,29 +236,23 @@ def cumulative_gain_curve(
     - **Handling Edge Cases:** If `y_true` contains no instances of the positive class, the function 
       will raise a `ValueError`, as a cumulative gain curve would not be meaningful.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from sklearn.datasets import make_classification
     >>> from sklearn.linear_model import LogisticRegression
     >>> from sklearn.model_selection import train_test_split
     >>> import matplotlib.pyplot as plt
-
     >>> # Generate a binary classification dataset
     >>> X, y = make_classification(n_samples=1000, n_classes=2, n_informative=3, random_state=42)
-
     >>> # Split into training and test sets
     >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
     >>> # Train a logistic regression model
     >>> model = LogisticRegression()
     >>> model.fit(X_train, y_train)
-
     >>> # Predict probabilities for the test set
     >>> y_scores = model.predict_proba(X_test)[:, 1]
-
     >>> # Calculate the cumulative gain curve
     >>> percentages, gains = cumulative_gain_curve(y_test, y_scores)
-
     >>> # Plot the cumulative gain curve
     >>> plt.plot(percentages, gains, marker='o')
     >>> plt.xlabel('Percentage of Samples')
@@ -269,7 +260,6 @@ def cumulative_gain_curve(
     >>> plt.title('Cumulative Gain Curve')
     >>> plt.grid()
     >>> plt.show()
-
     """
     # Convert input to numpy arrays for efficient processing
     y_true = np.asarray(y_true)
@@ -415,29 +405,23 @@ def binary_ks_curve(
     - **Handling Edge Cases:** The function inserts thresholds of 0 and 1 if they are not already present to ensure 
       that the KS curve starts and ends at the boundaries of the predicted probability range.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from sklearn.datasets import make_classification
     >>> from sklearn.linear_model import LogisticRegression
     >>> from sklearn.model_selection import train_test_split
     >>> import matplotlib.pyplot as plt
-
     >>> # Generate a binary classification dataset
     >>> X, y = make_classification(n_samples=1000, n_classes=2, n_informative=3, random_state=42)
-
     >>> # Split into training and test sets
     >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
     >>> # Train a logistic regression model
     >>> model = LogisticRegression()
     >>> model.fit(X_train, y_train)
-
     >>> # Predict probabilities for the test set
     >>> y_probas = model.predict_proba(X_test)[:, 1]
-
     >>> # Calculate the KS Statistic curve
     >>> thresholds, pct1, pct2, ks_statistic, max_distance_at, classes = binary_ks_curve(y_test, y_probas)
-
     >>> # Plot the KS Statistic curve
     >>> plt.plot(thresholds, pct1 - pct2, marker='o')
     >>> plt.xlabel('Threshold')
@@ -445,7 +429,6 @@ def binary_ks_curve(
     >>> plt.title('KS Statistic Curve')
     >>> plt.grid()
     >>> plt.show()
-
     """
     # Convert input to numpy arrays for efficient processing
     y_true = np.asarray(y_true)

@@ -5,7 +5,7 @@
 Recently Deprecated
 ===================
 
-.. currentmodule:: sklearn
+.. currentmodule:: scikitplot
 
 {% for ver, objs in DEPRECATED_API_REFERENCE %}
 .. _api_depr_ref-{{ ver|replace(".", "-") }}:

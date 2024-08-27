@@ -24,14 +24,14 @@ from sklearn.model_selection import learning_curve
 
 ## Define __all__ to specify the public interface of the module, not required default all above func
 __all__ = [
-    'plot_feature_importances',
+    'plot_feature_importance',
     'plot_learning_curve',
 ]
 
 
-def plot_feature_importances(
+def plot_feature_importance(
     model,
-    title='Feature Importances',
+    title='Feature Importance',
     ax=None,
     figsize=None,
     title_fontsize="large",
@@ -48,7 +48,7 @@ def plot_feature_importances(
     digits=4,
 ):
     """
-    Generates a plot of a sklearn model's feature importances.
+    Generates a plot of a sklearn model's feature importance.
 
     This function handles different types of classifiers and their respective
     feature importance or coefficient attributes. It supports models wrapped in pipelines.
@@ -68,7 +68,7 @@ def plot_feature_importances(
 
     title : str, optional
         Title of the generated plot.
-        Defaults to "Feature Importances".
+        Defaults to "Feature Importance".
 
     ax : matplotlib.axes.Axes, optional
         The axes upon which to plot the curve. If None, the plot is drawn on
@@ -112,7 +112,7 @@ def plot_feature_importances(
         be plotted. Defaults to None (plot all features).
 
     order : {'ascending', 'descending', None}, optional
-        Order of feature importances in the plot. Defaults to None
+        Order of feature importance in the plot. Defaults to None
         (automatically set based on orientation).
 
     feature_names : list of str, optional
@@ -142,8 +142,12 @@ def plot_feature_importances(
     >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
     >>> clf = make_pipeline(StandardScaler(), RandomForestClassifier())
     >>> clf.fit(X_train, y_train)
-    >>> ax, features = skplt.estimators.plot_feature_importances(clf);
+    >>> ax, features = skplt.estimators.plot_feature_importance(clf);
     >>> features
+
+    .. image:: ../../_static/examples/plot_feature_importance.png
+       :align: center
+       :alt: Feature Importance
     """
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
@@ -282,84 +286,89 @@ def plot_learning_curve(
     random_state=None,
     n_jobs=1, 
 ):
-    """Generates a plot of the train and test learning curves for a classifier.
+    """
+    Generates a plot of the train and test learning curves for a classifier.
 
-    Args:
-        clf: Classifier instance that implements ``fit`` and ``predict``
-            methods.
+    The learning curves plot the performance of a classifier as a function of the number of training samples.
+    This helps in understanding how well the classifier performs with different amounts of training data.
 
-        X (array-like, shape (n_samples, n_features)):
-            Training vector, where n_samples is the number of samples and
-            n_features is the number of features.
+    Parameters
+    ----------
+    clf : object
+        Classifier instance that implements `fit` and `predict` methods.
 
-        y (array-like, shape (n_samples) or (n_samples, n_features)):
-            Target relative to X for classification or regression;
-            None for unsupervised learning.
+    X : array-like, shape (n_samples, n_features)
+        Training data, where `n_samples` is the number of samples and `n_features` is the number of features.
 
-        title (string, optional): Title of the generated plot. Defaults to
-            "Learning Curves"
+    y : array-like, shape (n_samples,) or (n_samples, n_features), optional
+        Target relative to `X` for classification or regression; None for unsupervised learning.
 
-        cv (int, cross-validation generator, iterable, optional): Determines
-            the cross-validation strategy to be used for splitting.
+    title : str, optional, default="Learning Curves"
+        Title of the generated plot.
 
-            Possible inputs for cv are:
-              - None, to use the default 3-fold cross-validation,
-              - integer, to specify the number of folds.
-              - An object to be used as a cross-validation generator.
-              - An iterable yielding train/test splits.
+    cv : int, cross-validation generator, or iterable, optional
+        Determines the cross-validation strategy to use for splitting:
+        - None, to use the default 3-fold cross-validation,
+        - integer, to specify the number of folds,
+        - An object to be used as a cross-validation generator,
+        - An iterable yielding train/test splits.
 
-            For integer/None inputs, if ``y`` is binary or multiclass,
-            :class:`StratifiedKFold` used. If the estimator is not a classifier
-            or if ``y`` is neither binary nor multiclass, :class:`KFold` is
-            used.
+        For integer/None inputs, if `y` is binary or multiclass, `StratifiedKFold` is used.
+        If the estimator is not a classifier or if `y` is neither binary nor multiclass, `KFold` is used.
 
-        shuffle (bool, optional): Used when do_cv is set to True. Determines
-            whether to shuffle the training data before splitting using
-            cross-validation. Default set to True.
+    shuffle : bool, optional, default=True
+        Whether to shuffle the training data before splitting using cross-validation.
 
-        random_state (int :class:`RandomState`): Pseudo-random number generator
-            state used for random sampling.
+    random_state : int or RandomState, optional
+        Pseudo-random number generator state used for random sampling.
 
-        train_sizes (iterable, optional): Determines the training sizes used to
-            plot the learning curve. If None, ``np.linspace(.1, 1.0, 5)`` is
-            used.
+    train_sizes : iterable, optional
+        Determines the training sizes used to plot the learning curve.
+        If None, `np.linspace(.1, 1.0, 5)` is used.
 
-        n_jobs (int, optional): Number of jobs to run in parallel. Defaults to
-            1.
+    n_jobs : int, optional, default=1
+        Number of jobs to run in parallel.
 
-        scoring (string, callable or None, optional): default: None
-            A string (see scikit-learn model evaluation documentation) or a
-            scorerbcallable object / function with signature
-            scorer(estimator, X, y).
+    scoring : str, callable, or None, optional, default=None
+        A string (see scikit-learn model evaluation documentation) or a scorer callable object/function
+        with signature `scorer(estimator, X, y)`.
 
-        ax (:class:`matplotlib.axes.Axes`, optional): The axes upon which to
-            plot the curve. If None, the plot is drawn on a new set of axes.
+    ax : matplotlib.axes.Axes, optional
+        The axes upon which to plot the curve. If None, a new figure and axes are created.
 
-        figsize (2-tuple, optional): Tuple denoting figure size of the plot
-            e.g. (6, 6). Defaults to ``None``.
+    figsize : tuple of int, optional
+        Tuple denoting figure size of the plot, e.g., (6, 6). Defaults to None.
 
-        title_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "large".
+    title_fontsize : str or int, optional, default="large"
+        Font size for the plot title. Use e.g., "small", "medium", "large" or integer values.
 
-        text_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "medium".
+    text_fontsize : str or int, optional, default="medium"
+        Font size for the text in the plot. Use e.g., "small", "medium", "large" or integer values.
 
-    Returns:
-        ax (:class:`matplotlib.axes.Axes`): The axes on which the plot was
-            drawn.
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes on which the plot was drawn.
 
-    Example:
-        >>> import scikitplot as skplt
-        >>> rf = RandomForestClassifier()
-        >>> skplt.estimators.plot_learning_curve(rf, X, y)
-        <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-        >>> plt.show()
+    Notes
+    -----
+    If `cv` is not specified, 3-fold cross-validation is used by default. The plot will show the learning curves
+    for training and test data across different training sizes.
 
-        .. image:: _static/examples/plot_learning_curve.png
-           :align: center
-           :alt: Learning Curves
+    Examples
+    --------
+    >>> import scikitplot as skplt
+    >>> from sklearn.ensemble import RandomForestClassifier
+    >>> from sklearn.datasets import load_iris
+    >>> X, y = load_iris(return_X_y=True)
+    >>> rf = RandomForestClassifier()
+    >>> skplt.estimators.plot_learning_curve(rf, X, y)
+    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
+    >>> plt.show()
+
+    .. image:: ../../_static/examples/plot_learning_curve.png
+       :align: center
+       :alt: Learning Curves
     """
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)

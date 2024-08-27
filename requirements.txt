@@ -1,7 +1,7 @@
 ## Library Dependencies
 pandas
 matplotlib>=1.4.0
-scikit-learn>=0.21
+scikit-learn>=0.24
 scipy>=0.9
 joblib>=0.10
 
@@ -16,6 +16,8 @@ joblib>=0.10
 # pytest>=6.1
 
 ## Documentation Dependencies
-# Sphinx>=3.4
-# sphinx-rtd-theme>=0.5.1
-# numpydoc>=1.1
+numpydoc>=1.1
+Sphinx>=7.4
+sphinx-rtd-theme>=1.8.0
+sphinx-gallery
+nbsphinx

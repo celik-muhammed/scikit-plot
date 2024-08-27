@@ -1,8 +1,13 @@
+.. _cluster:
 .. apidocs file containing the API Documentation
-.. _clusterdocs:
 
+================================
 Clusterer Module (API Reference)
 ================================
 
+This module contains functions and classes related to clustering.
+
 .. automodule:: scikitplot.cluster
    :members: plot_elbow
+   :undoc-members:
+   :show-inheritance:

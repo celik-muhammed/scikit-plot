@@ -75,9 +75,28 @@ if __name__ == "__main__":
 
     # Variables to replace in the templates
     template_vars = {
-        'title': 'Sample Title',
-        'description': 'This is a sample description.'
+        'module': 'scikitplot',  # or any relevant value
+        'module_info': {
+            'description': 'Module description',
+            'sections': [
+                {
+                    'title': 'Section Title',
+                    'description': 'Section description',
+                    'autosummary': ['item1', 'item2']
+                }
+            ]
+        },
+        'inferred': {
+            'version_full': {
+                'some_key': 'some_value'
+            },
+            'version_short': {
+                'some_key': 'short_version'
+            },
+            'previous_tag': {
+                'some_key': 'some_value'
+            }
+        },
     }
-
     # Call the function to render templates
     render_templates(template_dir, template_vars)

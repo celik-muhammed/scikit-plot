@@ -39,51 +39,56 @@ def plot_pca_component_variance(
     target_explained_variance=0.75,
     x_tick_rotation=90,
 ):
-    """Plots PCA components' explained variance ratios. (new in v0.2.2)
+    """
+    Plots PCA components' explained variance ratios. (new in v0.2.2)
 
-    Args:
-        clf: PCA instance that has the ``explained_variance_ratio_`` attribute.
+    Parameters
+    ----------
+    clf : object
+        PCA instance that has the ``explained_variance_ratio_`` attribute.
 
-        title (string, optional): Title of the generated plot. Defaults to
-            "PCA Component Explained Variances"
+    title : str, optional, default='PCA Component Explained Variances'
+        Title of the generated plot.
 
-        target_explained_variance (float, optional): Looks for the minimum
-            number of principal components that satisfies this value and
-            emphasizes it on the plot. Defaults to 0.75
+    target_explained_variance : float, optional, default=0.75
+        Looks for the minimum number of principal components that satisfies this 
+        value and emphasizes it on the plot.
 
-        ax (:class:`matplotlib.axes.Axes`, optional): The axes upon which to
-            plot the curve. If None, the plot is drawn on a new set of axes.
+    ax : matplotlib.axes.Axes, optional, default=None
+        The axes upon which to plot the curve. If None, a new set of axes is created.
 
-        figsize (2-tuple, optional): Tuple denoting figure size of the plot
-            e.g. (6, 6). Defaults to ``None``.
+    figsize : tuple of int, optional, default=None
+        Tuple denoting figure size of the plot (e.g., (6, 6)).
 
-        title_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "large".
+    title_fontsize : str or int, optional, default='large'
+        Font size for the plot title. Use e.g., "small", "medium", "large" or integer-values.
 
-        text_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "medium".
-            
-        x_tick_rotation : int, optional
-            Rotates x-axis tick labels by the specified angle. Defaults to None
-            (automatically set based on orientation).
+    text_fontsize : str or int, optional, default='medium'
+        Font size for the text in the plot. Use e.g., "small", "medium", "large" or integer-values.
 
-    Returns:
-        ax (:class:`matplotlib.axes.Axes`): The axes on which the plot was
-            drawn.
+    x_tick_rotation : int, optional, default=None
+        Rotates x-axis tick labels by the specified angle. Defaults to None 
+        (automatically set based on orientation).
 
-    Example:
-        >>> import scikitplot as skplt
-        >>> pca = PCA(random_state=1)
-        >>> pca.fit(X)
-        >>> skplt.decomposition.plot_pca_component_variance(pca)
-        <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-        >>> plt.show()
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes on which the plot was drawn.
 
-        .. image:: _static/examples/plot_pca_component_variance.png
-           :align: center
-           :alt: PCA Component variances
+    Examples
+    --------
+    >>> import scikitplot as skplt
+    >>> from sklearn.decomposition import PCA
+    >>> import matplotlib.pyplot as plt
+    >>> pca = PCA(random_state=1)
+    >>> pca.fit(X)
+    >>> skplt.decomposition.plot_pca_component_variance(pca)
+    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
+    >>> plt.show()
+
+    .. image:: ../../_static/examples/plot_pca_component_variance.png
+       :align: center
+       :alt: PCA Component variances
     """
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
@@ -157,65 +162,70 @@ def plot_pca_2d_projection(
     dimensions=[0, 1], 
     label_dots=False, 
 ):
-    """Plots the 2-dimensional projection of PCA on a given dataset.
+    """
+    Plots the 2-dimensional projection of PCA on a given dataset.
 
-    Args:
-        clf: Fitted PCA instance that can ``transform`` given data set into 2
-            dimensions.
+    Parameters
+    ----------
+    clf : object
+        Fitted PCA instance that can ``transform`` given data set into 2 dimensions.
 
-        X (array-like, shape (n_samples, n_features)):
-            Feature set to project, where n_samples is the number of samples
-            and n_features is the number of features.
+    X : array-like, shape (n_samples, n_features)
+        Feature set to project, where n_samples is the number of samples and
+        n_features is the number of features.
 
-        y (array-like, shape (n_samples) or (n_samples, n_features)):
-            Target relative to X for labeling.
+    y : array-like, shape (n_samples) or (n_samples, n_features)
+        Target relative to X for labeling.
 
-        title (string, optional): Title of the generated plot. Defaults to
-            "PCA 2-D Projection"
+    title : str, optional, default='PCA 2-D Projection'
+        Title of the generated plot.
 
-        biplot (bool, optional): If True, the function will generate and plot
-        	biplots. If false, the biplots are not generated.
+    biplot : bool, optional, default=False
+        If True, the function will generate and plot biplots. If False, the
+        biplots are not generated.
 
-        feature_labels (array-like, shape (n_classes), optional): List of labels
-        	that represent each feature of X. Its index position must also be
-        	relative to the features. If ``None`` is given, then labels will be
-        	automatically generated for each feature.
-        	e.g. "variable1", "variable2", "variable3" ...
+    feature_labels : array-like, shape (n_features), optional, default=None
+        List of labels that represent each feature of X. Its index position
+        must also be relative to the features. If None is given, labels will
+        be automatically generated for each feature (e.g. "variable1", "variable2",
+        "variable3" ...).
 
-        ax (:class:`matplotlib.axes.Axes`, optional): The axes upon which to
-            plot the curve. If None, the plot is drawn on a new set of axes.
+    ax : matplotlib.axes.Axes, optional, default=None
+        The axes upon which to plot. If None, a new set of axes is created.
 
-        figsize (2-tuple, optional): Tuple denoting figure size of the plot
-            e.g. (6, 6). Defaults to ``None``.
+    figsize : tuple of int, optional, default=None
+        Size of the figure (width, height) in inches.
 
-        title_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "large".
+    title_fontsize : str or int, optional, default='large'
+        Font size for the plot title.
 
-        text_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "medium".
+    text_fontsize : str or int, optional, default='medium'
+        Font size for the text in the plot.
 
-        cmap (string or :class:`matplotlib.colors.Colormap` instance, optional):
-            Colormap used for plotting the projection. View Matplotlib Colormap
-            documentation for available options.
-            https://matplotlib.org/users/colormaps.html
+    cmap : str or matplotlib.colors.Colormap, optional, default='viridis'
+        Colormap used for plotting the projection. See Matplotlib Colormap
+        documentation for available options:
+        https://matplotlib.org/users/colormaps.html
 
-    Returns:
-        ax (:class:`matplotlib.axes.Axes`): The axes on which the plot was
-            drawn.
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes on which the plot was drawn.
 
-    Example:
-        >>> import scikitplot as skplt
-        >>> pca = PCA(random_state=1)
-        >>> pca.fit(X)
-        >>> skplt.decomposition.plot_pca_2d_projection(pca, X, y)
-        <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-        >>> plt.show()
+    Examples
+    --------
+    >>> import scikitplot as skplt
+    >>> from sklearn.decomposition import PCA
+    >>> import matplotlib.pyplot as plt
+    >>> pca = PCA(random_state=1)
+    >>> pca.fit(X)
+    >>> skplt.decomposition.plot_pca_2d_projection(pca, X, y)
+    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
+    >>> plt.show()
 
-        .. image:: _static/examples/plot_pca_2d_projection.png
-           :align: center
-           :alt: PCA 2D Projection
+    .. image:: ../../_static/examples/plot_pca_2d_projection.png
+       :align: center
+       :alt: PCA 2D Projection
     """
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)

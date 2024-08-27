@@ -83,46 +83,52 @@ def decile_table(
     change_deciles=10, 
     digits=3,
 ):
-    """Generates the Decile Table from labels and probabilities
-    
-    The Decile Table is creared by first sorting the customers by their predicted 
+    """
+    Generates the Decile Table from labels and probabilities.
+
+    The Decile Table is created by first sorting the customers by their predicted 
     probabilities, in decreasing order from highest (closest to one) to 
-    lowest (closest to zero). Splitting the customers into equally sized segments, 
-    we create groups containing the same numbers of customers, for example, 10 decile 
+    lowest (closest to zero). The customers are split into equally sized segments, 
+    creating groups containing the same number of customers, for example, 10 decile 
     groups each containing 10% of the customer base.
-    
-    Args:
-        y_true (array-like, shape (n_samples)):
-            Ground truth (correct/actual) target values.
 
-        y_prob (array-like, shape (n_samples, n_classes)):
-            Prediction probabilities for each class returned by a classifier/algorithm.
+    Parameters
+    ----------
+    y_true : array-like, shape (n_samples,)
+        Ground truth (correct/actual) target values.
 
-        labels (bool, optional): If True, prints a legend for the abbreviations of
-            decile table column names. Defaults to True.
+    y_prob : array-like, shape (n_samples, n_classes)
+        Prediction probabilities for each class returned by a classifier/algorithm.
 
-        change_deciles (int, optional): The number of partitions for creating the table
-            can be changed. Defaults to '10' for deciles.
+    labels : bool, optional, default=True
+        If True, prints a legend for the abbreviations of decile table column names.
 
-        digits (int, optional): The decimal precision till which the result is 
-            needed. Defaults to '3'.
+    change_deciles : int, optional, default=10
+        The number of partitions for creating the table. Defaults to 10 for deciles.
 
-    Returns:
-        dt: The dataframe dt (decile-table) with the deciles and related information.
+    digits : int, optional, default=3
+        The decimal precision for the result.
 
-    Example:
-        >>> import scikitplot as skplt
-        >>> from sklearn.datasets import load_iris
-        >>> from sklearn.model_selection import train_test_split
-        >>> from sklearn import tree
-        >>> X, y = load_iris(return_X_y=True)
-        >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33,random_state=3)
-        >>> clf = tree.DecisionTreeClassifier(max_depth=1,random_state=3)
-        >>> clf = clf.fit(X_train, y_train)
-        >>> y_prob = clf.predict_proba(X_test)
-        >>> skplt.deciles.decile_table(y_test, y_prob[:,1])
+    Returns
+    -------
+    pd.DataFrame
+        The dataframe `dt` (decile-table) with the deciles and related information.
 
-    References:
+    Examples
+    --------
+    >>> import scikitplot as skplt
+    >>> from sklearn.datasets import load_iris
+    >>> from sklearn.model_selection import train_test_split
+    >>> from sklearn import tree
+    >>> X, y = load_iris(return_X_y=True)
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=3)
+    >>> clf = tree.DecisionTreeClassifier(max_depth=1, random_state=3)
+    >>> clf.fit(X_train, y_train)
+    >>> y_prob = clf.predict_proba(X_test)
+    >>> skplt.deciles.decile_table(y_test, y_prob[:, 1])
+
+    References
+    ----------
     [1] https://github.com/tensorbored/kds/blob/master/kds/metrics.py#L32
     """
     y_true = np.array(y_true)
@@ -275,8 +281,8 @@ def plot_cumulative_gain(
     ----------
     [1] http://mlwiki.org/index.php/Cumulative_Gain_Chart
     
-    Example
-    -------
+    Examples
+    --------
     >>> # from sklearn.datasets import load_iris as load_data  # multi
     >>> from sklearn.datasets import load_breast_cancer as load_data  # binary
     >>> from sklearn.model_selection import train_test_split
@@ -290,7 +296,7 @@ def plot_cumulative_gain(
     >>> y_probas = model.predict_proba(X_test)
     >>> skplt.deciles.plot_cumulative_gain(y_test, y_probas)
     
-    .. image:: _static/examples/plot_cumulative_gain.png
+    .. image:: ../../_static/examples/plot_cumulative_gain.png
        :align: center
        :alt: Cumulative Gain Curves
     """
@@ -415,9 +421,9 @@ def plot_cumulative_gain(
     ax.set_ylim([0.0, 1.05])
     
     # Set x-axis ticks and labels
-    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
+    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator( (ax.get_xlim()[1] / 10) ))
     ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
-    ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
+    ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator( (ax.get_ylim()[1] / 10) ))
     ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
 
     # Enable grid and display legend
@@ -453,85 +459,85 @@ def plot_lift(
 ):
     """
     Generate a Lift Curve from true labels and predicted probabilities.
-    
+
     The lift curve evaluates the performance of a classifier by comparing
     the lift (or improvement) achieved by using the model compared to random 
     guessing. The implementation supports binary classification directly and 
     multiclass classification through One-vs-Rest (OVR) or multinomial strategies.
-    
+
     Parameters
     ----------
     y_true : array-like of shape (n_samples,)
         Ground truth (correct) target values.
-    
+
     y_probas : array-like of shape (n_samples,) or (n_samples, n_classes)
         Predicted probabilities for each class or only target class probabilities. 
         If 1D, it is treated as probabilities for the positive class in binary 
         or multiclass classification with the `class_index`.
-    
+
     title : str, default='Lift Curves'
         Title of the plot.
-    
+
     ax : matplotlib.axes.Axes, optional, default=None
         The axes on which to plot. If None, a new figure and axes are created.
-    
+
     figsize : tuple of int, optional, default=None
         Size of the figure (width, height) in inches.
-    
+
     title_fontsize : str or int, optional, default='large'
         Font size for the plot title.
-    
+
     text_fontsize : str or int, optional, default='medium'
         Font size for the text in the plot.
-    
+
     cmap : None, str or matplotlib.colors.Colormap, optional, default='viridis'
         Colormap used for plotting. See Matplotlib Colormap documentation for options:
         - https://matplotlib.org/users/colormaps.html
         - plt.colormaps()
         - plt.get_cmap()  # None == 'viridis'
-    
+
     class_index : int, optional, default=1
         Index of the class of interest for multi-class classification. Ignored for
         binary classification.
-    
+
     multi_class : {'ovr', 'multinomial', None}, optional, default=None
         Strategy for handling multiclass classification:
         - 'ovr': One-vs-Rest, plotting binary problems for each class.
         - 'multinomial' or None: Multinomial plot for the entire probability distribution.
-    
+
     class_names : list of str, optional, default=None
         List of class names for the legend. Order should match the order of classes in `y_probas`.
-    
+
     classes_to_plot : list-like, optional, default=None
         Specific classes to plot. If a given class does not exist, it will be ignored. 
         If None, all classes are plotted. e.g. [0, 'cold']
-    
+
     plot_micro : bool, optional, default=False
         Whether to plot the micro-average Lift curve.
-    
+
     plot_macro : bool, optional, default=False
         Whether to plot the macro-average Lift curve.
-    
+
     show_labels : bool, optional, default=True
         Whether to display the legend labels.
-    
+
     Returns
     -------
     matplotlib.axes.Axes
         The axes with the plotted lift curves.
-    
+
     Notes
     -----
     The implementation is specific to binary classification. For multiclass 
     problems, the 'ovr' or 'multinomial' strategies can be used. When 
     `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
-    
+
     References
     ----------
     [1] http://www2.cs.uregina.ca/~dbd/cs831/notes/lift_chart/lift_chart.html
-    
-    Example
-    -------
+
+    Examples
+    --------
     >>> # from sklearn.datasets import load_iris as load_data  # multi
     >>> from sklearn.datasets import load_breast_cancer as load_data  # binary
     >>> from sklearn.model_selection import train_test_split
@@ -544,8 +550,8 @@ def plot_lift(
     >>> model.fit(X_train, y_train)
     >>> y_probas = model.predict_proba(X_test)
     >>> skplt.deciles.plot_lift(y_test, y_probas)
-    
-    .. image:: _static/examples/plot_lift.png
+
+    .. image:: ../../_static/examples/plot_lift.png
        :align: center
        :alt: Lift Curves
     """
@@ -675,9 +681,9 @@ def plot_lift(
     # ax.set_ylim([0.0, 1.05])
     
     # Set x-axis ticks and labels
-    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
+    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator( (ax.get_xlim()[1] / 10) ))
     ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
-    ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(0.5))
+    ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator( (ax.get_ylim()[1] / 10) ))
     ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
 
     # Enable grid and display legend
@@ -703,50 +709,56 @@ def plot_lift_decile_wise(
     title_fontsize="large",
     text_fontsize="medium",
 ):
-    """Generates the Decile-wise Lift Plot from labels and probabilities
+    """
+    Generates the Decile-wise Lift Plot from labels and probabilities.
 
-    The lift curve is used to determine the effectiveness of a
-    binary classifier. A detailed explanation can be found at
+    The lift curve is used to determine the effectiveness of a binary classifier.
+    A detailed explanation can be found at:
     http://www2.cs.uregina.ca/~dbd/cs831/notes/lift_chart/lift_chart.html
     The implementation here works only for binary classification.
-    
-    Args:
-        y_true (array-like, shape (n_samples)):
-            Ground truth (correct) target values.
 
-        y_prob (array-like, shape (n_samples, n_classes)):
-            Prediction probabilities for each class returned by a classifier.
+    Parameters
+    ----------
+    y_true : array-like, shape (n_samples,)
+        Ground truth (correct) target values.
 
-        title (string, optional): Title of the generated plot. Defaults to
-            "Decile-wise Lift Plot".
+    y_prob : array-like, shape (n_samples, n_classes)
+        Prediction probabilities for each class returned by a classifier.
 
-        title_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values (8, 10, 12, etc.)
-            Defaults to 14.
+    title : str, optional, default='Decile-wise Lift Plot'
+        Title of the generated plot.
 
-        text_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values (8, 10, 12, etc.)
-            Defaults to 10.
+    title_fontsize : str or int, optional, default=14
+        Font size for the plot title. Use e.g., "small", "medium", "large" or integer-values 
+        (8, 10, 12, etc.).
 
-        figsize (2-tuple, optional): Tuple denoting figure size of the plot
-            e.g. (6, 6). Defaults to ``None``.
+    text_fontsize : str or int, optional, default=10
+        Font size for the text in the plot. Use e.g., "small", "medium", "large" or integer-values 
+        (8, 10, 12, etc.).
 
-    Returns:
-        None
+    figsize : tuple of int, optional, default=None
+        Tuple denoting figure size of the plot (e.g., (6, 6)).
 
-    Example:
-        >>> import scikitplot as skplt
-        >>> from sklearn.datasets import load_iris
-        >>> from sklearn.model_selection import train_test_split
-        >>> from sklearn import tree
-        >>> X, y = load_iris(return_X_y=True)
-        >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33,random_state=3)
-        >>> clf = tree.DecisionTreeClassifier(max_depth=1,random_state=3)
-        >>> clf = clf.fit(X_train, y_train)
-        >>> y_prob = clf.predict_proba(X_test)
-        >>> skplt.deciles.plot_lift_decile_wise(y_test, y_prob[:,1])
+    Returns
+    -------
+    None
+        This function does not return any value.
 
-    References:
+    Examples
+    --------
+    >>> import scikitplot as skplt
+    >>> from sklearn.datasets import load_iris
+    >>> from sklearn.model_selection import train_test_split
+    >>> from sklearn import tree
+    >>> X, y = load_iris(return_X_y=True)
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=3)
+    >>> clf = tree.DecisionTreeClassifier(max_depth=1, random_state=3)
+    >>> clf = clf.fit(X_train, y_train)
+    >>> y_prob = clf.predict_proba(X_test)
+    >>> skplt.deciles.plot_lift_decile_wise(y_test, y_prob[:, 1])
+
+    References
+    ----------
     [1] https://github.com/tensorbored/kds/blob/master/kds/metrics.py#L190
     """
     if ax is None:
@@ -784,52 +796,54 @@ def plot_ks_statistic(
     text_fontsize="medium", 
     digits=3,
 ):
-    """Generates the KS Statistic plot from labels and scores/probabilities
+    """
+    Generates the KS Statistic plot from labels and scores/probabilities.
 
-    Args:
-        y_true (array-like, shape (n_samples)):
-            Ground truth (correct) target values.
+    Parameters
+    ----------
+    y_true : array-like, shape (n_samples)
+        Ground truth (correct) target values.
 
-        y_probas (array-like, shape (n_samples, n_classes)):
-            Prediction probabilities for each class returned by a classifier.
+    y_probas : array-like, shape (n_samples, n_classes)
+        Prediction probabilities for each class returned by a classifier.
 
-        title (string, optional): Title of the generated plot. Defaults to
-            "KS Statistic Plot".
+    title : str, optional
+        Title of the generated plot. Defaults to "KS Statistic Plot".
 
-        ax (:class:`matplotlib.axes.Axes`, optional): The axes upon which to
-            plot the learning curve. If None, the plot is drawn on a new set of
-            axes.
+    ax : matplotlib.axes.Axes, optional
+        The axes upon which to plot the learning curve. If None, the plot is drawn on a new set of axes.
 
-        figsize (2-tuple, optional): Tuple denoting figure size of the plot
-            e.g. (6, 6). Defaults to ``None``.
+    figsize : tuple of 2 ints, optional
+        Tuple denoting figure size of the plot e.g. (6, 6). Defaults to None.
 
-        title_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "large".
+    title_fontsize : str or int, optional
+        Matplotlib-style fontsizes. Use e.g. "small", "medium", "large" or integer-values. Defaults to "large".
 
-        text_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "medium".
+    text_fontsize : str or int, optional
+        Matplotlib-style fontsizes. Use e.g. "small", "medium", "large" or integer-values. Defaults to "medium".
 
-        digits (int, optional): Number of digits for formatting output floating point values.
-            Use e.g. 2 or 4. Defaults to 3.
+    digits : int, optional
+        Number of digits for formatting output floating point values. Use e.g. 2 or 4. Defaults to 3.
 
-    Returns:
-        ax (:class:`matplotlib.axes.Axes`): The axes on which the plot was
-            drawn.
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes on which the plot was drawn.
 
-    Example:
-        >>> import scikitplot as skplt
-        >>> lr = LogisticRegression()
-        >>> lr = lr.fit(X_train, y_train)
-        >>> y_probas = lr.predict_proba(X_test)
-        >>> skplt.deciles.plot_ks_statistic(y_test, y_probas)
-        <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-        >>> plt.show()
+    Examples
+    --------
+    >>> import scikitplot as skplt
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> lr = LogisticRegression()
+    >>> lr = lr.fit(X_train, y_train)
+    >>> y_probas = lr.predict_proba(X_test)
+    >>> skplt.deciles.plot_ks_statistic(y_test, y_probas)
+    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
+    >>> plt.show()
 
-        .. image:: _static/examples/plot_ks_statistic.png
-           :align: center
-           :alt: KS Statistic
+    .. image:: ../../_static/examples/plot_ks_statistic.png
+       :align: center
+       :alt: KS Statistic
     """
     y_true = np.array(y_true)
     y_probas = np.array(y_probas)
@@ -879,59 +893,62 @@ def report(
     text_fontsize="medium", digits=3,
     plot_style = None,
 ):
-    """Generates decile table and 4 plots (Lift, Lift@Decile, Gain and KS) 
-    from labels and probabilities
-    
-    Args:
-        y_true (array-like, shape (n_samples)):
-            Ground truth (correct) target values.
+    """
+    Generates a decile table and four plots (Lift, Lift@Decile, Gain, and KS) 
+    from labels and probabilities.
 
-        y_prob (array-like, shape (n_samples, n_classes)):
-            Prediction probabilities for each class returned by a classifier.
+    Parameters
+    ----------
+    y_true : array-like, shape (n_samples,)
+        Ground truth (correct) target values.
 
-        labels (bool, optional): If True, prints a legend for the abbreviations of
-            decile table column names. Defaults to True.
+    y_prob : array-like, shape (n_samples, n_classes)
+        Prediction probabilities for each class returned by a classifier.
 
-        ax (:class:`matplotlib.axes.Axes`, optional): The axes upon which to
-            plot the learning curve. If None, the plot is drawn on a new set of
-            axes.
+    labels : bool, optional, default=True
+        If True, prints a legend for the abbreviations of decile table column names.
 
-        figsize (2-tuple, optional): Tuple denoting figure size of the plot
-            e.g. (6, 6). Defaults to ``None``.
+    ax : matplotlib.axes.Axes, optional, default=None
+        The axes upon which to plot. If None, a new set of axes is created.
 
-        title_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "large".
+    figsize : tuple of int, optional, default=None
+        Tuple denoting figure size of the plot (e.g., (6, 6)).
 
-        text_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "medium".
+    title_fontsize : str or int, optional, default='large'
+        Font size for the plot title. Use e.g., "small", "medium", "large" or integer-values.
 
-        digits (int, optional): Number of digits for formatting output floating point values.
-            Use e.g. 2 or 4. Defaults to 3.
+    text_fontsize : str or int, optional, default='medium'
+        Font size for the text in the plot. Use e.g., "small", "medium", "large" or integer-values.
 
-        plot_style(string, optional): Check available styles "plt.style.available".
-            few examples: ['ggplot', 'seaborn', 'bmh', 'classic', 'dark_background', 
-            'fivethirtyeight', 'grayscale', 'seaborn-bright', 'seaborn-colorblind', 
-            'seaborn-dark', 'seaborn-dark-palette', 'tableau-colorblind10','fast'] 
-            Defaults to ``None``.
+    digits : int, optional, default=3
+        Number of digits for formatting output floating point values. Use e.g., 2 or 4.
 
-    Returns:
-        dc: The dataframe dc (decile-table) with the deciles and related information.
+    plot_style : str, optional, default=None
+        Check available styles with "plt.style.available". Examples include:
+        ['ggplot', 'seaborn', 'bmh', 'classic', 'dark_background', 'fivethirtyeight', 
+        'grayscale', 'seaborn-bright', 'seaborn-colorblind', 'seaborn-dark', 
+        'seaborn-dark-palette', 'tableau-colorblind10', 'fast'].
 
-    Example:
-        >>> import scikitplot as skplt
-        >>> from sklearn.datasets import load_iris
-        >>> from sklearn.model_selection import train_test_split
-        >>> from sklearn import tree
-        >>> X, y = load_iris(return_X_y=True)
-        >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33,random_state=3)
-        >>> clf = tree.DecisionTreeClassifier(max_depth=1,random_state=3)
-        >>> clf = clf.fit(X_train, y_train)
-        >>> y_prob = clf.predict_proba(X_test)
-        >>> skplt.deciles.report(y_test, y_prob[:,1])
+    Returns
+    -------
+    pandas.DataFrame
+        The dataframe containing the decile table with the deciles and related information.
 
-    References:
+    Examples
+    --------
+    >>> import scikitplot as skplt
+    >>> from sklearn.datasets import load_iris
+    >>> from sklearn.model_selection import train_test_split
+    >>> from sklearn import tree
+    >>> X, y = load_iris(return_X_y=True)
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=3)
+    >>> clf = tree.DecisionTreeClassifier(max_depth=1, random_state=3)
+    >>> clf = clf.fit(X_train, y_train)
+    >>> y_prob = clf.predict_proba(X_test)
+    >>> skplt.deciles.report(y_test, y_prob[:, 1])
+
+    References
+    ----------
     [1] https://github.com/tensorbored/kds/blob/master/kds/metrics.py#L382
     """
     if plot_style is None:

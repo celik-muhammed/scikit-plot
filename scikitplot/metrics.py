@@ -178,6 +178,9 @@ def plot_calibration_curve(
     >>>              'Gaussian Naive Bayes', 'Support Vector Machine']
     >>> skplt.metrics.plot_calibration_curve(y_test, probas_list, y_is_decision)
     
+    .. image:: ../../_static/examples/plot_calibration_curve.png
+       :align: center
+       :alt: Calibration Curves
     """
     title_pad = None
     # Create a new figure and axes if none are provided
@@ -353,6 +356,83 @@ def plot_classifier_eval(
     normalize=None,
     digits=3,
 ):
+    """
+    Generates various evaluation plots for a classifier, including confusion matrix, precision-recall curve, and ROC curve.
+
+    This function provides a comprehensive view of a classifier's performance through multiple plots,
+    helping in the assessment of its effectiveness and areas for improvement.
+
+    Parameters
+    ----------
+    y_true : array-like, shape (n_samples,)
+        Ground truth (correct) target values.
+
+    y_pred : array-like, shape (n_samples,)
+        Predicted target values from the classifier.
+
+    title : string, optional
+        Title of the generated plot. If None, no title is set.
+
+    ax : matplotlib.axes.Axes, optional
+        The axes upon which to plot the figures. If None, new axes are created.
+
+    figsize : tuple of int, optional
+        Tuple denoting figure size of the plot, e.g. (10, 10). Defaults to None.
+
+    title_fontsize : string or int, optional, default="large"
+        Font size for the plot title. Use e.g. "small", "medium", "large" or integer values.
+
+    text_fontsize : string or int, optional, default="medium"
+        Font size for the text in the plot. Use e.g. "small", "medium", "large" or integer values.
+
+    cmap : string or matplotlib.colors.Colormap, optional, default='viridis'
+        Colormap used for plotting. View Matplotlib Colormap documentation for available options.
+
+    x_tick_rotation : int, optional, default=0
+        Rotates x-axis tick labels by the specified angle.
+
+    labels : list of string, optional
+        List of labels for the classes. If None, labels are automatically generated based on the class indices.
+
+    normalize : {'true', 'pred', 'all', None}, optional
+        Normalizes the confusion matrix according to the specified mode. Defaults to None.
+        - 'true': Normalizes by true (actual) values.
+        - 'pred': Normalizes by predicted values.
+        - 'all': Normalizes by total values.
+        - None: No normalization.
+
+    digits : int, optional, default=3
+        Number of digits for formatting floating point values in the plots.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    The function generates and displays multiple evaluation plots. Ensure that `y_true` and `y_pred`
+    have the same shape and contain valid class labels. The `normalize` parameter is applicable
+    to the confusion matrix plot. Adjust `cmap` and `x_tick_rotation` to customize the appearance
+    of the plots.
+
+    Examples
+    --------
+    >>> import scikitplot as skplt
+    >>> from sklearn.datasets import load_iris
+    >>> from sklearn.model_selection import train_test_split
+    >>> from sklearn import tree
+    >>> from sklearn.metrics import accuracy_score
+    >>> X, y = load_iris(return_X_y=True)
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=3)
+    >>> clf = tree.DecisionTreeClassifier(max_depth=1, random_state=3)
+    >>> clf.fit(X_train, y_train)
+    >>> y_pred = clf.predict(X_test)
+    >>> skplt.metrics.plot_classifier_eval(y_test, y_pred)
+    
+    .. image:: ../../_static/examples/plot_classifier_eval.png
+       :align: center
+       :alt: Classifier Eval
+    """
     figsize = (8, 3) if figsize is None else figsize
     title = '' if title is None else title
     if ax is None:
@@ -502,81 +582,91 @@ def plot_confusion_matrix(
     text_fontsize="medium", 
     show_colorbar=True,
 ):
-    """Generates confusion matrix plot from predictions and true labels
+    """
+    Generates a confusion matrix plot from predictions and true labels.
 
-    Args:
-        y_true (array-like, shape (n_samples)):
-            Ground truth (correct) target values.
+    The confusion matrix is a summary of prediction results that shows the counts of true
+    and false positives and negatives for each class. This function also provides options for
+    normalizing, hiding zero values, and customizing the plot appearance.
 
-        y_pred (array-like, shape (n_samples)):
-            Estimated targets as returned by a classifier.
+    Parameters
+    ----------
+    y_true : array-like, shape (n_samples,)
+        Ground truth (correct) target values.
 
-        labels (array-like, shape (n_classes), optional): List of labels to
-            index the matrix. This may be used to reorder or select a subset
-            of labels. If none is given, those that appear at least once in
-            ``y_true`` or ``y_pred`` are used in sorted order. (new in v0.2.5)
+    y_pred : array-like, shape (n_samples,)
+        Estimated targets as returned by a classifier.
 
-        true_labels (array-like, optional): The true labels to display.
-            If none is given, then all of the labels are used.
+    labels : array-like, shape (n_classes), optional
+        List of labels to index the matrix. This may be used to reorder or select a subset
+        of labels. If None, labels appearing at least once in `y_true` or `y_pred` are used
+        in sorted order. (new in v0.2.5)
 
-        pred_labels (array-like, optional): The predicted labels to display.
-            If none is given, then all of the labels are used.
+    true_labels : array-like, optional
+        The true labels to display. If None, all labels are used.
 
-        title (string, optional): Title of the generated plot. Defaults to
-            "Confusion Matrix" if `normalize` is True. Else, defaults to
-            "Normalized Confusion Matrix.
+    pred_labels : array-like, optional
+        The predicted labels to display. If None, all labels are used.
 
-        normalize (bool, optional): If True, normalizes the confusion matrix
-            before plotting. Defaults to False.
+    title : string, optional
+        Title of the generated plot. Defaults to "Confusion Matrix" if `normalize` is True.
+        Otherwise, defaults to "Normalized Confusion Matrix".
 
-        hide_zeros (bool, optional): If True, does not plot cells containing a
-            value of zero. Defaults to False.
+    normalize : bool, optional, default=False
+        If True, normalizes the confusion matrix before plotting.
 
-        hide_counts (bool, optional): If True, doe not overlay counts.
-            Defaults to False.
+    hide_zeros : bool, optional, default=False
+        If True, cells containing a value of zero are not plotted.
 
-        x_tick_rotation (int, optional): Rotates x-axis tick labels by the
-            specified angle. This is useful in cases where there are numerous
-            categories and the labels overlap each other.
+    hide_counts : bool, optional, default=False
+        If True, counts are not overlaid on the plot.
 
-        ax (:class:`matplotlib.axes.Axes`, optional): The axes upon which to
-            plot the curve. If None, the plot is drawn on a new set of axes.
+    x_tick_rotation : int, optional, default=0
+        Rotates x-axis tick labels by the specified angle. Useful when labels overlap.
 
-        figsize (2-tuple, optional): Tuple denoting figure size of the plot
-            e.g. (6, 6). Defaults to ``None``.
+    ax : matplotlib.axes.Axes, optional
+        The axes upon which to plot the confusion matrix. If None, a new set of axes is created.
 
-        cmap : None, str or matplotlib.colors.Colormap, optional, default='viridis'
-            Colormap used for plotting.
-            See Matplotlib Colormap documentation for options.
-            - https://matplotlib.org/users/colormaps.html
-            - plt.colormaps() # 'nipy_spectral' etc.
-            - plt.get_cmap()  # None == 'viridis'
+    figsize : tuple of int, optional
+        Tuple denoting figure size of the plot, e.g., (6, 6). Defaults to None.
 
-        title_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "large".
+    cmap : None, str, or matplotlib.colors.Colormap, optional, default='viridis'
+        Colormap used for plotting. Options include 'viridis', 'plasma', 'inferno', etc.
+        Refer to the Matplotlib Colormap documentation for available choices.
 
-        text_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "medium".
+    title_fontsize : string or int, optional, default="large"
+        Font size for the plot title. Use "small", "medium", "large", or integer values.
 
-        show_colorbar (bool, optional): If False, does not add colour bar.
-            Defaults to True.
+    text_fontsize : string or int, optional, default="medium"
+        Font size for text in the plot. Use "small", "medium", "large", or integer values.
 
-    Returns:
-        ax (:class:`matplotlib.axes.Axes`): The axes on which the plot was
-            drawn.
+    show_colorbar : bool, optional, default=True
+        If False, the colorbar is not displayed.
 
-    Example:
-        >>> import scikitplot as skplt
-        >>> rf = RandomForestClassifier()
-        >>> rf = rf.fit(X_train, y_train)
-        >>> y_pred = rf.predict(X_test)
-        >>> skplt.metrics.plot_confusion_matrix(y_test, y_pred, normalize=True);
+    Returns
+    -------
+    ax : matplotlib.axes.Axes
+        The axes on which the plot was drawn.
 
-    .. image:: _static/examples/plot_confusion_matrix.png
+    Notes
+    -----
+    Ensure that `y_true` and `y_pred` have the same shape and contain valid class labels.
+    The `normalize` parameter applies only to the confusion matrix plot. Adjust `cmap` and
+    `x_tick_rotation` to customize the appearance of the plot. The `show_colorbar` parameter
+    controls whether a colorbar is displayed.
+
+    Examples
+    --------
+    >>> import scikitplot as skplt
+    >>> from sklearn.ensemble import RandomForestClassifier
+    >>> rf = RandomForestClassifier()
+    >>> rf.fit(X_train, y_train)
+    >>> y_pred = rf.predict(X_test)
+    >>> skplt.metrics.plot_confusion_matrix(y_test, y_pred, normalize=True)
+    
+    .. image:: ../../_static/examples/plot_confusion_matrix.png
        :align: center
-       :alt: Confusion matrix
+       :alt: Confusion Matrix
     """
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
@@ -710,7 +800,7 @@ def plot_roc_curve(y_true, y_probas, title='ROC Curves',
         >>> y_probas = nb.predict_proba(X_test)
         >>> skplt.metrics.plot_roc_curve(y_test, y_probas)
 
-        .. image:: _static/examples/plot_roc_curve.png
+        .. image:: ../../_static/examples/plot_roc_curve.png
            :align: center
            :alt: ROC Curves
     """
@@ -824,83 +914,85 @@ def plot_roc(
 ):
     """
     Generates the ROC AUC curves from labels and predicted scores/probabilities.
-    
+
+    The ROC (Receiver Operating Characteristic) curve plots the true positive rate 
+    against the false positive rate at various threshold settings. The AUC (Area Under 
+    the Curve) represents the degree of separability achieved by the classifier. This 
+    function supports both binary and multiclass classification tasks.
+
     Parameters
     ----------
-    y_true : array-like of shape (n_samples,)
+    y_true : array-like, shape (n_samples,)
         Ground truth (correct) target values.
-    
-    y_probas : array-like of shape (n_samples,) or (n_samples, n_classes)
+
+    y_probas : array-like, shape (n_samples,) or (n_samples, n_classes)
         Predicted probabilities for each class or only target class probabilities. 
         If 1D, it is treated as probabilities for the positive class in binary 
         or multiclass classification with the `class_index`.
-    
+
     title : str, optional, default='ROC AUC Curves'
         Title of the generated plot.
-    
+
     ax : matplotlib.axes.Axes, optional, default=None
         The axes on which to plot. If None, a new figure and axes are created.
-    
+
     figsize : tuple of int, optional, default=None
         Size of the figure (width, height) in inches.
-    
+
     title_fontsize : str or int, optional, default='large'
         Font size for the plot title.
-    
+
     text_fontsize : str or int, optional, default='medium'
         Font size for the text in the plot.
-    
+
     cmap : None, str or matplotlib.colors.Colormap, optional, default='viridis'
-        Colormap used for plotting. See Matplotlib Colormap documentation for options.
-        - https://matplotlib.org/users/colormaps.html
-        - plt.colormaps() # 'nipy_spectral' etc.
-        - plt.get_cmap()  # None == 'viridis'
-    
+        Colormap used for plotting. Options include 'viridis', 'plasma', 'inferno', etc.
+        See Matplotlib Colormap documentation for available choices.
+
     class_index : int, optional, default=1
         Index of the class of interest for multi-class classification. Ignored for binary classification.
-    
+
     multi_class : {'ovr', 'multinomial', None}, optional, default=None
         Strategy for handling multiclass classification:
         - 'ovr': One-vs-Rest, plotting binary problems for each class.
         - 'multinomial' or None: Multinomial plot for the entire probability distribution.
-    
+
     class_names : list of str, optional, default=None
         List of class names for the legend. Order should match the order of classes in `y_probas`.
-    
+
     classes_to_plot : list-like, optional, default=None
-        Specific classes to plot. If given class does not exist, it will be ignored. If None, all classes are plotted.
-        e.g. [0, 'cold']
-    
+        Specific classes to plot. If a given class does not exist, it will be ignored. 
+        If None, all classes are plotted.
+
     plot_micro : bool, optional, default=False
         Whether to plot the micro-average ROC AUC curve.
-    
+
     plot_macro : bool, optional, default=False
         Whether to plot the macro-average ROC AUC curve.
-    
+
     show_labels : bool, optional, default=True
         Whether to display the legend labels.
-    
+
     digits : int, optional, default=3
         Number of digits for formatting AUC values in the plot.
-    
+
     Returns
     -------
     matplotlib.axes.Axes
         The axes with the plotted ROC AUC curves.
-    
+
     Notes
     -----
-    The implementation is specific to binary classification. For multiclass 
-    problems, the 'ovr' or 'multinomial' strategies can be used. When 
-    `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
-    
-    Example
-    -------
+    The implementation is specific to binary classification. For multiclass problems, 
+    the 'ovr' or 'multinomial' strategies can be used. When `multi_class='ovr'`, 
+    the plot focuses on the specified class (`class_index`).
+
+    Examples
+    --------
     >>> import matplotlib.pyplot as plt
-    >>> # from sklearn.datasets import load_iris as load_data  # multi
     >>> from sklearn.datasets import load_breast_cancer as load_data  # binary
     >>> from sklearn.model_selection import train_test_split
-    >>> from sklearn.linear_model import LogisticRegression
+    >>> from sklearn.naive_bayes import GaussianNB
     >>> import scikitplot as skplt
     >>> X, y = load_data(return_X_y=True)
     >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
@@ -908,8 +1000,8 @@ def plot_roc(
     >>> model.fit(X_train, y_train)
     >>> y_probas = model.predict_proba(X_test)
     >>> skplt.metrics.plot_roc(y_test, y_probas)
-    
-    .. image:: _static/examples/plot_roc_curve.png
+
+    .. image:: ../../_static/examples/plot_roc.png
        :align: center
        :alt: ROC AUC Curves
     """
@@ -1132,7 +1224,7 @@ def plot_precision_recall_curve(
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: _static/examples/plot_precision_recall_curve.png
+        .. image:: ../../_static/examples/plot_precision_recall_curve.png
            :align: center
            :alt: Precision Recall Curve
     """
@@ -1224,88 +1316,89 @@ def plot_precision_recall(
 ):
     """
     Generates the Precision-Recall Curves from labels and predicted scores/probabilities.
-    
+
+    The Precision-Recall curve plots the precision against the recall for different threshold values. 
+    The area under the curve (AUC) represents the classifier's performance. This function supports 
+    both binary and multiclass classification tasks.
+
     Parameters
     ----------
-    y_true : array-like of shape (n_samples,)
+    y_true : array-like, shape (n_samples,)
         Ground truth (correct) target values.
-    
-    y_probas : array-like of shape (n_samples,) or (n_samples, n_classes)
+
+    y_probas : array-like, shape (n_samples,) or (n_samples, n_classes)
         Predicted probabilities for each class or only target class probabilities.
         If 1D, it is treated as probabilities for the positive class in binary
         or multiclass classification with the `class_index`.
-    
+
     title : str, optional, default='Precision-Recall AUC Curves'
         Title of the generated plot.
-    
+
     ax : matplotlib.axes.Axes, optional, default=None
         The axes on which to plot. If None, a new figure and axes are created.
-    
+
     figsize : tuple of int, optional, default=None
         Size of the figure (width, height) in inches.
-    
+
     title_fontsize : str or int, optional, default='large'
         Font size for the plot title.
-    
+
     text_fontsize : str or int, optional, default='medium'
         Font size for the text in the plot.
-    
+
     cmap : None, str or matplotlib.colors.Colormap, optional, default='viridis'
-        Colormap used for plotting. See Matplotlib Colormap documentation for options.
-        - https://matplotlib.org/users/colormaps.html
-        - plt.colormaps()
-        - plt.get_cmap()  # None == 'viridis'
-    
+        Colormap used for plotting. Options include 'viridis', 'plasma', 'inferno', etc.
+        See Matplotlib Colormap documentation for available choices.
+
     class_index : int, optional, default=1
         Index of the class of interest for multi-class classification. Ignored for binary classification.
-    
+
     multi_class : {'ovr', 'multinomial', None}, optional, default=None
         Strategy for handling multiclass classification:
         - 'ovr': One-vs-Rest, plotting binary problems for each class.
         - 'multinomial' or None: Multinomial plot for the entire probability distribution.
-    
+
     class_names : list of str, optional, default=None
         List of class names for the legend. Order should match the order of classes in `y_probas`.
-    
+
     classes_to_plot : list-like, optional, default=None
-        Specific classes to plot. If a given class does not exist, it will be ignored. If None, all classes are plotted.
-        e.g. [0, 'cold']
-    
+        Specific classes to plot. If a given class does not exist, it will be ignored. 
+        If None, all classes are plotted.
+
     plot_micro : bool, optional, default=True
         Whether to plot the micro-average Precision-Recall AUC curve.
-    
+
     plot_macro : bool, optional, default=False
         Whether to plot the macro-average Precision-Recall AUC curve.
-    
+
     show_labels : bool, optional, default=True
         Whether to display the legend labels.
-    
+
     digits : int, optional, default=3
         Number of digits for formatting AUC values in the plot.
-    
+
     area : {'average_precision', 'pr_auc'}, optional, default='pr_auc'
         Strategy for calculating the area score:
-        - Both calculations give very close results.
-        - Macro scores are calculated using 'average_precision'.
-    
+        - 'pr_auc': Precision-Recall AUC.
+        - 'average_precision': Average Precision score, closely related but computed differently.
+
     Returns
     -------
     matplotlib.axes.Axes
         The axes with the plotted Precision-Recall AUC curves.
-    
+
     Notes
     -----
-    The implementation is specific to binary classification. For multiclass
-    problems, the 'ovr' or 'multinomial' strategies can be used. When
-    `multi_class='ovr'`, the plot focuses on the specified class (`class_index`).
-    
-    Example
-    -------
+    The implementation is specific to binary classification. For multiclass problems, 
+    the 'ovr' or 'multinomial' strategies can be used. When `multi_class='ovr'`, 
+    the plot focuses on the specified class (`class_index`).
+
+    Examples
+    --------
     >>> import matplotlib.pyplot as plt
-    >>> # from sklearn.datasets import load_iris as load_data  # multi
     >>> from sklearn.datasets import load_breast_cancer as load_data  # binary
     >>> from sklearn.model_selection import train_test_split
-    >>> from sklearn.linear_model import LogisticRegression
+    >>> from sklearn.naive_bayes import GaussianNB
     >>> import scikitplot as skplt
     >>> X, y = load_data(return_X_y=True)
     >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
@@ -1313,8 +1406,8 @@ def plot_precision_recall(
     >>> model.fit(X_train, y_train)
     >>> y_probas = model.predict_proba(X_test)
     >>> skplt.metrics.plot_precision_recall(y_test, y_probas)
-    
-    .. image:: _static/examples/plot_precision_recall.png
+
+    .. image:: ../../_static/examples/plot_precision_recall.png
        :align: center
        :alt: Precision-Recall AUC Curves
     """
@@ -1500,65 +1593,73 @@ def plot_silhouette(
     text_fontsize="medium", 
     digits=3,
 ):
-    """Plots silhouette analysis of clusters provided.
+    """
+    Plots silhouette analysis of clusters provided.
 
-    Args:
-        X (array-like, shape (n_samples, n_features)):
-            Data to cluster, where n_samples is the number of samples and
-            n_features is the number of features.
+    Silhouette analysis is a method of interpreting and validating the consistency 
+    within clusters of data. It measures how similar an object is to its own 
+    cluster compared to other clusters.
 
-        cluster_labels (array-like, shape (n_samples,)):
-            Cluster label for each sample.
+    Parameters
+    ----------
+    X : array-like, shape (n_samples, n_features)
+        Data to cluster, where `n_samples` is the number of samples and 
+        `n_features` is the number of features.
 
-        title (string, optional): Title of the generated plot. Defaults to
-            "Silhouette Analysis"
+    cluster_labels : array-like, shape (n_samples,)
+        Cluster label for each sample.
 
-        metric (string or callable, optional): The metric to use when
-            calculating distance between instances in a feature array.
-            If metric is a string, it must be one of the options allowed by
-            sklearn.metrics.pairwise.pairwise_distances. If X is
-            the distance array itself, use "precomputed" as the metric.
+    title : str, optional, default='Silhouette Analysis'
+        Title of the generated plot.
 
-        copy (boolean, optional): Determines whether ``fit`` is used on
-            **clf** or on a copy of **clf**.
+    metric : str or callable, optional, default='euclidean'
+        The metric to use when calculating distance between instances in a feature array.
+        If metric is a string, it must be one of the options allowed by 
+        `sklearn.metrics.pairwise.pairwise_distances`. If `X` is the distance array itself, 
+        use "precomputed" as the metric.
 
-        ax (:class:`matplotlib.axes.Axes`, optional): The axes upon which to
-            plot the curve. If None, the plot is drawn on a new set of axes.
+    copy : bool, optional, default=True
+        Determines whether `fit` is used on `clf` or on a copy of `clf`.
 
-        figsize (2-tuple, optional): Tuple denoting figure size of the plot
-            e.g. (6, 6). Defaults to ``None``.
+    ax : matplotlib.axes.Axes, optional, default=None
+        The axes upon which to plot the curve. If None, a new figure and axes are created.
 
-        cmap (string or :class:`matplotlib.colors.Colormap` instance, optional):
-            Colormap used for plotting the projection. View Matplotlib Colormap
-            documentation for available options.
-            https://matplotlib.org/users/colormaps.html
+    figsize : tuple of int, optional, default=None
+        Size of the figure (width, height) in inches.
 
-        title_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "large".
+    cmap : str or matplotlib.colors.Colormap, optional, default='viridis'
+        Colormap used for plotting the projection. See Matplotlib Colormap documentation 
+        for available options. 
+        - https://matplotlib.org/users/colormaps.html
 
-        text_fontsize (string or int, optional): Matplotlib-style fontsizes.
-            Use e.g. "small", "medium", "large" or integer-values. Defaults to
-            "medium".
+    title_fontsize : str or int, optional, default='large'
+        Font size for the plot title.
 
-        digits (int, optional): Number of digits for formatting output floating point values.
-            Use e.g. 2 or 4. Defaults to 3.
+    text_fontsize : str or int, optional, default='medium'
+        Font size for the text in the plot.
 
-    Returns:
-        ax (:class:`matplotlib.axes.Axes`): The axes on which the plot was
-            drawn.
+    digits : int, optional, default=3
+        Number of digits for formatting output floating point values. 
 
-    Example:
-        >>> import scikitplot as skplt
-        >>> kmeans = KMeans(n_clusters=4, random_state=1)
-        >>> cluster_labels = kmeans.fit_predict(X)
-        >>> skplt.metrics.plot_silhouette(X, cluster_labels)
-        <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-        >>> plt.show()
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes on which the plot was drawn.
 
-        .. image:: _static/examples/plot_silhouette.png
-           :align: center
-           :alt: Silhouette Plot
+    Examples
+    --------
+    >>> import scikitplot as skplt
+    >>> from sklearn.cluster import KMeans
+    >>> import matplotlib.pyplot as plt
+    >>> # Example data X
+    >>> kmeans = KMeans(n_clusters=4, random_state=1)
+    >>> cluster_labels = kmeans.fit_predict(X)
+    >>> skplt.metrics.plot_silhouette(X, cluster_labels)
+    >>> plt.show()
+
+    .. image:: ../../_static/examples/plot_silhouette.png
+       :align: center
+       :alt: Silhouette Plot
     """
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)

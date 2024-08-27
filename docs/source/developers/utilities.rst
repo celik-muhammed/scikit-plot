@@ -1,5 +1,7 @@
 .. _developers-utils:
 
+.. currentmodule:: scikitplot.utils
+
 ========================
 Utilities for Developers
 ========================
@@ -15,8 +17,6 @@ All the following functions and classes are in the module :mod:`scikitplot.utils
    scikit-plots.  Backports, in particular, will be removed as the scikit-plots
    dependencies evolve.
 
-
-.. currentmodule:: scikitplot.utils
 
 Validation Tools
 ================

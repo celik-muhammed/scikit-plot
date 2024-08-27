@@ -1,4 +1,4 @@
-dropdown.js/**
+/**
  * This script is used to add the functionality of collapsing/expanding all dropdowns
  * on the page to the sphinx-design dropdowns. This is because some browsers cannot
  * search into collapsed <details> (such as Firefox).

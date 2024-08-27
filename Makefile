@@ -5,7 +5,7 @@
 
 
 ## Declare phony targets to indicate these are not files but commands to be executed.
-.PHONY: clean examples test publish all
+.PHONY: clean clean_doc clean_pypi examples test publish all
 ## To run any of these targets, use the `make` command followed by the target name.
 ## For example:
 ##   make clean            # Executes the clean target to remove build artifacts
@@ -18,12 +18,17 @@
 ## clean target: Removes build artifacts and cleans up the project directory.
 ## Useful for ensuring a fresh build environment.
 clean:
-	# mkdir -p current_dir
 	rm -rf `find -L -type d -name .ipynb_checkpoints`
 	rm -rf `find -L -type d -name __pycache__` .pytest_cache
+	echo "basic clean completed."
+
+clean_doc: clean
 	rm -rf docs/build
+	echo "docs clean completed."
+
+clean_pypi: clean clean_doc
 	rm -rf build dist scikit_plots.egg-info
-	echo "clean completed."
+	echo "docs clean completed."
 
 
 ## example_script target: Runs py script on the examples/ directory.

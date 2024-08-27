@@ -20,7 +20,27 @@ from . import (
 from scikitplot.classifiers import classifier_factory
 from scikitplot.clustering import clustering_factory
 
+from .utils._show_versions import show_versions
+
+
 # __all__ = ['estimators']
 
+
+# PEP0440 compatible formatted version, see:
+# https://www.python.org/dev/peps/pep-0440/
+#
+# Generic release markers:
+#   X.Y.0   # For first release after an increment in Y
+#   X.Y.Z   # For bugfix releases
+#
+# Admissible pre-release markers:
+#   X.Y.ZaN   # Alpha release
+#   X.Y.ZbN   # Beta release
+#   X.Y.ZrcN  # Release Candidate
+#   X.Y.Z     # Final release
+#
+# Dev branch marker is: 'X.Y.dev' or 'X.Y.devN' where N is an integer.
+# 'X.Y.dev0' is the canonical version of 'X.Y.dev'
+#
 # https://packaging.python.org/en/latest/discussions/versioning/#valid-version-numbers
-__version__ = '0.3.8dev13'
+__version__ = '0.3.8rc2'

@@ -551,7 +551,7 @@ def plot_precision_recall_curve(y_true, y_probas,
 
 @deprecated('This will be removed in v0.4.0. Please use '
             'scikitplot.estimators.plot_feature_importances instead.')
-def plot_feature_importances(clf, title='Feature Importance',
+def plot_feature_importance(clf, title='Feature Importance',
                              feature_names=None, max_num_features=20,
                              order='descending', x_tick_rotation=0, ax=None,
                              figsize=None, title_fontsize="large",

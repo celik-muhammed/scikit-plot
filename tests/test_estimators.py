@@ -6,7 +6,7 @@ from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 import matplotlib.pyplot as plt
 
-from scikitplot.estimators import plot_feature_importances
+from scikitplot.estimators import plot_feature_importance
 from scikitplot.estimators import plot_learning_curve
 
 
@@ -14,7 +14,7 @@ def convert_labels_into_string(y_true):
     return ["A" if x == 0 else x for x in y_true]
 
 
-class TestFeatureImportances(unittest.TestCase):
+class TestFeatureImportance(unittest.TestCase):
     def setUp(self):
         np.random.seed(0)
         self.X, self.y = load_data(return_X_y=True)
@@ -28,45 +28,45 @@ class TestFeatureImportances(unittest.TestCase):
         np.random.seed(0)
         clf = RandomForestClassifier()
         clf.fit(self.X, convert_labels_into_string(self.y))
-        plot_feature_importances(clf)
+        plot_feature_importance(clf)
 
-    def test_feature_importances_in_clf(self):
+    def test_feature_importance_in_clf(self):
         np.random.seed(0)
         clf = LogisticRegression()
         clf.fit(self.X, self.y)
-        # self.assertRaises(TypeError, plot_feature_importances, clf)
-        plot_feature_importances(clf, feature_names=["a", "b", "c", "d"])
+        # self.assertRaises(TypeError, plot_feature_importance, clf)
+        plot_feature_importance(clf, feature_names=["a", "b", "c", "d"])
 
     def test_feature_names(self):
         np.random.seed(0)
         clf = RandomForestClassifier()
         clf.fit(self.X, self.y)
-        plot_feature_importances(clf, feature_names=["a", "b", "c", "d"])
+        plot_feature_importance(clf, feature_names=["a", "b", "c", "d"])
 
     def test_threshold(self):
         np.random.seed(0)
         clf = RandomForestClassifier()
         clf.fit(self.X, self.y)
-        plot_feature_importances(clf, threshold=1e-10)
-        plot_feature_importances(clf, threshold=1e-5)
-        plot_feature_importances(clf, threshold=1e-2)
+        plot_feature_importance(clf, threshold=1e-10)
+        plot_feature_importance(clf, threshold=1e-5)
+        plot_feature_importance(clf, threshold=1e-2)
 
     def test_order(self):
         np.random.seed(0)
         clf = RandomForestClassifier()
         clf.fit(self.X, self.y)
-        plot_feature_importances(clf, order='ascending')
-        plot_feature_importances(clf, order='descending')
-        plot_feature_importances(clf, order=None)
+        plot_feature_importance(clf, order='ascending')
+        plot_feature_importance(clf, order='descending')
+        plot_feature_importance(clf, order=None)
 
     # def test_ax(self):
     #     np.random.seed(0)
     #     clf = RandomForestClassifier()
     #     clf.fit(self.X, self.y)
     #     fig, ax = plt.subplots(1, 1)
-    #     out_ax = plot_feature_importances(clf)
+    #     out_ax = plot_feature_importance(clf)
     #     assert ax is not out_ax
-    #     out_ax = plot_feature_importances(clf, ax=ax)
+    #     out_ax = plot_feature_importance(clf, ax=ax)
     #     assert ax is out_ax
 
 

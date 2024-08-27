@@ -31,23 +31,43 @@ __all__ = [
 
 
 def _clone_and_score_clusterer(clf, X, n_clusters):
-    """Clones and scores clusterer instance.
+    """
+    Clones and scores a clusterer instance.
 
-    Args:
-        clf: Clusterer instance that implements ``fit``,``fit_predict``, and
-            ``score`` methods, and an ``n_clusters`` hyperparameter.
-            e.g. :class:`sklearn.cluster.KMeans` instance
+    This function fits the given clusterer instance on the provided data and scores the clustering performance.
 
-        X (array-like, shape (n_samples, n_features)):
-            Data to cluster, where n_samples is the number of samples and
-            n_features is the number of features.
+    Parameters
+    ----------
+    clf : object
+        Clusterer instance that implements `fit`, `fit_predict`, and `score` methods, and an `n_clusters` hyperparameter.
+        Example: :class:`sklearn.cluster.KMeans` instance.
 
-        n_clusters (int): Number of clusters
+    X : array-like, shape (n_samples, n_features)
+        Data to cluster, where `n_samples` is the number of samples and `n_features` is the number of features.
 
-    Returns:
-        score: Score of clusters
+    n_clusters : int
+        Number of clusters.
 
-        time: Number of seconds it took to fit cluster
+    Returns
+    -------
+    score : float
+        Score of the clusters.
+
+    time : float
+        Number of seconds it took to fit the clusterer.
+
+    Examples
+    --------
+    >>> from sklearn.cluster import KMeans
+    >>> from sklearn.datasets import load_iris
+    >>> X, _ = load_iris(return_X_y=True)
+    >>> kmeans = KMeans(n_clusters=3, random_state=0)
+    >>> clone_and_score_clusterer(kmeans, X, n_clusters=3)
+    (score, time)
+
+    Notes
+    -----
+    The `score` value is based on the clusterer's scoring method, and the `time` represents the fitting duration.
     """
     start = time.time()
     clf = clone(clf)
@@ -116,7 +136,7 @@ def plot_elbow(
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: _static/examples/plot_elbow.png
+        .. image:: ../../_static/examples/plot_elbow.png
            :align: center
            :alt: Elbow Curve
     """

@@ -21,7 +21,7 @@ from sklearn.base import clone
 from sklearn.utils import deprecated
 
 from scikitplot import plotters
-from scikitplot.plotters import plot_feature_importances
+from scikitplot.plotters import plot_feature_importance
 from scikitplot.plotters import plot_learning_curve
 
 
@@ -185,7 +185,7 @@ def plot_confusion_matrix_with_cv(
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: _static/examples/plot_confusion_matrix.png
+        .. image:: ../../_static/examples/plot_confusion_matrix.png
            :align: center
            :alt: Confusion matrix
     """
@@ -317,7 +317,7 @@ def plot_roc_curve_with_cv(
             <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
             >>> plt.show()
 
-        .. image:: _static/examples/plot_roc_curve.png
+        .. image:: ../../_static/examples/plot_roc_curve.png
            :align: center
            :alt: ROC Curves
     """
@@ -438,7 +438,7 @@ def plot_ks_statistic_with_cv(
             <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
             >>> plt.show()
 
-        .. image:: _static/examples/plot_ks_statistic.png
+        .. image:: ../../_static/examples/plot_ks_statistic.png
            :align: center
            :alt: KS Statistic
     """
@@ -572,7 +572,7 @@ def plot_precision_recall_curve_with_cv(
             <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
             >>> plt.show()
 
-        .. image:: _static/examples/plot_precision_recall_curve.png
+        .. image:: ../../_static/examples/plot_precision_recall_curve.png
            :align: center
            :alt: Precision Recall Curve
     """
