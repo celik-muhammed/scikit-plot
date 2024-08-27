@@ -1,5 +1,6 @@
 ## Library Dependencies
 pandas
+polars
 matplotlib>=1.4.0
 scikit-learn>=0.24
 scipy>=0.9
@@ -16,10 +17,24 @@ joblib>=0.10
 # pytest>=6.1
 
 ## Documentation Dependencies
+packaging
+seaborn
+plotly
+Pillow
+pooch
+jinja2
 numpydoc>=1.1
-Sphinx>=7.4
-sphinx-rtd-theme>=1.8.0
-sphinx-prompt
-sphinx_copybutton
+sphinx>=7.4
 sphinx-gallery
+sphinx-copybutton
+sphinx-prompt
+sphinx-design
+sphinx-tabs
+sphinx-remove-toctrees
+sphinx-rtd-theme>=1.8.0
+sphinxext-opengraph
+sphinxcontrib-sass
+pydata-sphinx-theme
+scikit-image
+myst-parser
 nbsphinx
