@@ -20,5 +20,6 @@ numpydoc>=1.1
 Sphinx>=7.4
 sphinx-rtd-theme>=1.8.0
 sphinx-prompt
+sphinx_copybutton
 sphinx-gallery
 nbsphinx
