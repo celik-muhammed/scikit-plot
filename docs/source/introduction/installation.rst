@@ -4,25 +4,24 @@
 Installing scikit-plots
 =======================
 
-Scikit-plots depends on `Scikit-learn <http://scikit-learn.org/>`_ and `Matplotlib <http://matplotlib.org/>`_ to do its magic, so make sure you have them installed as well.
+Scikit-plots relies on `Matplotlib <http://matplotlib.org/>`_ and
+`Scikit-learn <http://scikit-learn.org/>`_ for plotting model results.
+Additionally, it can work with results from other modeling libraries such as
+`TensorFlow <https://www.tensorflow.org/>`_ and `PyTorch <https://pytorch.org/>`_.
+Ensure that you have the necessary libraries installed in your environment.
 
-There are different ways to install scikit-learn:
+There are different ways to install scikit-plots:
 
 * :ref:`Install the latest official release <install_official_release>`. This
   is the best approach for most users. It will provide a stable version
   and pre-built packages are available for most platforms.
 
-* Install the version of scikit-learn provided by your
-  :ref:`operating system or Python distribution <install_by_distribution>`.
-  This is a quick option for those who have operating systems or Python
-  distributions that distribute scikit-learn.
-  It might not provide the latest release version.
-
-* :ref:`Building the package from source
-  <install_bleeding_edge>`. This is best for users who want the
-  latest-and-greatest features and aren't afraid of running
-  brand-new code. This is also needed for users who wish to contribute to the
-  project.
+.. Note
+    * :ref:`Building the package from source
+      <install_bleeding_edge>`. This is best for users who want the
+      latest-and-greatest features and aren't afraid of running
+      brand-new code. This is also needed for users who wish to contribute to the
+      project.
 
 
 .. _install_official_release:
@@ -68,7 +67,7 @@ Installing the latest release
           `official website <https://www.python.org/downloads/windows/>`__.
 
           Now create a `virtual environment (venv)
-          <https://docs.python.org/3/tutorial/venv.html>`_ and install scikit-learn.
+          <https://docs.python.org/3/tutorial/venv.html>`_ and install scikit-plots.
           Note that the virtual environment is optional but strongly recommended, in
           order to avoid potential conflicts with other packages.
 
@@ -76,15 +75,15 @@ Installing the latest release
 
             python -m venv sklearn-env
             sklearn-env\Scripts\activate  # activate
-            pip install -U scikit-learn
+            pip install -U scikit-plots
 
           In order to check your installation, you can use:
 
           .. prompt:: powershell
 
-            python -m pip show scikit-learn  # show scikit-learn version and location
+            python -m pip show scikit-plots  # show scikit-plots version and location
             python -m pip freeze             # show all installed packages in the environment
-            python -c "import sklearn; sklearn.show_versions()"
+            python -c "import scikitplot; scikitplot.show_versions()"
 
         .. tab-item:: Linux
           :class-label: tab-4
@@ -102,7 +101,7 @@ Installing the latest release
           `python3-pip` from your distribution's package manager.
 
           Now create a `virtual environment (venv)
-          <https://docs.python.org/3/tutorial/venv.html>`_ and install scikit-learn.
+          <https://docs.python.org/3/tutorial/venv.html>`_ and install scikit-plots.
           Note that the virtual environment is optional but strongly recommended, in
           order to avoid potential conflicts with other packages.
 
@@ -110,15 +109,15 @@ Installing the latest release
 
             python3 -m venv sklearn-env
             source sklearn-env/bin/activate  # activate
-            pip3 install -U scikit-learn
+            pip3 install -U scikit-plots
 
           In order to check your installation, you can use:
 
           .. prompt:: bash
 
-            python3 -m pip show scikit-learn  # show scikit-learn version and location
+            python3 -m pip show scikit-plots  # show scikit-plots version and location
             python3 -m pip freeze             # show all installed packages in the environment
-            python3 -c "import sklearn; sklearn.show_versions()"
+            python3 -c "import scikitplot; scikitplot.show_versions()"
 
         .. tab-item:: MacOS
           :class-label: tab-4
@@ -129,7 +128,7 @@ Installing the latest release
           <https://www.python.org/downloads/macos/>`__.
 
           Now create a `virtual environment (venv)
-          <https://docs.python.org/3/tutorial/venv.html>`_ and install scikit-learn.
+          <https://docs.python.org/3/tutorial/venv.html>`_ and install scikit-plots.
           Note that the virtual environment is optional but strongly recommended, in
           order to avoid potential conflicts with other packges.
 
@@ -137,15 +136,15 @@ Installing the latest release
 
             python -m venv sklearn-env
             source sklearn-env/bin/activate  # activate
-            pip install -U scikit-learn
+            pip install -U scikit-plots
 
           In order to check your installation, you can use:
 
           .. prompt:: bash
 
-            python -m pip show scikit-learn  # show scikit-learn version and location
+            python -m pip show scikit-plots  # show scikit-plots version and location
             python -m pip freeze             # show all installed packages in the environment
-            python -c "import sklearn; sklearn.show_versions()"
+            python -c "import scikitplot; scikitplot.show_versions()"
 
     .. tab-item:: conda
       :class-label: tab-6
@@ -153,17 +152,27 @@ Installing the latest release
       .. include:: installation_instructions_conda.rst
 
 
-Using an isolated environment such as pip venv or conda makes it possible to
-install a specific version of scikit-learn with pip or conda and its dependencies
-independently of any previously installed Python packages. In particular under Linux
-it is discouraged to install pip packages alongside the packages managed by the
-package manager of the distribution (apt, dnf, pacman...).
+Setting Up Your Environment
+---------------------------
 
-Note that you should always remember to activate the environment of your choice
-prior to running any Python command whenever you start a new terminal session.
+To manage dependencies and avoid conflicts, it is recommended to use an
+isolated environment, such as `pip venv` or `conda`. This approach allows
+you to install specific versions of `scikit-learn` and its dependencies
+independently from other Python packages.
 
-If you have not installed NumPy or SciPy yet, you can also install these using
-conda or pip. When using pip, please ensure that *binary wheels* are used,
-and NumPy and SciPy are not recompiled from source, which can happen when using
-particular configurations of operating system and hardware (such as Linux on
-a Raspberry Pi).
+For Linux users, it is advisable to avoid installing pip packages alongside
+those managed by your distribution's package manager (e.g., apt, dnf, pacman).
+
+Activating Your Environment
+---------------------------
+
+Remember to activate your chosen environment before running any Python commands,
+especially when starting a new terminal session.
+
+Installing Dependencies
+-----------------------
+
+If you have not yet installed `NumPy` or `SciPy`, you can do so using `pip`
+or `conda`. When using `pip`, ensure that *binary wheels* are used to avoid
+compiling from source. This is particularly important for certain configurations,
+such as running Linux on a Raspberry Pi.

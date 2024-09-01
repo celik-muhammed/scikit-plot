@@ -1,4 +1,4 @@
-.. _teams/contributor_experience_team:
+.. _contributor-experience-team:
 
 .. raw:: html
 

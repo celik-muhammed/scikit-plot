@@ -1,6 +1,6 @@
 .. _deciles_examples:
 
-deciles
--------
+Deciles
+-------------------------
 
-Examples related to the :mod:`scikitplot.deciles` module.
+Examples related to the :mod:`scikitplot.deciles` module with e.g. :class:`sklearn.linear_model.LogisticRegression` instance.

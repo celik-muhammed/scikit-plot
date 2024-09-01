@@ -46,6 +46,6 @@ ax = skplt.deciles.plot_ks_statistic(
 # Adjust layout to make sure everything fits
 plt.tight_layout()
 # Save the plot to a file
-plt.savefig('plot_ks_statistic_script.png')
+# plt.savefig('plot_ks_statistic_script.png')
 # Display the plot
 plt.show(block=True)

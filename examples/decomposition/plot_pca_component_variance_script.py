@@ -50,6 +50,6 @@ ax = skplt.decomposition.plot_pca_component_variance(
 # Adjust layout to make sure everything fits
 plt.tight_layout()
 # Save the plot to a file
-plt.savefig('plot_pca_component_variance_script.png')
+# plt.savefig('plot_pca_component_variance_script.png')
 # Display the plot
 plt.show(block=True)

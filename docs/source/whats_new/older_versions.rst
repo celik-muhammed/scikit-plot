@@ -3,13 +3,16 @@
 
 .. currentmodule:: scikitplot 
 
-.. _older_versions:
+
+.. _changelog_older_versions:
 
 ==============
 Older Versions
 ==============
 
-.. _changes_0_3.7:
+reserved.
+
+.. _changes_0_3_7:
 
 Version 0.3.7
 =============
@@ -19,37 +22,55 @@ Version 0.3.7
 The 0.3.7 release is a bug-fix release with no additional features, but is
 instead a set of bug fixes
 
-Documentation
--------------
-
-Changelog
-----------
-
-Fixes
------
-
-Misc
-----
-
-Removed modules
----------------
-
-External dependencies
----------------------
-
-API changes summary
--------------------
-
-
-People
-------
-
-Authors
--------
+Documentation for Version 0.3.7
+-------------------------------
 
 reserved.
+
+Changelog for Version 0.3.7
+---------------------------
+
+reserved.
+
+Fixes for Version 0.3.7
+-----------------------
+
+reserved.
+
+Misc for Version 0.3.7
+----------------------
+
+reserved.
+
+Removed modules for Version 0.3.7
+---------------------------------
+
+reserved.
+
+External Dependencies for Version 0.3.7
+---------------------------------------
+
+reserved.
+
+API changes summary for Version 0.3.7
+-------------------------------------
+
+reserved.
+
+People for Version 0.3.7
+------------------------
+
+reserved.
+
+
+Authors for Version 0.3
+=======================
+
+reserved.
+
 
 Earlier versions
 ================
 
-Earlier versions included contributions by reserved.
+Earlier versions included contributions by 
+reserved.

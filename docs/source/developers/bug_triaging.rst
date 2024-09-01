@@ -1,7 +1,14 @@
-.. _bug_triaging:
+.. _bug-triaging:
 
+===============================
 Bug triaging and issue curation
 ===============================
+
+.. warning::
+
+    Not Implemented...
+
+**Reserved.**
 
 The `issue tracker <https://github.com/scikit-plots/scikit-plots/issues>`_
 is important to the communication in the project: it helps

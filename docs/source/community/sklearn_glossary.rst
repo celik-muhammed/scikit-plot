@@ -1,3 +1,6 @@
+.. meta::
+   :noindex:
+
 .. currentmodule:: sklearn
 
 .. _glossary:

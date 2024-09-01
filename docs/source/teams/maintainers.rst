@@ -1,4 +1,4 @@
-.. _teams/maintainers:
+.. _maintainers:
 
 .. raw:: html
 

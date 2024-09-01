@@ -1,6 +1,6 @@
 .. _decomposition_examples:
 
-decomposition
--------------
+Decomposition
+-------------------------------
 
-Examples related to the :mod:`scikitplot.decomposition` module.
+Examples related to the :mod:`scikitplot.decomposition` module with e.g. :class:`sklearn.decomposition.PCA` instance.

@@ -68,6 +68,6 @@ ax = skplt.metrics.plot_calibration_curve(
 # Adjust layout to make sure everything fits
 plt.tight_layout()
 # Save the plot to a file
-plt.savefig('plot_calibration_curve_script.png')
+# plt.savefig('plot_calibration_curve_script.png')
 # Display the plot
 plt.show(block=True)

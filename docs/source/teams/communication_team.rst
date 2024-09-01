@@ -1,4 +1,4 @@
-.. _teams/communication_team:
+.. _communication-team:
 
 .. raw:: html
 

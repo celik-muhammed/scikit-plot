@@ -1,9 +1,21 @@
-.. _scikiplot_glossary:
+.. _scikiplot-glossary:
 
 .. currentmodule:: scikiplot
 
-=========================================
-Glossary of Common Terms and API Elements
-=========================================
+=====================
+scikit-plots Glossary
+=====================
 
-Reserved.
+.. warning::
+
+    Reserved...
+
+
+sklearn_glossary
+================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   sklearn_glossary.rst

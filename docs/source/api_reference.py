@@ -23,8 +23,8 @@ def _get_guide(*refs, is_developer=False):
 def _get_submodule(module_name, submodule_name):
     """Get the submodule docstring and automatically add the hook.
 
-    `module_name` is e.g. `scikitplot.utils`, and `submodule_name` is e.g.
-    `helpers`, so we get the docstring and hook for `scikitplot.utils.helpers`
+    `module_name` is e.g. `sklearn.feature_extraction`, and `submodule_name` is e.g.
+    `image`, so we get the docstring and hook for `sklearn.feature_extraction.image`
     submodule. `module_name` is used to reset the current module because autosummary
     automatically changes the current module.
     """
@@ -78,18 +78,18 @@ Essentially, the rendered page would look like the following:
 |---------------------------------------------------------------------------------|
 
 Hooks will be automatically generated for each module and each section. For a module,
-e.g., `scikitplot.utils`, the hook would be `utils_ref`; for a
-section, e.g., "From text" under `scikitplot.utils`, the hook would be
-`utils_ref-from-text`. However, note that a better way is to refer using
-the :mod: directive, e.g., :mod:`scikitplot.utils` for the module and
-:mod:`scikitplot.utils.text` for the section. Only in case that a section
+e.g., `sklearn.feature_extraction`, the hook would be `feature_extraction_ref`; for a
+section, e.g., "From text" under `sklearn.feature_extraction`, the hook would be
+`feature_extraction_ref-from-text`. However, note that a better way is to refer using
+the :mod: directive, e.g., :mod:`sklearn.feature_extraction` for the module and
+:mod:`sklearn.feature_extraction.text` for the section. Only in case that a section
 is not a particular submodule does the hook become useful, e.g., the "Loaders" section
-under `scikitplot.datasets`.
+under `sklearn.datasets`.
 """
 
 API_REFERENCE = {
     "scikitplot": {
-        "short_summary": "Settings and information tools.",
+        "short_summary": "Settings and information visualization tools.",
         "description": None,
         "sections": [
             {
@@ -102,7 +102,7 @@ API_REFERENCE = {
     },
     "scikitplot.cluster": {
         "short_summary": "Clustering.",
-        "description": _get_guide("cluster"),
+        "description": _get_guide("clustering"),
         "sections": [
             {
                 "title": None,
@@ -113,7 +113,7 @@ API_REFERENCE = {
         ],
     },
     "scikitplot.deciles": {
-        "short_summary": "Decile analysis.",
+        "short_summary": "Deciles.",
         "description": _get_guide("deciles"),
         "sections": [
             {
@@ -131,7 +131,7 @@ API_REFERENCE = {
         ],
     },
     "scikitplot.decomposition": {
-        "short_summary": "Matrix decomposition.",
+        "short_summary": "Decomposition.",
         "description": _get_guide("decomposition"),
         "sections": [
             {
@@ -144,7 +144,7 @@ API_REFERENCE = {
         ],
     },
     "scikitplot.estimators": {
-        "short_summary": "Model selection.",
+        "short_summary": "Visualizations for model’s decision-making process.",
         "description": _get_guide("estimators"),
         "sections": [
             {
@@ -157,7 +157,7 @@ API_REFERENCE = {
         ],
     },
     "scikitplot.metrics": {
-        "short_summary": "Metrics.",
+        "short_summary": "Visualizations for model performance metrics.",
         "description": _get_guide("metrics"),
         "sections": [
             {
@@ -173,9 +173,7 @@ API_REFERENCE = {
                 "autosummary": [
                     "plot_classifier_eval",
                     "plot_confusion_matrix",
-                    "plot_roc_curve",
                     "plot_roc",
-                    "plot_precision_recall_curve",
                     "plot_precision_recall",
                 ],
             },
@@ -186,13 +184,6 @@ API_REFERENCE = {
                     "plot_silhouette",
                 ],
             },
-            # {
-            #     "title": "Regression metrics",
-            #     "description": _get_guide("regression_metrics"),
-            #     "autosummary": [
-            #         # 
-            #     ],
-            # },
         ],
     },
     "scikitplot.utils": {
@@ -237,24 +228,24 @@ following:
 |     More versions...                     |
 |------------------------------------------|
 
-Note that the autosummary here assumes that the current module is `scikitplot`,
-i.e., if `scikitplot.plotters.plot_confusion_matrix` is deprecated,
-one should put `plotters.plot_confusion_matrix` in the "entries"
+Note that the autosummary here assumes that the current module is `sklearn`, i.e., if
+`sklearn.utils.Memory` is deprecated, one should put `utils.Memory` in the "entries"
 slot of the autosummary block.
 
 Example:
 
 DEPRECATED_API_REFERENCE = {
-    "3.7": [
-        "classifiers",
-        "clustering",
-        "plotters",
+    "0.24": [
+        "model_selection.fit_grid_point",
+        "utils.safe_indexing",
     ],
 }
 """
 
 DEPRECATED_API_REFERENCE = {
-    "3.7": [
+    "0.4": [
+        "metrics.plot_roc_curve",
+        "metrics.plot_precision_recall_curve",
         "classifiers",
         "clustering",
         "plotters",

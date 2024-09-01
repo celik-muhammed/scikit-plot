@@ -86,7 +86,7 @@ def plot_pca_component_variance(
     <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
     >>> plt.show()
 
-    .. image:: ../../_static/examples/plot_pca_component_variance.png
+    .. image:: /images/examples/plot_pca_component_variance.png
        :align: center
        :alt: PCA Component variances
     """
@@ -130,12 +130,16 @@ def plot_pca_component_variance(
     
     # ax.set_xlim([0.0, 1.0])
     ax.set_ylim([-0.02, 1.02])
-    
+
+    # Define the desired number of ticks
+    num_ticks = 10
+
     # Set x-axis ticks and labels
-    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(1))
-    ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.0f'))
-    ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
-    ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+    # ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator( (ax.get_xlim()[1] / 10) ))
+    ax.xaxis.set_major_locator( mpl.ticker.MaxNLocator(nbins=num_ticks, integer=False) )
+    ax.xaxis.set_major_formatter( mpl.ticker.FormatStrFormatter('%.1f') )
+    ax.yaxis.set_major_locator( mpl.ticker.MaxNLocator(nbins=num_ticks, integer=False) )
+    ax.yaxis.set_major_formatter( mpl.ticker.FormatStrFormatter('%.1f') )
     
     # Enable grid and display legend
     ax.grid(True)
@@ -223,7 +227,7 @@ def plot_pca_2d_projection(
     <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
     >>> plt.show()
 
-    .. image:: ../../_static/examples/plot_pca_2d_projection.png
+    .. image:: /images/examples/plot_pca_2d_projection.png
        :align: center
        :alt: PCA 2D Projection
     """

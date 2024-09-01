@@ -1,4 +1,4 @@
-.. _teams/maintainers_emeritus:
+.. _maintainers-emeritus:
 
 .. raw:: html
 

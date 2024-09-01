@@ -1,4 +1,4 @@
-.. _marketing_analytics:
+.. _marketing-analytics:
 
 ===================
 Marketing Analytics

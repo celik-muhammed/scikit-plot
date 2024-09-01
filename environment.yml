@@ -6,6 +6,6 @@ dependencies:
 - numpy
 - pandas
 - scipy
-- scikit-learn
 - matplotlib
+- scikit-learn
 - joblib

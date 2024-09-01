@@ -24,14 +24,162 @@ from sklearn.model_selection import learning_curve
 
 ## Define __all__ to specify the public interface of the module, not required default all above func
 __all__ = [
-    'plot_feature_importance',
     'plot_learning_curve',
+    'plot_feature_importances',
 ]
 
 
-def plot_feature_importance(
+def plot_learning_curve(
+    clf, 
+    X, 
+    y, 
+    title='Learning Curves',
+    ax=None, 
+    figsize=None, 
+    title_fontsize="large",
+    text_fontsize="medium",
+    cv=None, 
+    scoring=None,
+    train_sizes=None, 
+    shuffle=False, 
+    random_state=None,
+    n_jobs=1, 
+):
+    """
+    Generates a plot of the train and test learning curves for a classifier.
+
+    The learning curves plot the performance of a classifier as a function of the number of training samples.
+    This helps in understanding how well the classifier performs with different amounts of training data.
+
+    Parameters
+    ----------
+    clf : object
+        Classifier instance that implements `fit` and `predict` methods.
+
+    X : array-like, shape (n_samples, n_features)
+        Training data, where `n_samples` is the number of samples and `n_features` is the number of features.
+
+    y : array-like, shape (n_samples,) or (n_samples, n_features), optional
+        Target relative to `X` for classification or regression; None for unsupervised learning.
+
+    title : str, optional, default="Learning Curves"
+        Title of the generated plot.
+
+    cv : int, cross-validation generator, or iterable, optional
+        Determines the cross-validation strategy to use for splitting:
+        - None, to use the default 3-fold cross-validation,
+        - integer, to specify the number of folds,
+        - An object to be used as a cross-validation generator,
+        - An iterable yielding train/test splits.
+
+        For integer/None inputs, if `y` is binary or multiclass, `StratifiedKFold` is used.
+        If the estimator is not a classifier or if `y` is neither binary nor multiclass, `KFold` is used.
+
+    shuffle : bool, optional, default=True
+        Whether to shuffle the training data before splitting using cross-validation.
+
+    random_state : int or RandomState, optional
+        Pseudo-random number generator state used for random sampling.
+
+    train_sizes : iterable, optional
+        Determines the training sizes used to plot the learning curve.
+        If None, `np.linspace(.1, 1.0, 5)` is used.
+
+    n_jobs : int, optional, default=1
+        Number of jobs to run in parallel.
+
+    scoring : str, callable, or None, optional, default=None
+        A string (see scikit-learn model evaluation documentation) or a scorer callable object/function
+        with signature `scorer(estimator, X, y)`.
+
+    ax : matplotlib.axes.Axes, optional
+        The axes upon which to plot the curve. If None, a new figure and axes are created.
+
+    figsize : tuple of int, optional
+        Tuple denoting figure size of the plot, e.g., (6, 6). Defaults to None.
+
+    title_fontsize : str or int, optional, default="large"
+        Font size for the plot title. Use e.g., "small", "medium", "large" or integer values.
+
+    text_fontsize : str or int, optional, default="medium"
+        Font size for the text in the plot. Use e.g., "small", "medium", "large" or integer values.
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes on which the plot was drawn.
+
+    Notes
+    -----
+    If `cv` is not specified, 3-fold cross-validation is used by default. The plot will show the learning curves
+    for training and test data across different training sizes.
+
+    Examples
+    --------
+    >>> import scikitplot as skplt
+    >>> from sklearn.ensemble import RandomForestClassifier
+    >>> from sklearn.datasets import load_iris
+    >>> X, y = load_iris(return_X_y=True)
+    >>> rf = RandomForestClassifier()
+    >>> skplt.estimators.plot_learning_curve(rf, X, y)
+    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
+    >>> plt.show()
+
+    .. image:: /images/examples/plot_learning_curve.png
+       :align: center
+       :alt: Learning Curves
+    """
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, figsize=figsize)
+
+    if train_sizes is None:
+        train_sizes = np.linspace(.1, 1.0, 5)
+
+    train_sizes, train_scores, test_scores = learning_curve(
+        clf, 
+        X, 
+        y, 
+        cv=cv, 
+        scoring=scoring,
+        train_sizes=train_sizes, 
+        shuffle=shuffle, 
+        random_state=random_state,
+        n_jobs=n_jobs,
+    )    
+    train_scores_mean = np.mean(train_scores, axis=1)
+    train_scores_std = np.std(train_scores, axis=1)
+    test_scores_mean = np.mean(test_scores, axis=1)
+    test_scores_std = np.std(test_scores, axis=1)
+    
+    ax.fill_between(
+        train_sizes, train_scores_mean - train_scores_std,
+        train_scores_mean + train_scores_std, alpha=0.1, color="r"
+    )
+    ax.fill_between(
+        train_sizes, test_scores_mean - test_scores_std,
+        test_scores_mean + test_scores_std, alpha=0.1, color="g"
+    )
+    ax.plot(
+        train_sizes, train_scores_mean, 'o-', color="r",
+        label="Training score"
+    )
+    ax.plot(
+        train_sizes, test_scores_mean, 'o-', color="g",
+        label="Cross-validation score"
+    )    
+    ax.set_title(title, fontsize=title_fontsize)
+    ax.set_xlabel("Training examples", fontsize=text_fontsize)
+    ax.set_ylabel("Score", fontsize=text_fontsize)
+    ax.tick_params(labelsize=text_fontsize)
+    ax.grid()
+    ax.legend(loc="best", fontsize=text_fontsize)
+
+    return ax
+
+
+def plot_feature_importances(
     model,
-    title='Feature Importance',
+    title='Feature Importances',
     ax=None,
     figsize=None,
     title_fontsize="large",
@@ -48,10 +196,10 @@ def plot_feature_importance(
     digits=4,
 ):
     """
-    Generates a plot of a sklearn model's feature importance.
+    Generates a plot of a sklearn model's feature importances.
 
     This function handles different types of classifiers and their respective
-    feature importance or coefficient attributes. It supports models wrapped in pipelines.
+    feature importances or coefficient attributes. It supports models wrapped in pipelines.
     Error bars can be added based on different statistical methods or custom functions.
 
     Supports models like `LogisticRegression`, `RidgeClassifier`,
@@ -68,7 +216,7 @@ def plot_feature_importance(
 
     title : str, optional
         Title of the generated plot.
-        Defaults to "Feature Importance".
+        Defaults to "Feature Importances".
 
     ax : matplotlib.axes.Axes, optional
         The axes upon which to plot the curve. If None, the plot is drawn on
@@ -142,12 +290,12 @@ def plot_feature_importance(
     >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
     >>> clf = make_pipeline(StandardScaler(), RandomForestClassifier())
     >>> clf.fit(X_train, y_train)
-    >>> ax, features = skplt.estimators.plot_feature_importance(clf);
+    >>> ax, features = skplt.estimators.plot_feature_importances(clf);
     >>> features
 
-    .. image:: ../../_static/examples/plot_feature_importance.png
+    .. image:: /images/examples/plot_feature_importances.png
        :align: center
-       :alt: Feature Importance
+       :alt: Feature Importances
     """
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
@@ -268,151 +416,3 @@ def plot_feature_importance(
     plt.tight_layout()
     plt.legend([f'features: {len(importances)}'])
     return ax, feature_names
-
-
-def plot_learning_curve(
-    clf, 
-    X, 
-    y, 
-    title='Learning Curves',
-    ax=None, 
-    figsize=None, 
-    title_fontsize="large",
-    text_fontsize="medium",
-    cv=None, 
-    scoring=None,
-    train_sizes=None, 
-    shuffle=False, 
-    random_state=None,
-    n_jobs=1, 
-):
-    """
-    Generates a plot of the train and test learning curves for a classifier.
-
-    The learning curves plot the performance of a classifier as a function of the number of training samples.
-    This helps in understanding how well the classifier performs with different amounts of training data.
-
-    Parameters
-    ----------
-    clf : object
-        Classifier instance that implements `fit` and `predict` methods.
-
-    X : array-like, shape (n_samples, n_features)
-        Training data, where `n_samples` is the number of samples and `n_features` is the number of features.
-
-    y : array-like, shape (n_samples,) or (n_samples, n_features), optional
-        Target relative to `X` for classification or regression; None for unsupervised learning.
-
-    title : str, optional, default="Learning Curves"
-        Title of the generated plot.
-
-    cv : int, cross-validation generator, or iterable, optional
-        Determines the cross-validation strategy to use for splitting:
-        - None, to use the default 3-fold cross-validation,
-        - integer, to specify the number of folds,
-        - An object to be used as a cross-validation generator,
-        - An iterable yielding train/test splits.
-
-        For integer/None inputs, if `y` is binary or multiclass, `StratifiedKFold` is used.
-        If the estimator is not a classifier or if `y` is neither binary nor multiclass, `KFold` is used.
-
-    shuffle : bool, optional, default=True
-        Whether to shuffle the training data before splitting using cross-validation.
-
-    random_state : int or RandomState, optional
-        Pseudo-random number generator state used for random sampling.
-
-    train_sizes : iterable, optional
-        Determines the training sizes used to plot the learning curve.
-        If None, `np.linspace(.1, 1.0, 5)` is used.
-
-    n_jobs : int, optional, default=1
-        Number of jobs to run in parallel.
-
-    scoring : str, callable, or None, optional, default=None
-        A string (see scikit-learn model evaluation documentation) or a scorer callable object/function
-        with signature `scorer(estimator, X, y)`.
-
-    ax : matplotlib.axes.Axes, optional
-        The axes upon which to plot the curve. If None, a new figure and axes are created.
-
-    figsize : tuple of int, optional
-        Tuple denoting figure size of the plot, e.g., (6, 6). Defaults to None.
-
-    title_fontsize : str or int, optional, default="large"
-        Font size for the plot title. Use e.g., "small", "medium", "large" or integer values.
-
-    text_fontsize : str or int, optional, default="medium"
-        Font size for the text in the plot. Use e.g., "small", "medium", "large" or integer values.
-
-    Returns
-    -------
-    matplotlib.axes.Axes
-        The axes on which the plot was drawn.
-
-    Notes
-    -----
-    If `cv` is not specified, 3-fold cross-validation is used by default. The plot will show the learning curves
-    for training and test data across different training sizes.
-
-    Examples
-    --------
-    >>> import scikitplot as skplt
-    >>> from sklearn.ensemble import RandomForestClassifier
-    >>> from sklearn.datasets import load_iris
-    >>> X, y = load_iris(return_X_y=True)
-    >>> rf = RandomForestClassifier()
-    >>> skplt.estimators.plot_learning_curve(rf, X, y)
-    <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
-    >>> plt.show()
-
-    .. image:: ../../_static/examples/plot_learning_curve.png
-       :align: center
-       :alt: Learning Curves
-    """
-    if ax is None:
-        fig, ax = plt.subplots(1, 1, figsize=figsize)
-
-    if train_sizes is None:
-        train_sizes = np.linspace(.1, 1.0, 5)
-
-    train_sizes, train_scores, test_scores = learning_curve(
-        clf, 
-        X, 
-        y, 
-        cv=cv, 
-        scoring=scoring,
-        train_sizes=train_sizes, 
-        shuffle=shuffle, 
-        random_state=random_state,
-        n_jobs=n_jobs,
-    )    
-    train_scores_mean = np.mean(train_scores, axis=1)
-    train_scores_std = np.std(train_scores, axis=1)
-    test_scores_mean = np.mean(test_scores, axis=1)
-    test_scores_std = np.std(test_scores, axis=1)
-    
-    ax.fill_between(
-        train_sizes, train_scores_mean - train_scores_std,
-        train_scores_mean + train_scores_std, alpha=0.1, color="r"
-    )
-    ax.fill_between(
-        train_sizes, test_scores_mean - test_scores_std,
-        test_scores_mean + test_scores_std, alpha=0.1, color="g"
-    )
-    ax.plot(
-        train_sizes, train_scores_mean, 'o-', color="r",
-        label="Training score"
-    )
-    ax.plot(
-        train_sizes, test_scores_mean, 'o-', color="g",
-        label="Cross-validation score"
-    )    
-    ax.set_title(title, fontsize=title_fontsize)
-    ax.set_xlabel("Training examples", fontsize=text_fontsize)
-    ax.set_ylabel("Score", fontsize=text_fontsize)
-    ax.tick_params(labelsize=text_fontsize)
-    ax.grid()
-    ax.legend(loc="best", fontsize=text_fontsize)
-
-    return ax

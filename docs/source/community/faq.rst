@@ -62,11 +62,10 @@ Apart from scikit-learn, another popular one is `scikit-image <https://scikit-im
 Do you support PyPy?
 ^^^^^^^^^^^^^^^^^^^^
 
-scikit-plots is regularly tested and maintained to work with
-`PyPy <https://pypy.org/>`_.
+Currently No.
 
 How can I obtain permission to use the images in scikit-plots for my work?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Citations of scikit-plots are highly encouraged and appreciated. See
-:ref:`citing scikit-plots <citing-scikit-plots>`.
+:ref:`citing scikit-plots <citing_scikit_plots>`.

@@ -1,6 +1,6 @@
 .. _estimators_examples:
 
-estimators
-----------
+Estimators
+----------------------------
 
-Examples related to the :mod:`scikitplot.estimators` module.
+Examples related to the :mod:`scikitplot.estimators` module with e.g. :class:`sklearn.linear_model.LogisticRegression` instance.

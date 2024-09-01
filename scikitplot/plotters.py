@@ -118,7 +118,7 @@ def plot_confusion_matrix(y_true, y_pred, labels=None, true_labels=None,
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: _static/examples/plot_confusion_matrix.png
+        .. image:: /images/examples/plot_confusion_matrix.png
            :align: center
            :alt: Confusion matrix
     """
@@ -244,7 +244,7 @@ def plot_roc_curve(y_true, y_probas, title='ROC Curves',
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: _static/examples/plot_roc_curve.png
+        .. image:: /images/examples/plot_roc_curve.png
            :align: center
            :alt: ROC Curves
     """
@@ -383,7 +383,7 @@ def plot_ks_statistic(y_true, y_probas, title='KS Statistic Plot',
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: _static/examples/plot_ks_statistic.png
+        .. image:: /images/examples/plot_ks_statistic.png
            :align: center
            :alt: KS Statistic
     """
@@ -478,7 +478,7 @@ def plot_precision_recall_curve(y_true, y_probas,
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: _static/examples/plot_precision_recall_curve.png
+        .. image:: /images/examples/plot_precision_recall_curve.png
            :align: center
            :alt: Precision Recall Curve
     """
@@ -551,7 +551,7 @@ def plot_precision_recall_curve(y_true, y_probas,
 
 @deprecated('This will be removed in v0.4.0. Please use '
             'scikitplot.estimators.plot_feature_importances instead.')
-def plot_feature_importance(clf, title='Feature Importance',
+def plot_feature_importances(clf, title='Feature Importances',
                              feature_names=None, max_num_features=20,
                              order='descending', x_tick_rotation=0, ax=None,
                              figsize=None, title_fontsize="large",
@@ -609,7 +609,7 @@ def plot_feature_importance(clf, title='Feature Importance',
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: _static/examples/plot_feature_importances.png
+        .. image:: /images/examples/plot_feature_importances.png
            :align: center
            :alt: Feature Importances
     """
@@ -743,7 +743,7 @@ def plot_learning_curve(clf, X, y, title='Learning Curve', cv=None,
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: _static/examples/plot_learning_curve.png
+        .. image:: /images/examples/plot_learning_curve.png
            :align: center
            :alt: Learning Curve
     """
@@ -835,7 +835,7 @@ def plot_silhouette(clf, X, title='Silhouette Analysis', metric='euclidean',
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: _static/examples/plot_silhouette.png
+        .. image:: /images/examples/plot_silhouette.png
            :align: center
            :alt: Silhouette Plot
     """
@@ -946,7 +946,7 @@ def plot_elbow_curve(clf, X, title='Elbow Plot', cluster_ranges=None,
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: _static/examples/plot_elbow.png
+        .. image:: /images/examples/plot_elbow.png
            :align: center
            :alt: Elbow Curve
     """
@@ -1022,7 +1022,7 @@ def plot_pca_component_variance(clf, title='PCA Component Explained Variances',
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: _static/examples/plot_pca_component_variance.png
+        .. image:: /images/examples/plot_pca_component_variance.png
            :align: center
            :alt: PCA Component variances
     """
@@ -1114,7 +1114,7 @@ def plot_pca_2d_projection(clf, X, y, title='PCA 2-D Projection', ax=None,
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: _static/examples/plot_pca_2d_projection.png
+        .. image:: /images/examples/plot_pca_2d_projection.png
            :align: center
            :alt: PCA 2D Projection
     """

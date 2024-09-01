@@ -1,9 +1,11 @@
 :html_theme.sidebar_secondary.remove:
 
-{% if module == "scikitplot" -%}
-{%- set module_hook = "scikitplot" -%}
-{%- elif module.startswith("scikitplot.") -%}
-{%- set module_hook = module[8:] -%}
+{% set sk = "scikitplot" %}
+
+{% if module == sk -%}
+{%- set module_hook = sk -%}
+{%- elif module.startswith(sk + ".") -%}
+{%- set module_hook = module[sk|length + 1:] -%}
 {%- else -%}
 {%- set module_hook = None -%}
 {%- endif -%}

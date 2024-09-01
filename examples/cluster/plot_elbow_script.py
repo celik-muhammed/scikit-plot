@@ -10,6 +10,11 @@ method used by a scikit-learn clusterer
 # Authors: scikit-plots developers
 # License: MIT
 
+# %%
+# Load the dataset
+# ----------------
+#
+# We will start by loading the ``iris`` dataset.
 from sklearn.datasets import (
     make_classification,
     load_breast_cancer as data_2_classes,
@@ -30,9 +35,18 @@ import scikitplot as skplt
 X, y = data_3_classes(return_X_y=True, as_frame=False)
 X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.5, random_state=0)
 
+# %%
+# Model Training
+# --------------
+#
 # Create an instance of the LogisticRegression
 model = KMeans(n_clusters=4, random_state=1)
 
+
+# %%
+# Visualize the results
+# ---------------------
+#
 # Plot!
 ax = skplt.cluster.plot_elbow(
     model, 
@@ -42,6 +56,6 @@ ax = skplt.cluster.plot_elbow(
 # Adjust layout to make sure everything fits
 plt.tight_layout()
 # Save the plot to a file
-plt.savefig('plot_elbow_script.png')
+# plt.savefig('plot_elbow_script.png')
 # Display the plot
 plt.show(block=True)

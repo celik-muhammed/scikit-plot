@@ -178,7 +178,7 @@ def plot_calibration_curve(
     >>>              'Gaussian Naive Bayes', 'Support Vector Machine']
     >>> skplt.metrics.plot_calibration_curve(y_test, probas_list, y_is_decision)
     
-    .. image:: ../../_static/examples/plot_calibration_curve.png
+    .. image:: /images/examples/plot_calibration_curve.png
        :align: center
        :alt: Calibration Curves
     """
@@ -324,12 +324,16 @@ def plot_calibration_curve(
     ax.tick_params(labelsize=text_fontsize)
     
     ax.set_ylim([-0.05, 1.05])
-    
+
+    # Define the desired number of ticks
+    num_ticks = 10
+
     # Set x-axis ticks and labels
-    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
-    ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
-    ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
-    ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+    # ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator( (ax.get_xlim()[1] / 10) ))
+    ax.xaxis.set_major_locator( mpl.ticker.MaxNLocator(nbins=num_ticks, integer=False) )
+    ax.xaxis.set_major_formatter( mpl.ticker.FormatStrFormatter('%.1f') )
+    ax.yaxis.set_major_locator( mpl.ticker.MaxNLocator(nbins=num_ticks, integer=False) )
+    ax.yaxis.set_major_formatter( mpl.ticker.FormatStrFormatter('%.1f') )
     
     # Enable grid and display legend
     ax.grid(True)
@@ -429,7 +433,7 @@ def plot_classifier_eval(
     >>> y_pred = clf.predict(X_test)
     >>> skplt.metrics.plot_classifier_eval(y_test, y_pred)
     
-    .. image:: ../../_static/examples/plot_classifier_eval.png
+    .. image:: /images/examples/plot_classifier_eval.png
        :align: center
        :alt: Classifier Eval
     """
@@ -664,7 +668,7 @@ def plot_confusion_matrix(
     >>> y_pred = rf.predict(X_test)
     >>> skplt.metrics.plot_confusion_matrix(y_test, y_pred, normalize=True)
     
-    .. image:: ../../_static/examples/plot_confusion_matrix.png
+    .. image:: /images/examples/plot_confusion_matrix.png
        :align: center
        :alt: Confusion Matrix
     """
@@ -800,7 +804,7 @@ def plot_roc_curve(y_true, y_probas, title='ROC Curves',
         >>> y_probas = nb.predict_proba(X_test)
         >>> skplt.metrics.plot_roc_curve(y_test, y_probas)
 
-        .. image:: ../../_static/examples/plot_roc_curve.png
+        .. image:: /images/examples/plot_roc_curve.png
            :align: center
            :alt: ROC Curves
     """
@@ -1001,7 +1005,7 @@ def plot_roc(
     >>> y_probas = model.predict_proba(X_test)
     >>> skplt.metrics.plot_roc(y_test, y_probas)
 
-    .. image:: ../../_static/examples/plot_roc.png
+    .. image:: /images/examples/plot_roc.png
        :align: center
        :alt: ROC AUC Curves
     """
@@ -1143,12 +1147,16 @@ def plot_roc(
     
     ax.set_xlim([0.0, 1.0])
     ax.set_ylim([0.0, 1.05])
-    
-    # Set x-axis ticks and labels
-    # ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
-    # ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
-    # ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
-    # ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+
+    # Define the desired number of ticks
+    # num_ticks = 10
+
+    ## Set x-axis ticks and labels
+    ## ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator( (ax.get_xlim()[1] / 10) ))
+    # ax.xaxis.set_major_locator( mpl.ticker.MaxNLocator(nbins=num_ticks, integer=False) )
+    # ax.xaxis.set_major_formatter( mpl.ticker.FormatStrFormatter('%.1f') )
+    # ax.yaxis.set_major_locator( mpl.ticker.MaxNLocator(nbins=num_ticks, integer=False) )
+    # ax.yaxis.set_major_formatter( mpl.ticker.FormatStrFormatter('%.1f') )
 
     # Enable grid and display legend
     ax.grid(True)
@@ -1224,7 +1232,7 @@ def plot_precision_recall_curve(
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: ../../_static/examples/plot_precision_recall_curve.png
+        .. image:: /images/examples/plot_precision_recall_curve.png
            :align: center
            :alt: Precision Recall Curve
     """
@@ -1407,7 +1415,7 @@ def plot_precision_recall(
     >>> y_probas = model.predict_proba(X_test)
     >>> skplt.metrics.plot_precision_recall(y_test, y_probas)
 
-    .. image:: ../../_static/examples/plot_precision_recall.png
+    .. image:: /images/examples/plot_precision_recall.png
        :align: center
        :alt: Precision-Recall AUC Curves
     """
@@ -1559,12 +1567,16 @@ def plot_precision_recall(
     
     ax.set_xlim([0.0, 1.0])
     ax.set_ylim([0.0, 1.05])
-    
-    # Set x-axis ticks and labels
-    # ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
-    # ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
-    # ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(0.1))
-    # ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+
+    # Define the desired number of ticks
+    # num_ticks = 10
+
+    ## Set x-axis ticks and labels
+    ## ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator( (ax.get_xlim()[1] / 10) ))
+    # ax.xaxis.set_major_locator( mpl.ticker.MaxNLocator(nbins=num_ticks, integer=False) )
+    # ax.xaxis.set_major_formatter( mpl.ticker.FormatStrFormatter('%.1f') )
+    # ax.yaxis.set_major_locator( mpl.ticker.MaxNLocator(nbins=num_ticks, integer=False) )
+    # ax.yaxis.set_major_formatter( mpl.ticker.FormatStrFormatter('%.1f') )
 
     # Enable grid and display legend
     ax.grid(True)
@@ -1657,7 +1669,7 @@ def plot_silhouette(
     >>> skplt.metrics.plot_silhouette(X, cluster_labels)
     >>> plt.show()
 
-    .. image:: ../../_static/examples/plot_silhouette.png
+    .. image:: /images/examples/plot_silhouette.png
        :align: center
        :alt: Silhouette Plot
     """

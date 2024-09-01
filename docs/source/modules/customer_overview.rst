@@ -1,6 +1,5 @@
-.. _customer_overview:
-.. apidocs file containing the API Documentation
+.. _customer-overview:
 
-=============================
-Placeholder Customer Overview
-=============================
+======================================
+Customer Overview Module (Placeholder)
+======================================

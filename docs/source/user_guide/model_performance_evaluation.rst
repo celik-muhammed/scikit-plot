@@ -1,4 +1,4 @@
-.. _model_performance_evaluation:
+.. _model-performance-evaluation:
 
 ============================
 Model Performance Evaluation
@@ -11,3 +11,4 @@ Model Performance Evaluation
     ../modules/estimators.rst
     ../modules/metrics.rst
     ../modules/decomposition.rst
+    ../modules/clustering.rst

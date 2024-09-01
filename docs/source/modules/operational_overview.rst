@@ -1,6 +1,5 @@
-.. _operational_overview:
-.. apidocs file containing the API Documentation
+.. _operational-overview:
 
-================================
-Placeholder Operational Overview
-================================
+==========================================
+Operational Overview Module (Placeholder)
+==========================================

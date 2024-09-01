@@ -3,30 +3,53 @@
 
 .. currentmodule:: scikitplot
 
-.. _release_notes_1_6:
+.. _release_notes_0_4:
 
 ===========
 Version 0.4
 ===========
+
+**In Development**
 
 ..
   -- UNCOMMENT WHEN 0.4.0 IS RELEASED --
   For a short description of the main highlights of the release, please refer to
   :ref:`sphx_glr_auto_examples_release_highlights_plot_release_highlights_0_4_0.py`.
 
-.. _changes_0_4:
+.. _changes_0_4_0:
 
 Version 0.4.0
 =============
 
 **In Development**
 
-**Classes:**
+Changelog for Version 0.4.0
+---------------------------
 
-**Other**
+:mod:`scikitplot.metrics`
+............................
 
-Changelog
----------
+- |Fix|
+
+:mod:`scikitplot.estimators`
+............................
+
+- |Fix|
+
+:mod:`scikitplot.deciles`
+............................
+
+- |Fix|
+
+:mod:`scikitplot.decomposition`
+................................
+
+- |Fix|
+
+:mod:`scikitplot.cluster`
+............................
+
+- |Fix|
 
 Thanks to everyone who has contributed to the maintenance and improvement of
 the project since version 0.3.7, including:

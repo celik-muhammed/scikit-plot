@@ -114,6 +114,10 @@ def decile_table(
     pd.DataFrame
         The dataframe `dt` (decile-table) with the deciles and related information.
 
+    References
+    ----------
+    [1] https://github.com/tensorbored/kds/blob/master/kds/metrics.py#L32
+
     Examples
     --------
     >>> import scikitplot as skplt
@@ -126,10 +130,6 @@ def decile_table(
     >>> clf.fit(X_train, y_train)
     >>> y_prob = clf.predict_proba(X_test)
     >>> skplt.deciles.decile_table(y_test, y_prob[:, 1])
-
-    References
-    ----------
-    [1] https://github.com/tensorbored/kds/blob/master/kds/metrics.py#L32
     """
     y_true = np.array(y_true)
     y_prob = np.array(y_prob)
@@ -296,7 +296,7 @@ def plot_cumulative_gain(
     >>> y_probas = model.predict_proba(X_test)
     >>> skplt.deciles.plot_cumulative_gain(y_test, y_probas)
     
-    .. image:: ../../_static/examples/plot_cumulative_gain.png
+    .. image:: /images/examples/plot_cumulative_gain.png
        :align: center
        :alt: Cumulative Gain Curves
     """
@@ -419,12 +419,16 @@ def plot_cumulative_gain(
     
     ax.set_xlim([0.0, 1.0])
     ax.set_ylim([0.0, 1.05])
-    
+
+    # Define the desired number of ticks
+    num_ticks = 10
+
     # Set x-axis ticks and labels
-    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator( (ax.get_xlim()[1] / 10) ))
-    ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
-    ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator( (ax.get_ylim()[1] / 10) ))
-    ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+    # ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator( (ax.get_xlim()[1] / 10) ))
+    ax.xaxis.set_major_locator( mpl.ticker.MaxNLocator(nbins=num_ticks, integer=False) )
+    ax.xaxis.set_major_formatter( mpl.ticker.FormatStrFormatter('%.1f') )
+    ax.yaxis.set_major_locator( mpl.ticker.MaxNLocator(nbins=num_ticks, integer=False) )
+    ax.yaxis.set_major_formatter( mpl.ticker.FormatStrFormatter('%.1f') )
 
     # Enable grid and display legend
     ax.grid(True)
@@ -551,7 +555,7 @@ def plot_lift(
     >>> y_probas = model.predict_proba(X_test)
     >>> skplt.deciles.plot_lift(y_test, y_probas)
 
-    .. image:: ../../_static/examples/plot_lift.png
+    .. image:: /images/examples/plot_lift.png
        :align: center
        :alt: Lift Curves
     """
@@ -669,7 +673,7 @@ def plot_lift(
         )
 
     # Plot the baseline
-    ax.plot([0, 1], [1, 1], ls='--', lw=1, c='gray', label='Baseline')
+    ax.plot([0, 1], [1, 1], ls='--', lw=1, c='gray', label='Baseline (1)')
 
     # Set title, labels, and formatting
     ax.set_title(title, fontsize=title_fontsize, pad=title_pad)
@@ -679,12 +683,16 @@ def plot_lift(
     
     # ax.set_xlim([0.0, 1.0])
     # ax.set_ylim([0.0, 1.05])
-    
+
+    # Define the desired number of ticks
+    num_ticks = 10
+
     # Set x-axis ticks and labels
-    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator( (ax.get_xlim()[1] / 10) ))
-    ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
-    ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator( (ax.get_ylim()[1] / 10) ))
-    ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.1f'))
+    # ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator( (ax.get_xlim()[1] / 10) ))
+    ax.xaxis.set_major_locator( mpl.ticker.MaxNLocator(nbins=num_ticks, integer=False) )
+    ax.xaxis.set_major_formatter( mpl.ticker.FormatStrFormatter('%.1f') )
+    ax.yaxis.set_major_locator( mpl.ticker.MaxNLocator(nbins=num_ticks, integer=False) )
+    ax.yaxis.set_major_formatter( mpl.ticker.FormatStrFormatter('%.1f') )
 
     # Enable grid and display legend
     ax.grid(True)
@@ -744,6 +752,10 @@ def plot_lift_decile_wise(
     None
         This function does not return any value.
 
+    References
+    ----------
+    [1] https://github.com/tensorbored/kds/blob/master/kds/metrics.py#L190
+
     Examples
     --------
     >>> import scikitplot as skplt
@@ -756,10 +768,6 @@ def plot_lift_decile_wise(
     >>> clf = clf.fit(X_train, y_train)
     >>> y_prob = clf.predict_proba(X_test)
     >>> skplt.deciles.plot_lift_decile_wise(y_test, y_prob[:, 1])
-
-    References
-    ----------
-    [1] https://github.com/tensorbored/kds/blob/master/kds/metrics.py#L190
     """
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=figsize)
@@ -841,7 +849,7 @@ def plot_ks_statistic(
     <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
     >>> plt.show()
 
-    .. image:: ../../_static/examples/plot_ks_statistic.png
+    .. image:: /images/examples/plot_ks_statistic.png
        :align: center
        :alt: KS Statistic
     """
@@ -934,6 +942,10 @@ def report(
     pandas.DataFrame
         The dataframe containing the decile table with the deciles and related information.
 
+    References
+    ----------
+    [1] https://github.com/tensorbored/kds/blob/master/kds/metrics.py#L382
+
     Examples
     --------
     >>> import scikitplot as skplt
@@ -946,10 +958,6 @@ def report(
     >>> clf = clf.fit(X_train, y_train)
     >>> y_prob = clf.predict_proba(X_test)
     >>> skplt.deciles.report(y_test, y_prob[:, 1])
-
-    References
-    ----------
-    [1] https://github.com/tensorbored/kds/blob/master/kds/metrics.py#L382
     """
     if plot_style is None:
         None

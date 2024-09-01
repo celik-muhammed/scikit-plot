@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:00.836** total execution time for 14 files **from all galleries**:
+**00:11.435** total execution time for 14 files **from all galleries**:
 
 .. container::
 
@@ -32,45 +32,45 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_estimators_plot_feature_importance_script.py` (``../../examples/estimators/plot_feature_importance_script.py``)
-     - 00:00.836
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_cluster_plot_elbow_script.py` (``../../examples/cluster/plot_elbow_script.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_deciles_plot_cumulative_gain_script.py` (``../../examples/deciles/plot_cumulative_gain_script.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_deciles_plot_ks_statistic_script.py` (``../../examples/deciles/plot_ks_statistic_script.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_deciles_plot_lift_script.py` (``../../examples/deciles/plot_lift_script.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_decomposition_plot_pca_2d_projection_script.py` (``../../examples/decomposition/plot_pca_2d_projection_script.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_decomposition_plot_pca_component_variance_script.py` (``../../examples/decomposition/plot_pca_component_variance_script.py``)
-     - 00:00.000
+   * - :ref:`sphx_glr_auto_examples_metrics_plot_calibration_curve_script.py` (``../../examples/metrics/plot_calibration_curve_script.py``)
+     - 00:02.662
      - 0.0
    * - :ref:`sphx_glr_auto_examples_estimators_plot_learning_curve_script.py` (``../../examples/estimators/plot_learning_curve_script.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_metrics_plot_calibration_curve_script.py` (``../../examples/metrics/plot_calibration_curve_script.py``)
-     - 00:00.000
+     - 00:02.347
      - 0.0
    * - :ref:`sphx_glr_auto_examples_metrics_plot_classifier_eval_script.py` (``../../examples/metrics/plot_classifier_eval_script.py``)
-     - 00:00.000
+     - 00:00.855
      - 0.0
    * - :ref:`sphx_glr_auto_examples_metrics_plot_confusion_matrix_script.py` (``../../examples/metrics/plot_confusion_matrix_script.py``)
-     - 00:00.000
+     - 00:00.675
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_deciles_plot_ks_statistic_script.py` (``../../examples/deciles/plot_ks_statistic_script.py``)
+     - 00:00.663
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_cluster_plot_elbow_script.py` (``../../examples/cluster/plot_elbow_script.py``)
+     - 00:00.609
      - 0.0
    * - :ref:`sphx_glr_auto_examples_metrics_plot_precision_recall_script.py` (``../../examples/metrics/plot_precision_recall_script.py``)
-     - 00:00.000
+     - 00:00.559
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_decomposition_plot_pca_2d_projection_script.py` (``../../examples/decomposition/plot_pca_2d_projection_script.py``)
+     - 00:00.559
      - 0.0
    * - :ref:`sphx_glr_auto_examples_metrics_plot_roc_script.py` (``../../examples/metrics/plot_roc_script.py``)
-     - 00:00.000
+     - 00:00.546
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_estimators_plot_feature_importances_script.py` (``../../examples/estimators/plot_feature_importances_script.py``)
+     - 00:00.518
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_deciles_plot_cumulative_gain_script.py` (``../../examples/deciles/plot_cumulative_gain_script.py``)
+     - 00:00.501
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_deciles_plot_lift_script.py` (``../../examples/deciles/plot_lift_script.py``)
+     - 00:00.362
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_decomposition_plot_pca_component_variance_script.py` (``../../examples/decomposition/plot_pca_component_variance_script.py``)
+     - 00:00.334
      - 0.0
    * - :ref:`sphx_glr_auto_examples_metrics_plot_silhouette_script.py` (``../../examples/metrics/plot_silhouette_script.py``)
-     - 00:00.000
+     - 00:00.245
      - 0.0

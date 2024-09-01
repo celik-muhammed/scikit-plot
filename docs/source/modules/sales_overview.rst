@@ -1,6 +1,5 @@
-.. _sales_overview:
-.. apidocs file containing the API Documentation
+.. _sales-overview:
 
-==========================
-Placeholder Sales Overview
-==========================
+=====================================
+Sales Overview Module (Placeholder)
+=====================================

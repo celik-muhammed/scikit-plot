@@ -1,4 +1,4 @@
-.. _teams/contributor_experience_team_emeritus:
+.. _contributor-experience-team-emeritus:
 
 .. raw:: html
 

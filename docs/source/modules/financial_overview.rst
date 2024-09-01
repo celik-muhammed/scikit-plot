@@ -1,6 +1,5 @@
-.. _financial_overview:
-.. apidocs file containing the API Documentation
+.. _financial-overview:
 
-==============================
-Placeholder Financial Overview
-==============================
+========================================
+Financial Overview Module (Placeholder)
+========================================

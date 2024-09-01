@@ -47,6 +47,6 @@ ax = skplt.metrics.plot_confusion_matrix(
 # Adjust layout to make sure everything fits
 plt.tight_layout()
 # Save the plot to a file
-plt.savefig('plot_confusion_matrix_script.png')
+# plt.savefig('plot_confusion_matrix_script.png')
 # Display the plot
 plt.show(block=True)

@@ -1,4 +1,4 @@
-.. _teams/communication_team_emeritus:
+.. _communication-team-emeritus:
 
 .. raw:: html
 

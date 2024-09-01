@@ -3,32 +3,37 @@
 ### cleaning up build files, running tests, building Docker images, and more.
 ## Phony targets are used to avoid conflicts with files of the same name.
 
-
 ## Declare phony targets to indicate these are not files but commands to be executed.
-.PHONY: clean clean_doc clean_pypi examples test publish all
-## To run any of these targets, use the `make` command followed by the target name.
-## For example:
-##   make clean            # Executes the clean target to remove build artifacts
-##   make examples         # Executes the examples target to run code save generated plots.
-##   make test             # Executes the test target to run unit tests
-##   make publish          # Executes the publish target to run unit tests and publish pypi
-##   make all              # Executes the all target to clean and build the project
+.PHONY: clean examples test publish all
 
+# all target: A convenience target that cleans the build directory and then builds the app.
+# Ensures that the project is rebuilt from a clean state.
+all: test clean publish
+	echo "all completed."
+
+help:
+	@echo "Please use \`make <target>' where <target> is one of"
+	@echo "  clean     to remove build artifacts and temporary files"
+	@echo "  examples  to execute py scripts under 'examples/' folder"
+	@echo "  test      to run unit tests after 'clean'"
+	@echo "  publish   to build the project"
+	@echo "  all       to run 'test clean publish'"
 
 ## clean target: Removes build artifacts and cleans up the project directory.
 ## Useful for ensuring a fresh build environment.
-clean:
+clean_basic:
 	rm -rf `find -L -type d -name .ipynb_checkpoints`
-	rm -rf `find -L -type d -name __pycache__` .pytest_cache
+	@echo "Removed all '.ipynb_checkpoints'"
+	rm -rf `find -L -type d -name __pycache__` 
+	@echo "Removed all '__pycache__'"
+	rm -rf `find -L -type d -name .pytest_cache`
+	@echo "Removed all '.pytest_cache'"
 	echo "basic clean completed."
 
-clean_doc: clean
-	rm -rf docs/build
-	echo "docs clean completed."
-
-clean_pypi: clean clean_doc
+## pypi
+clean: clean_basic
 	rm -rf build dist scikit_plots.egg-info
-	echo "docs clean completed."
+	echo "pypi clean completed."
 
 
 ## example_script target: Runs py script on the examples/ directory.
@@ -53,22 +58,15 @@ examples:
 
 ## test target: Runs pytest on the tests/ directory.
 ## Run this target to execute unit tests.
-test: clean
-	pytest tests/
+test: clean_basic
+	cd scikitplot && pytest tests/
 	echo "pytest completed."
 
 
 ## publish target: Builds the pypi Packages, and publishes the library.
 ## This target depends on clean and test.
-publish: test clean
+publish:
 	python -m build
+	twine check dist/*
 	twine upload dist/*
 	echo "pypi publish completed."
-
-
-# all target: A convenience target that cleans the build directory and then builds the app.
-# Ensures that the project is rebuilt from a clean state.
-all: clean
-	# Assuming my_app is built using some other rule or command
-	make my_app
-	echo "all completed."

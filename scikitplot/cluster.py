@@ -136,7 +136,7 @@ def plot_elbow(
         <matplotlib.axes._subplots.AxesSubplot object at 0x7fe967d64490>
         >>> plt.show()
 
-        .. image:: ../../_static/examples/plot_elbow.png
+        .. image:: /images/examples/plot_elbow.png
            :align: center
            :alt: Elbow Curve
     """

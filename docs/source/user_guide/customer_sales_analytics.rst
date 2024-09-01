@@ -1,4 +1,4 @@
-.. _customer_sales_analytics:
+.. _customer-sales-analytics:
 
 ======================================
 Placeholder Customer & Sales Analytics

@@ -50,6 +50,6 @@ ax = skplt.decomposition.plot_pca_2d_projection(
 # Adjust layout to make sure everything fits
 plt.tight_layout()
 # Save the plot to a file
-plt.savefig('plot_pca_2d_projection_script.png')
+# plt.savefig('plot_pca_2d_projection_script.png')
 # Display the plot
 plt.show(block=True)

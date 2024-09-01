@@ -1,4 +1,4 @@
-.. _operational_analytics:
+.. _operational-analytics:
 
 =====================
 Operational Analytics

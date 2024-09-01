@@ -6,19 +6,22 @@ Setup script for installing scikit-plots
 
 For license information, see LICENSE and/or NOTICE.md
 """
-from __future__ import print_function
-
+from __future__ import (
+    print_function
+)
 import os
 import io
 import sys
 import codecs
 import pathlib
 
-import pytest
-
 from setuptools import (
-    setup, find_packages, find_namespace_packages
+    setup,
+    find_packages,
+    find_namespace_packages
 )
+
+import pytest
 # import test_commands
 
 
@@ -48,7 +51,7 @@ LICENSE      = 'MIT License'
 AUTHOR       = 'Reiichiro Nakano, Prateek Sharma et al.'
 A_EMAIL      = 'reiichiro.s.nakano@gmail.com, s.prateek3080@gmail.com'
 URL          = 'https://github.com/reiinakano/scikit-plot'  # Your fork's URL
-DOC_URL      = 'https://scikit-plot.readthedocs.io/en/stable/'
+DOC_URL      = 'https://scikit-plots.github.io/stable/'
 MAINTAINER   = 'Muhammed Çelik'
 M_EMAIL      = 'muhammed.business.network@gmail.com'
 REPOSITORY   = 'https://github.com/celik-muhammed/scikit-plot'
@@ -160,6 +163,7 @@ config = {
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python',

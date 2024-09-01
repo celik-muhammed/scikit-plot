@@ -11,7 +11,7 @@ This project was started in 2024.
 The people behind scikit-plots
 ------------------------------
 list of contributors can be found `on
-github <https://github.com/scikit-plots/scikit-plots/graphs/contributors>`__.
+github <https://github.com/scikit-plots/scikit-plots/graphs/contributors>`_.
 
 Maintainers Team
 ................
@@ -81,59 +81,12 @@ past:
 .. include:: contributor_experience_team_emeritus.rst
 
 
-
-
-
-
-.. _citing-scikit-plots:
-
 Citing scikit-plots
 -------------------
 
 If you use scikit-plots in your research, please consider citing it as follows:
 
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.13367000.svg
-   :target: https://doi.org/10.5281/zenodo.13367000
-   :alt: DOI Badge for scikit-plots
-
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.13367001.svg
-   :target: https://doi.org/10.5281/zenodo.13367001
-   :alt: DOI Badge for scikit-plots v0.3.8dev0
-
-**IEEE Citation:**
-
-.. raw:: html
-
-    <div id="citation1">
-        [1] scikit-plots, “scikit-plots: vlatest”. Zenodo, Aug. 23, 2024. 
-        DOI: <a href="https://doi.org/10.5281/zenodo.13367000" target="_blank">10.5281/zenodo.13367000</a>.
-    </div>
-    <button onclick="copyToClipboard('citation1')">Copy to Clipboard</button>
-
-.. raw:: html
-
-    <div id="citation2">
-        [2] scikit-plots, “scikit-plots: v0.3.8dev0”. Zenodo, Aug. 23, 2024. 
-        DOI: <a href="https://doi.org/10.5281/zenodo.13367001" target="_blank">10.5281/zenodo.13367001</a>.
-    </div>
-    <button onclick="copyToClipboard('citation2')">Copy to Clipboard</button>
-
-.. raw:: html
-
-    <script>
-        function copyToClipboard(elementId) {
-            var text = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(text).then(function() {
-                alert('Citation copied to clipboard!');
-            }, function(err) {
-                alert('Failed to copy citation: ', err);
-            });
-        }
-    </script>
-
-
-
-
+.. include:: citing_scikit_plots.rst
 
 
 Artwork

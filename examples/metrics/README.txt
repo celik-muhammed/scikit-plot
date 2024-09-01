@@ -1,6 +1,6 @@
 .. _metrics_examples:
 
-metrics
--------
+Metrics
+-------------------------
 
-Examples related to the :mod:`scikitplot.metrics` module.
+Examples related to the :mod:`scikitplot.metrics` module with e.g. :class:`sklearn.linear_model.LogisticRegression` instance.

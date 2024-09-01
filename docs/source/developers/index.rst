@@ -1,7 +1,11 @@
+.. Defined in conf.py
+.. meta::
+   :noindex:
+
 .. _developers_guide:
 
 =================
-Developer's Guide
+Developers Guide
 =================
 
 .. toctree::

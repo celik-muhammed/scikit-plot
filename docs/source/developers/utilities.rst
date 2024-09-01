@@ -2,9 +2,15 @@
 
 .. currentmodule:: scikitplot.utils
 
+.. warning::
+
+    Not Implemented...
+
 ========================
 Utilities for Developers
 ========================
+
+**Reserved.**
 
 scikit-plots contains a number of utilities to help with development.  These are
 located in :mod:`scikitplot.utils`, and include tools in a number of categories.

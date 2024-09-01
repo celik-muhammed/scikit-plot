@@ -1,10 +1,16 @@
 .. _contributing:
 
+.. currentmodule:: scikitplot
+
 ============
 Contributing
 ============
 
-.. currentmodule:: scikitplot
+.. warning::
+
+    Not Implemented...
+
+**Reserved.**
 
 This project is a community effort, and everyone is welcome to
 contribute. It is hosted on https://github.com/scikit-plots/scikit-plots.
@@ -18,7 +24,7 @@ welcome to post feature requests or pull requests.
 Ways to contribute
 ==================
 
-There are many ways to contribute to scikit-learn, with the most common ones
+There are many ways to contribute to scikit-plots, with the most common ones
 being contribution of code or documentation to the project. Improving the
 documentation is no less important than improving the library itself.  If you
 find a typo in the documentation, or have made improvements, do not hesitate to
@@ -69,9 +75,9 @@ how to set up your git repository:
     .. code-block:: text
 
         git clone git@github.com:YourLogin/scikit-plots.git  # add --depth 1 if your connection is slow
-        cd scikit-learn
+        cd scikitplots
 
-4. Follow steps 2-6 in install_bleeding_edge to build scikit-learn in
+4. Follow steps 2-6 in install_bleeding_edge to build scikit-plots in
    development mode and return to this document.
 
 5. Install the development dependencies:
@@ -83,24 +89,24 @@ how to set up your git repository:
 .. _upstream:
 
 6. Add the ``upstream`` remote. This saves a reference to the main
-   scikit-learn repository, which you can use to keep your repository
+   scikit-plots repository, which you can use to keep your repository
    synchronized with the latest changes:
 
    .. code-block:: text
 
-        git remote add upstream git@github.com:scikit-learn/scikit-learn.git
+        git remote add upstream git@github.com:scikit-plots/scikit-plots.git
 
 7. Check that the `upstream` and `origin` remote aliases are configured correctly
    by running `git remote -v` which should display:
 
    .. code-block:: text
 
-        origin	git@github.com:YourLogin/scikit-learn.git (fetch)
-        origin	git@github.com:YourLogin/scikit-learn.git (push)
-        upstream	git@github.com:scikit-learn/scikit-learn.git (fetch)
-        upstream	git@github.com:scikit-learn/scikit-learn.git (push)
+        origin	git@github.com:YourLogin/scikit-plots.git (fetch)
+        origin	git@github.com:YourLogin/scikit-plots.git (push)
+        upstream	git@github.com:scikit-plots/scikit-plots.git (fetch)
+        upstream	git@github.com:scikit-plots/scikit-plots.git (push)
 
-You should now have a working installation of scikit-learn, and your git repository
+You should now have a working installation of scikit-plots, and your git repository
 properly configured. It could be useful to run some test to verify your installation.
 
 The next steps now describe the process of modifying code and submitting a PR:
@@ -157,7 +163,7 @@ The next steps now describe the process of modifying code and submitting a PR:
     mailing list for more visibility.
 
 It is often helpful to keep your local feature branch synchronized with the
-latest changes of the main scikit-learn repository:
+latest changes of the main scikit-plots repository:
 
 .. code-block:: text
 
@@ -259,10 +265,10 @@ complies with the following rules before marking a PR as "ready for review". The
    performance and efficiency (see :ref:`monitoring_performances`) or through
    examples of usage. Examples also illustrate the features and intricacies of
    the library to users. Have a look at other examples in the `examples/
-   <https://github.com/scikit-learn/scikit-learn/tree/main/examples>`_
+   <https://github.com/scikit-plots/scikit-plots/tree/main/examples>`_
    directory for reference. Examples should demonstrate why the new
    functionality is useful in practice and, if possible, compare it to other
-   methods available in scikit-learn.
+   methods available in scikit-plots.
 
 9. New features have some maintenance overhead. We expect PR authors
    to take part in the maintenance for the code they submit, at least
@@ -347,7 +353,7 @@ Stalled and Unclaimed Issues
 ----------------------------
 
 Generally speaking, issues which are up for grabs will have a
-`"help wanted" <https://github.com/scikit-learn/scikit-learn/labels/help%20wanted>`_.
+`"help wanted" <https://github.com/scikit-plots/scikit-plots/labels/help%20wanted>`_.
 tag. However, not all issues which need contributors will have this tag,
 as the "help wanted" tag is not always up-to-date with the state
 of the issue. Contributors can find issues which are still up for grabs
@@ -385,18 +391,18 @@ underestimate how easy an issue is to solve!
 
 - **Good first issue tag**
 
-  A great way to start contributing to scikit-learn is to pick an item from
+  A great way to start contributing to scikit-plots is to pick an item from
   the list of `good first issues
-  <https://github.com/scikit-learn/scikit-learn/labels/good%20first%20issue>`_
+  <https://github.com/scikit-plots/scikit-plots/labels/good%20first%20issue>`_
   in the issue tracker. Resolving these issues allow you to start contributing
   to the project without much prior knowledge. If you have already contributed
-  to scikit-learn, you should look at Easy issues instead.
+  to scikit-plots, you should look at Easy issues instead.
 
 - **Easy tag**
 
-  If you have already contributed to scikit-learn, another great way to contribute
-  to scikit-learn is to pick an item from the list of `Easy issues
-  <https://github.com/scikit-learn/scikit-learn/labels/Easy>`_ in the issue
+  If you have already contributed to scikit-plots, another great way to contribute
+  to scikit-plots is to pick an item from the list of `Easy issues
+  <https://github.com/scikit-plots/scikit-plots/labels/Easy>`_ in the issue
   tracker. Your assistance in this area will be greatly appreciated by the
   more experienced developers as it helps free up their time to concentrate on
   other issues.
@@ -407,7 +413,7 @@ underestimate how easy an issue is to solve!
   Additionally, we use the help wanted tag to mark Pull Requests which have been
   abandoned by their original contributor and are available for someone to pick up where
   the original contributor left off. The list of issues with the help wanted tag can be
-  found `here <https://github.com/scikit-learn/scikit-learn/labels/help%20wanted>`_.
+  found `here <https://github.com/scikit-plots/scikit-plots/labels/help%20wanted>`_.
   Note that not all issues which need contributors will have this tag.
 
 .. _contribute_documentation:
@@ -467,9 +473,9 @@ should have (at least) one of the following tags:
 There are four other tags to help new contributors:
 
 :Good first issue:
-    This issue is ideal for a first contribution to scikit-learn. Ask for help
+    This issue is ideal for a first contribution to scikit-plots. Ask for help
     if the formulation is unclear. If you have already contributed to
-    scikit-learn, look at Easy issues instead.
+    scikit-plots, look at Easy issues instead.
 
 :Easy:
     This issue can be tackled without much prior experience.
@@ -505,7 +511,7 @@ Code Review Guidelines
 ======================
 
 Reviewing code contributed to the project as PRs is a crucial component of
-scikit-learn development. We encourage anyone to start reviewing code of other
+scikit-plots development. We encourage anyone to start reviewing code of other
 developers. The code review process is often highly educational for everybody
 involved. This is particularly appropriate if it is a feature you would like to
 use, and so can respond critically about whether the PR meets your needs. While

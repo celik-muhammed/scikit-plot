@@ -1,7 +1,8 @@
+.. https://docs.open-mpi.org/en/v5.0.x/developers/rst-for-markdown-expats.html#whitespace-and-indenting
 .. https://docutils.sourceforge.io/docs/user/rst/quickref.html
 .. https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#hyperlink-targets
 .. Used for setting metadata like the document's title for processing tools.
-.. title:: Index
+.. title:: Homepage
 
 .. https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#comments
 .. Adding Comments
@@ -51,8 +52,10 @@
 
    Release Notes <whats_new/whats_new.rst>
    Community <https://zenodo.org/communities/scikit-plots>
-   Developer’s Guide <developers/index.rst>
-   Development <https://scikit-learn.org/dev/developers/index.html>
+   
+   
+   Developer’s Guide <developers/index>
+   
    FAQ <community/faq.rst>
    Glossary <community/scikiplot_glossary.rst>
    About us <teams/about.rst>

@@ -27,14 +27,15 @@ exclude = [
 ]
 
 [tool.setuptools.dynamic]
-readme = {file=["README.md"], content-type="text/markdown"}
+version = {attr = "scikitplot.__version__"}
 
 [project]
 name = "scikit-plots"
-# dynamic = ["version"]
-version = "0.3.8rc2"  # replace with the actual version from get_version()
+dynamic = ["version"]
 description = "An intuitive library to add plotting functionality to scikit-learn objects."
-dynamic = ["readme"]
+# [project.readme]
+# content-type = "text/x-rst"
+readme = "README.md"
 keywords = [
     "matplotlib", 
     "visualization", 
@@ -42,7 +43,8 @@ keywords = [
     "machine learning", 
     "data science"
 ]
-license = {text = "MIT License"}
+# license = {text = "MIT License"}
+license = {file = "LICENSE"}
 authors = [
     {name = "Reiichiro Nakano", email = "reiichiro.s.nakano@gmail.com"},
     {name = "Prateek Sharma", email = "s.prateek3080@gmail.com"}
@@ -56,6 +58,7 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
+    'License :: OSI Approved :: BSD License',
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
@@ -78,7 +81,7 @@ dependencies = [
 
 [project.urls]
 Homepage      = "https://github.com/celik-muhammed/scikit-plot"
-Documentation = "https://scikit-plot.readthedocs.io/en/stable/"
+Documentation = "https://scikit-plots.github.io/stable/"
 Donate        = "https://github.com/celik-muhammed/scikit-plot#donate"
 Forum         = "https://github.com/celik-muhammed/scikit-plot/issues"
 Issues        = "https://github.com/celik-muhammed/scikit-plot/issues"
@@ -94,3 +97,23 @@ addopts = "-ra -q"  # Add command-line options
 testpaths = [
     "tests",
 ]  # Directories to search for tests
+
+[tool.black]
+line-length = 88
+target-version = ['py39', 'py310', 'py311']
+preview = true
+exclude = '''
+/(
+    \.eggs         # exclude a few common directories in the
+  | \.git          # root of the project
+  | \.mypy_cache
+  | \.vscode
+  | build
+  | dist
+  | doc/build
+  | doc/_build
+  | doc/auto_examples
+  | scikitplot/externals
+  | asv_benchmarks/env
+)/
+'''

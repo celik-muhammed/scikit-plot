@@ -1,6 +1,6 @@
 .. _cluster_examples:
 
-cluster
--------
+Cluster
+-------------------------
 
-Examples related to the :mod:`scikitplot.cluster` module.
+Examples related to the :mod:`scikitplot.cluster` module with e.g. :class:`sklearn.cluster.KMeans` instance.

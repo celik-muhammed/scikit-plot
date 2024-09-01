@@ -1,4 +1,4 @@
-.. _financial_analytics:
+.. _financial-analytics:
 
 ===============================
 Placeholder Financial Analytics

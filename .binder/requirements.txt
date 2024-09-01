@@ -1,11 +1,10 @@
 --find-links https://pypi.anaconda.org/scientific-python-nightly-wheels/simple/scikit-learn
 --pre
-pandas
-polars
 matplotlib
+scikit-image
+pandas
 seaborn
 Pillow
-scikit-learn
-scikit-image
-scikit-plots
 sphinx-gallery
+scikit-learn
+polars
