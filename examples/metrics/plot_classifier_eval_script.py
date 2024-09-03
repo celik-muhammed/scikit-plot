@@ -43,14 +43,14 @@ y_train_pred = model.predict(X_train)
 
 fig1 = skplt.metrics.plot_classifier_eval(
     y_val, y_val_pred, 
-    labels=np.unique(y),
+    labels=np.unique(y_train),
     figsize=(8, 2),
     title='Val',
 );
 # plt.show(block=True)
 fig2 = skplt.metrics.plot_classifier_eval(
     y_train, y_train_pred, 
-    labels=np.unique(y),
+    labels=np.unique(y_train),
     figsize=(8, 2),
     title='Train',
 );
