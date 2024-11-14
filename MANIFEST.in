@@ -1,6 +1,9 @@
+## Optional file to specify additional files for packaging.
+## Setuptools Build System
+
 # Include the LICENSE file from the LICENSE directory
 include LICENSE
-include LICENSES/LICENSE_MIT
+include LICENSES/
 
 # Include other files as needed
 include README.md

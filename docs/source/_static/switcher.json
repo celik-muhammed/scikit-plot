@@ -9,5 +9,10 @@
         "version": "0.4.0",
         "url": "https://scikit-plots.github.io/stable/",
         "preferred": true
+    },
+    {
+        "name": "v0.3.7 (stable_prev)",
+        "version": "0.3.7",
+        "url": "https://scikit-plot.readthedocs.io/en/stable/"
     }
 ]
