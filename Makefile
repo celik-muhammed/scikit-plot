@@ -122,6 +122,16 @@ build:
 	@# ninja -C builddir test
 	@python -m pip install --no-build-isolation --no-cache-dir -e .
 
+	@## Create a Tag for the Release
+	@git tag -a v1.0.0 -m "Release version 1.0.0"
+	@git push origin v1.0.0
+
+	@## Build the PyPI Package
+	@git config --global --add safe.directory /home/jovyan/work/contribution/scikit-plots/third_party/NumCpp
+	@git submodule sync
+	@git submodule update --init --recursive
+	@python -m build
+
 	@## *twine* for the upload
 	@twine check dist/*
 	@twine upload dist/*
