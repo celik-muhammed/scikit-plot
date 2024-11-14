@@ -123,7 +123,7 @@ build:
 	@python -m pip install --no-build-isolation --no-cache-dir -e .
 
 	@## Create a Tag for the Release
-	@git tag -a v1.0.0 -m "Release version 1.0.0"
+	@git tag -a v0.4.0 -m "Release version 0.4.0"
 	@git push origin v1.0.0
 
 	@## Build the PyPI Package
@@ -144,6 +144,7 @@ LAST_COMMIT_MESSAGE = $(shell git log -1 --pretty=%B)
 ## Tagging the latest commit
 tag:
 	@echo "Creating tag v$(LAST_COMMIT_ID) with message: $(LAST_COMMIT_MESSAGE)"
+	@git tag
 	@git tag -a v$(LAST_COMMIT_ID) -m "$(LAST_COMMIT_MESSAGE)"
 	@echo "Tag v$(LAST_COMMIT_ID) created with message: $(LAST_COMMIT_MESSAGE)."
 
